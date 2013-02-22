@@ -11,15 +11,17 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.util.CoreMap;
 
 public class TextElementsExtractor {
 	
-	public static List<List<CoreLabel>> getCoreLabelElements(Document altoDocument) {
-		List<List<CoreLabel>> result=new LinkedList<List<CoreLabel>>();
+	public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
+		List<List<CoreMap>> result=new LinkedList<List<CoreMap>>();
 		
 		Elements lines = altoDocument.getElementsByTag("TextBlock");
+		
 		for (Element e:lines) {			
-			List<CoreLabel> newLine=new LinkedList<CoreLabel>();
+			List<CoreMap> newLine=new LinkedList<CoreMap>();
 			Elements words = e.getElementsByTag("String");
 			for (Element word:words) {
 				CoreLabel label = new CoreLabel();
