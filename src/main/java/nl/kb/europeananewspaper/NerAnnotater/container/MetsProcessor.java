@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import nl.kb.europeananewspaper.NerAnnotater.alto.AltoProcessor;
 import nl.kb.europeananewspaper.NerAnnotater.output.LogResultHandler;
+import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,6 +38,7 @@ public class MetsProcessor implements ContainerProcessor {
 		
 		Elements elementsByTag = doc.getElementsByTag("mets:flocat");
 		
+		int count=0;
 		for (Element e : elementsByTag) {
 			URL potentialAltoFilename;
 			try {
@@ -52,9 +54,20 @@ public class MetsProcessor implements ContainerProcessor {
 				} else {
 					potentialAltoFilename = referencedFile.normalize().toURL();
 				}
+				
+				String[] split = potentialAltoFilename.toExternalForm().split("/");
+				String name;
+				if (split.length>0&&!split[split.length-1].isEmpty()) {
+					//name from url
+					name=split[split.length-1];
+				} else {
+					//Generic name, if not available
+					name="alto-"+(count++)+".xml";
+				}
+				
 				AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, e
 						.parent().attr("mimetype"), lang,
-						new LogResultHandler());
+						ResultHandlerFactory.createResultHandler(name));
 			} catch (URISyntaxException e1) {
 				System.err
 						.println("Error parsing path to file in METS for file id "

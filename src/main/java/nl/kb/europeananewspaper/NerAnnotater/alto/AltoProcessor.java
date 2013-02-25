@@ -15,15 +15,14 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
-import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 
 public class AltoProcessor {
 
 	public static void handlePotentialAltoFile(URL potentialAltoFilename,
-			String mimeType, Locale lang, ResultHandler handler) {
+			String mimeType, Locale lang, ResultHandler handler) throws IOException{
 		if ("text/xml".equalsIgnoreCase(mimeType)
 				|| potentialAltoFilename.getFile().endsWith(".xml")) {
 			try {
@@ -89,7 +88,7 @@ public class AltoProcessor {
 			} catch (IOException e) {
 				System.err.println("Could not read ALTO file "
 						+ potentialAltoFilename.toExternalForm());
-				e.printStackTrace();
+				throw e;
 			} finally {
 				handler.close();
 			}

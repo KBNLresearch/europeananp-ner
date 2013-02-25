@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import nl.kb.europeananewspaper.NerAnnotater.alto.AltoProcessor;
 import nl.kb.europeananewspaper.NerAnnotater.output.LogResultHandler;
+import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,11 +35,17 @@ public class DIDLProcessor implements ContainerProcessor {
 		
 		Elements elementsByTag = doc.getElementsByTag("didl:resource");
 		
+		int count=0;
 		for (Element e:elementsByTag) {
 			if (e.attr("mimetype").equals("text/xml")) {
 				if (e.attr("ref").endsWith(":alto")) {
 					URL url2 = new URL(e.attr("ref"));
-					AltoProcessor.handlePotentialAltoFile(url2, e.attr("mimetype"), lang, new LogResultHandler());
+					String altoFilename=e.attr("dcx:filename");
+					if (altoFilename==null||altoFilename.isEmpty()) {
+						altoFilename="alto-"+(count++)+".xml";
+					}
+					
+					AltoProcessor.handlePotentialAltoFile(url2, e.attr("mimetype"), lang, ResultHandlerFactory.createResultHandler(altoFilename));
 				}
 			}
 		}
