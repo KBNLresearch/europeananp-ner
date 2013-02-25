@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.Locale;
 
 import nl.kb.europeananewspaper.NerAnnotater.alto.AltoProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.output.LogResultHandler;
 import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
 
 import org.jsoup.Jsoup;
@@ -19,7 +18,7 @@ public class DIDLProcessor implements ContainerProcessor {
 
 	public static DIDLProcessor INSTANCE = new DIDLProcessor();
 
-	public void processFile(String urlStr, Locale lang) throws IOException {
+	public void processFile(ContainerContext context,String urlStr, Locale lang) throws IOException {
 		URL url = null;
 		File file = new File(urlStr);
 		if (file.exists()) {
@@ -45,7 +44,7 @@ public class DIDLProcessor implements ContainerProcessor {
 						altoFilename="alto-"+(count++)+".xml";
 					}
 					
-					AltoProcessor.handlePotentialAltoFile(url2, e.attr("mimetype"), lang, ResultHandlerFactory.createResultHandler(altoFilename));
+					AltoProcessor.handlePotentialAltoFile(url2, e.attr("mimetype"), lang, ResultHandlerFactory.createResultHandler(context,altoFilename));
 				}
 			}
 		}

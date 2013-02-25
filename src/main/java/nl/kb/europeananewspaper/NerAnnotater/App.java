@@ -1,5 +1,6 @@
 package nl.kb.europeananewspaper.NerAnnotater;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,15 +33,25 @@ import org.apache.commons.cli.PosixParser;
 public class App {
 
 	static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
-
+	static File outputDirectoryRoot;
+	static String outputFormat;
+	
+	public static File getOutputDirectoryRoot() {
+		return outputDirectoryRoot;
+	}
+	
+	public static String getOutputFormat() {
+		return outputFormat;
+	}
+	
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws ClassCastException,
 			ClassNotFoundException, InterruptedException {
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption(OptionBuilder.withLongOpt("export")
-				.withDescription("use FORMAT for export").hasArg()
-				.withArgName("FORMAT").withType(String.class).create());
+				.withDescription("use FORMAT for export: log (Default), csv").hasArg()
+				.withArgName("FORMAT").withType(String.class).create("f"));
 
 		options.addOption(OptionBuilder
 				.withLongOpt("language")
@@ -69,11 +80,26 @@ public class App {
 						"models for languages. Ex. de=/path/to/file/models")
 				.hasArgs().withArgName("language=filename")
 				.withValueSeparator().create("m"));
+		
+		options.addOption(OptionBuilder
+				.withLongOpt("output-directory")
+				.withDescription(
+						"output DIRECTORY for result files. Default ./output")
+				.hasArgs().withArgName("DIRECTORY")
+				.withType(String.class).create("d"));
 
 		try {
 			// parse the command line arguments
 			CommandLine line = parser.parse(options, args);
 
+			
+			outputFormat="log";
+			if (line.getOptionValue("f") != null) {
+				outputFormat=line.getOptionValue("f");
+
+			}
+			
+			
 			Locale lang = Locale.ENGLISH;
 
 			if (line.getOptionValue("l") != null) {
@@ -109,6 +135,13 @@ public class App {
 			}
 			NERClassifiers.setLanguageModels(optionProperties);
 
+			String outputDirectory=line.getOptionValue("d");
+			if (outputDirectory==null||outputDirectory.isEmpty()) {
+				outputDirectory="."+File.pathSeparator+"output";
+			}
+		    
+			outputDirectoryRoot=new File(outputDirectory);
+			
 			// all others should be files
 			List<?> fileList = line.getArgList();
 

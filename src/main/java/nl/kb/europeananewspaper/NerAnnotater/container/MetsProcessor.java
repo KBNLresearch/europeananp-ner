@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.Locale;
 
 import nl.kb.europeananewspaper.NerAnnotater.alto.AltoProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.output.LogResultHandler;
 import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
 
 import org.jsoup.Jsoup;
@@ -21,7 +20,7 @@ public class MetsProcessor implements ContainerProcessor {
 
 	public static MetsProcessor INSTANCE = new MetsProcessor();
 
-	public void processFile(String urlStr, Locale lang) throws IOException {
+	public void processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
 
 		System.out.println("Processing METS file "+urlStr);
 		URL url = null;
@@ -67,7 +66,7 @@ public class MetsProcessor implements ContainerProcessor {
 				
 				AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, e
 						.parent().attr("mimetype"), lang,
-						ResultHandlerFactory.createResultHandler(name));
+						ResultHandlerFactory.createResultHandler(context,name));
 			} catch (URISyntaxException e1) {
 				System.err
 						.println("Error parsing path to file in METS for file id "
