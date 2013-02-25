@@ -21,6 +21,7 @@ public class ContainerHandleThread implements Callable<Boolean> {
 		processor.processFile(fileName, lang);
 		return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

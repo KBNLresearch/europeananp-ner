@@ -1,9 +1,12 @@
 package nl.kb.europeananewspaper.NerAnnotater;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,6 +30,8 @@ import org.apache.commons.cli.PosixParser;
  * 
  */
 public class App {
+
+	static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws ClassCastException,
@@ -83,27 +88,29 @@ public class App {
 			}
 
 			ContainerProcessor processor = MetsProcessor.INSTANCE;
-			if (line.getOptionValue("c")!=null)  {
-				System.out.println("Container format: "+line.getOptionValue("c"));
+			if (line.getOptionValue("c") != null) {
+				System.out.println("Container format: "
+						+ line.getOptionValue("c"));
 				if (line.getOptionValue("c").equals("didl"))
-				processor = DIDLProcessor.INSTANCE;
+					processor = DIDLProcessor.INSTANCE;
 				else if (line.getOptionValue("c").equals("mets")) {
 					processor = MetsProcessor.INSTANCE;
 				} else {
-					throw new ParseException("Could not identify container format: "+line.getOptionValue("c"));
+					throw new ParseException(
+							"Could not identify container format: "
+									+ line.getOptionValue("c"));
 				}
 
 			}
 			Properties optionProperties = line.getOptionProperties("m");
 
 			if (optionProperties == null || optionProperties.isEmpty()) {
-				System.out.println("No language models defined!");
-				return;
+				throw new ParseException("No language models defined!");
 			}
 			NERClassifiers.setLanguageModels(optionProperties);
 
 			// all others should be files
-			List<?> argList = line.getArgList();
+			List<?> fileList = line.getArgList();
 
 			BlockingQueue<Runnable> containerHandlePool = new LinkedBlockingQueue<Runnable>();
 
@@ -111,9 +118,10 @@ public class App {
 			ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
 					Math.min(2, maxThreads), maxThreads, 1000,
 					TimeUnit.MILLISECONDS, containerHandlePool);
-			for (Object arg : argList) {
-				Future<Boolean> results = threadPoolExecutor.submit(new ContainerHandleThread(arg
-						.toString(), lang, processor));
+			for (Object arg : fileList) {
+				results.put(arg.toString(), threadPoolExecutor
+						.submit(new ContainerHandleThread(arg.toString(), lang,
+								processor)));
 			}
 
 			threadPoolExecutor.shutdown();
@@ -121,10 +129,44 @@ public class App {
 			System.out.println("Total processing time: "
 					+ (System.currentTimeMillis() - startTime));
 
-			// validate that block-size has been set
+			boolean errors = false;
+			int successful = 0;
+			int withErrors = 0;
+
+			for (String key : results.keySet()) {
+				try {
+					if (results.get(key).get() == true) {
+						successful += 1;
+					} else {
+						withErrors += 1;
+						errors = true;
+					}
+				} catch (ExecutionException e) {
+					System.err
+							.println("Something went wrong during the parsing of container file "
+									+ key
+									+ " . Cause: "
+									+ e.getCause().getMessage());
+					e.printStackTrace();
+					withErrors += 1;
+					errors = true;
+				}
+			}
+
+			System.out.println(""+successful+" container documents successfully processed, "+withErrors+" with errors.");
+			if (errors) {
+				System.err.println("There were ERRORS while processing");
+				System.exit(1);
+			} else {
+				System.out.println("SUCCESSFUL");
+				System.exit(0);
+			}
+
 		} catch (org.apache.commons.cli.ParseException e) {
 			HelpFormatter helpFormatter = new HelpFormatter();
-			helpFormatter.printHelp("java -jar NerAnnotater.jar [OPTIONS] [INPUTFILES..]", options);
+			helpFormatter.printHelp(
+					"java -jar NerAnnotater.jar [OPTIONS] [INPUTFILES..]",
+					options);
 		}
 	}
 

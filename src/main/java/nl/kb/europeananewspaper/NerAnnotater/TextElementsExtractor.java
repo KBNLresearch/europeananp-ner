@@ -19,7 +19,6 @@ public class TextElementsExtractor {
 		List<List<CoreMap>> result=new LinkedList<List<CoreMap>>();
 		
 		Elements lines = altoDocument.getElementsByTag("TextBlock");
-		
 		for (Element e:lines) {			
 			List<CoreMap> newLine=new LinkedList<CoreMap>();
 			Elements words = e.getElementsByTag("String");
