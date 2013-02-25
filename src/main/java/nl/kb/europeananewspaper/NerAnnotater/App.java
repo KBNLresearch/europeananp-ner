@@ -137,7 +137,7 @@ public class App {
 
 			String outputDirectory=line.getOptionValue("d");
 			if (outputDirectory==null||outputDirectory.isEmpty()) {
-				outputDirectory="."+File.separator+"output";
+				outputDirectory="."+File.separator +"output";
 			}
 		    
 			outputDirectoryRoot=new File(outputDirectory);

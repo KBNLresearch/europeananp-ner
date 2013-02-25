@@ -2,6 +2,12 @@ package nl.kb.europeananewspaper.NerAnnotater.output;
 
 public interface ResultHandler {
 
-	public void addEntry(String wordid, String word,String label);
+	public void startDocument();
+	public void startTextBlock();
+	public void newLine(boolean hyphenated);
+	public void addToken(String wordid, String originalContent, String word,String label);
+	public void stopTextBlock();
+	public void stopDocument();
+	
 	public void close();
 }

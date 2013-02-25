@@ -22,7 +22,8 @@ import edu.stanford.nlp.util.CoreMap;
 public class AltoProcessor {
 
 	public static void handlePotentialAltoFile(URL potentialAltoFilename,
-			String mimeType, Locale lang, ResultHandler handler) throws IOException{
+			String mimeType, Locale lang, ResultHandler handler)
+			throws IOException {
 		if ("text/xml".equalsIgnoreCase(mimeType)
 				|| potentialAltoFilename.getFile().endsWith(".xml")) {
 			try {
@@ -40,6 +41,7 @@ public class AltoProcessor {
 
 				// we have an Alto file
 
+				handler.startDocument();
 				@SuppressWarnings("unchecked")
 				CRFClassifier<CoreMap> classifier = (CRFClassifier<CoreMap>) NERClassifiers
 						.getCRFClassifierForLanguage(lang);
@@ -48,22 +50,45 @@ public class AltoProcessor {
 						.getCoreMapElements(doc);
 				int totalNumberOfWords = 0;
 				int classified = 0;
-				for (List<CoreMap> line : coreMapElements) {
+				for (List<CoreMap> block : coreMapElements) {
 
-					List<CoreMap> classify = classifier.classify(line);
-
+					handler.startTextBlock();
+					List<CoreMap> classify = classifier.classify(block);
+//
+//					String spacePrefix="";
 					for (CoreMap label : classify) {
-
-						totalNumberOfWords += 1;
-						if (!label.get(AnswerAnnotation.class).equals("O")) {
-							classified += 1;
-							handler.addEntry(label.get(AltoStringID.class),
-									label.get(TextAnnotation.class),
-									label.get(AnswerAnnotation.class));
+						
+						if (label.get(HyphenatedLineBreak.class) != null) {
+							// Linebreak
+//							if (label.get(HyphenatedLineBreak.class)) {
+//								System.out.print("-");
+//							}
+//							System.out.println();
+							handler.newLine(label.get(HyphenatedLineBreak.class));
+//							spacePrefix="";
+						} else {
+							// normal word
+//							System.out.print(spacePrefix+label.get(OriginalContent.class));
+//							spacePrefix=" ";
+							totalNumberOfWords += 1;
+							if (!label.get(AnswerAnnotation.class).equals("O")) {
+								classified += 1;
+								handler.addToken(label.get(AltoStringID.class),
+										label.get(OriginalContent.class),
+										label.get(TextAnnotation.class),
+										label.get(AnswerAnnotation.class));
+							} else {
+								handler.addToken(label.get(AltoStringID.class),
+										label.get(OriginalContent.class),
+										label.get(TextAnnotation.class),
+										null);
+							}
 						}
 					}
+					handler.stopTextBlock();
 				}
 
+				handler.stopDocument();
 				System.out.println();
 				System.out.println("Statistics: "
 						+ classified
