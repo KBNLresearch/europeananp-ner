@@ -46,19 +46,9 @@ public class AltoProcessor {
 
 				List<List<CoreMap>> coreMapElements = TextElementsExtractor
 						.getCoreMapElements(doc);
-
-				// System.out.println("--------------------");
-				// System.out.println("Results for "+potentialAltoFilename.toExternalForm());
-				// int lineNmbr=1;
 				int totalNumberOfWords = 0;
 				int classified = 0;
 				for (List<CoreMap> line : coreMapElements) {
-
-					// System.out.print("Line #"+(lineNmbr++)+" ");
-					// for (CoreLabel label:line) {
-					// System.out.print(label.word()+" ");
-					// }
-					// System.out.println();
 
 					List<CoreMap> classify = classifier.classify(line);
 

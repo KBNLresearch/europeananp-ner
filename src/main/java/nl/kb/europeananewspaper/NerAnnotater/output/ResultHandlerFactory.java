@@ -8,7 +8,11 @@ public class ResultHandlerFactory {
 			String name) {
 		if (App.getOutputFormat().equals("log")) {
 			return new LogResultHandler(name);
-		} else {
+		} else if (App.getOutputFormat().equals("csv")) {
+			return new CsvResultHandler(context,name);
+		}
+		
+		else {
 			throw new IllegalArgumentException("Unknown output format: "
 					+ App.getOutputFormat());
 		}
