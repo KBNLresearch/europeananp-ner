@@ -10,6 +10,8 @@ public class ResultHandlerFactory {
 			return new LogResultHandler(name);
 		} else if (App.getOutputFormat().equals("csv")) {
 			return new CsvResultHandler(context,name);
+		} else if (App.getOutputFormat().equals("html")) {
+			return new HtmlResultHandler(context,name);
 		}
 		
 		else {

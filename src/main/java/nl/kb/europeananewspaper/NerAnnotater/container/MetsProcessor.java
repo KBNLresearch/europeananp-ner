@@ -20,7 +20,7 @@ public class MetsProcessor implements ContainerProcessor {
 
 	public static MetsProcessor INSTANCE = new MetsProcessor();
 
-	public void processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
+	public boolean processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
 
 		System.out.println("Processing METS file "+urlStr);
 		URL url = null;
@@ -72,8 +72,11 @@ public class MetsProcessor implements ContainerProcessor {
 						.println("Error parsing path to file in METS for file id "
 								+ e.parent().attr("id"));
 				e1.printStackTrace();
+				return false;
 			}
 
 		}
+		
+		return (count>0);
 	}
 }

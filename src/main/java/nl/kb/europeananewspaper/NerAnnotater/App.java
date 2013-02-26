@@ -50,7 +50,7 @@ public class App {
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption(OptionBuilder.withLongOpt("export")
-				.withDescription("use FORMAT for export: log (Default), csv").hasArg()
+				.withDescription("use FORMAT for export: log (Default), csv, html").hasArg()
 				.withArgName("FORMAT").withType(String.class).create("f"));
 
 		options.addOption(OptionBuilder

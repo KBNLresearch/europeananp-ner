@@ -18,13 +18,15 @@ public class DIDLProcessor implements ContainerProcessor {
 
 	public static DIDLProcessor INSTANCE = new DIDLProcessor();
 
-	public void processFile(ContainerContext context,String urlStr, Locale lang) throws IOException {
+	public boolean processFile(ContainerContext context,String urlStr, Locale lang) throws IOException {
 		URL url = null;
 		File file = new File(urlStr);
 		if (file.exists()) {
 			url = file.toURI().toURL();
 		} else {
+		
 			url = new URL(urlStr);
+			System.out.println("File not found, trying to get from URL: "+url.toExternalForm());
 		}
 
 		Document doc = null;
@@ -48,7 +50,8 @@ public class DIDLProcessor implements ContainerProcessor {
 				}
 			}
 		}
-	
+		
+	   return (count>0);
 		
 
 	}

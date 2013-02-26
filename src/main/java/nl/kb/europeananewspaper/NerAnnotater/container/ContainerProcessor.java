@@ -5,6 +5,6 @@ import java.util.Locale;
 
 public interface ContainerProcessor {
 
-	public void processFile(ContainerContext context, String urlStr, Locale lang) throws IOException;
+	public boolean processFile(ContainerContext context, String urlStr, Locale lang) throws IOException;
 
 }
