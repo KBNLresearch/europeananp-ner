@@ -54,34 +54,28 @@ public class AltoProcessor {
 
 					handler.startTextBlock();
 					List<CoreMap> classify = classifier.classify(block);
-//
-//					String spacePrefix="";
 					for (CoreMap label : classify) {
 						
 						if (label.get(HyphenatedLineBreak.class) != null) {
-							// Linebreak
-//							if (label.get(HyphenatedLineBreak.class)) {
-//								System.out.print("-");
-//							}
-//							System.out.println();
+
 							handler.newLine(label.get(HyphenatedLineBreak.class));
-//							spacePrefix="";
+
 						} else {
-							// normal word
-//							System.out.print(spacePrefix+label.get(OriginalContent.class));
-//							spacePrefix=" ";
+
 							totalNumberOfWords += 1;
 							if (!label.get(AnswerAnnotation.class).equals("O")) {
 								classified += 1;
 								handler.addToken(label.get(AltoStringID.class),
 										label.get(OriginalContent.class),
 										label.get(TextAnnotation.class),
-										label.get(AnswerAnnotation.class));
+										label.get(AnswerAnnotation.class),
+										label.get(ContinuationAltoStringID.class));
 							} else {
 								handler.addToken(label.get(AltoStringID.class),
 										label.get(OriginalContent.class),
 										label.get(TextAnnotation.class),
-										null);
+										null,
+										label.get(ContinuationAltoStringID.class));
 							}
 						}
 					}

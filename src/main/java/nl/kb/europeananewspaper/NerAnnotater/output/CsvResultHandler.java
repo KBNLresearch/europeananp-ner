@@ -19,9 +19,9 @@ public class CsvResultHandler implements ResultHandler {
 	CsvListWriter csvListWriter;
 
 	final String[] header = new String[] { "wordId", "originalText", "text",
-			"label" };
+			"label","continuationId" };
 	final CellProcessor[] processors = new CellProcessor[] { new NotNull(),
-			new NotNull(), new NotNull(), new NotNull() };
+			new NotNull(), new NotNull(), new NotNull(),new NotNull() };
 
 	public CsvResultHandler(ContainerContext context, String name) {
 		this.context = context;
@@ -30,7 +30,7 @@ public class CsvResultHandler implements ResultHandler {
 	}
 
 	public void addToken(String wordid, String originalContent, String word,
-			String label) {
+			String label, String continuationId) {
 
 		if (label != null) {
 			if (csvListWriter == null) {
@@ -50,7 +50,11 @@ public class CsvResultHandler implements ResultHandler {
 			}
 
 			try {
-				csvListWriter.write(wordid, originalContent, word, label);
+				String continuationIdStr="";
+				if (continuationId!=null) {
+					continuationIdStr=continuationId;
+				}
+				csvListWriter.write(wordid, originalContent, word, label,continuationIdStr);
 			} catch (IOException e) {
 				throw new IllegalStateException(
 						"Could not write to CSV writer for file "

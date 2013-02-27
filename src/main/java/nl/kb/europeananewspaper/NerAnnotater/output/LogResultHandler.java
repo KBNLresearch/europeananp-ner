@@ -7,10 +7,10 @@ public class LogResultHandler implements ResultHandler {
 	}
 
 	public void addToken(String wordid, String originalContent, String word,
-			String label) {
+			String label, String continuationId) {
 		if (label != null) {
 			System.out.println("Wordid: " + wordid + " OriginalContent"
-					+ originalContent + " Word: " + word + " Label: " + label);
+					+ originalContent + " Word: " + word + " Label: " + label+" ContinuationId: "+continuationId);
 		}
 	}
 

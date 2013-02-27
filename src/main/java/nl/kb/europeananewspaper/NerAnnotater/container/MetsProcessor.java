@@ -42,7 +42,6 @@ public class MetsProcessor implements ContainerProcessor {
 			URL potentialAltoFilename;
 			try {
 				URI referencedFile = new URI(e.attr("xlink:href"));
-				System.out.println("Potential ALTO reference: "+referencedFile);
 				if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
 					
 					String path = referencedFile.getPath();

@@ -15,6 +15,8 @@ public class HtmlResultHandler implements ResultHandler {
 	String name;
 	FileWriter outputFile;
 	String spacePrefix="";
+	String continuationId=null;
+	String continuationLabel=null;
 	
 	
 
@@ -61,7 +63,17 @@ public class HtmlResultHandler implements ResultHandler {
 	}
 
 	public void addToken(String wordid, String originalContent, String word,
-			String label) {
+			String label,String continuationId) {
+		
+		//try to find out if this is a continuation of the previous word
+		if (continuationId!=null) {
+			this.continuationId=continuationId;
+			this.continuationLabel=label;
+		}
+		
+		if (wordid.equals(this.continuationId)) {
+			label=continuationLabel;
+		}
 		
 		try {
 			if (label==null) {
