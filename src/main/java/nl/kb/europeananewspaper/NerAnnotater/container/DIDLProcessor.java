@@ -46,7 +46,7 @@ public class DIDLProcessor implements ContainerProcessor {
 						altoFilename="alto-"+(count++)+".xml";
 					}
 					
-					AltoProcessor.handlePotentialAltoFile(url2, e.attr("mimetype"), lang, ResultHandlerFactory.createResultHandler(context,altoFilename));
+					AltoProcessor.handlePotentialAltoFile(url2, e.attr("mimetype"), lang, ResultHandlerFactory.createResultHandlers(context,altoFilename));
 				}
 			}
 		}

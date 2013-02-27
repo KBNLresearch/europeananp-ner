@@ -56,14 +56,14 @@ public class NERClassifiers {
 				}
 
 			} catch (ClassCastException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new IllegalArgumentException(
+						"Model does not seem to be the right class ", e);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new IllegalArgumentException(
+						"Class not found while loading model ", e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new IllegalArgumentException(
+						"I/O error while reading class ", e);
 			}
 
 			if (classifier == null) {

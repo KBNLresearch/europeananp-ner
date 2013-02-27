@@ -65,7 +65,7 @@ public class MetsProcessor implements ContainerProcessor {
 				
 				AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, e
 						.parent().attr("mimetype"), lang,
-						ResultHandlerFactory.createResultHandler(context,name));
+						ResultHandlerFactory.createResultHandlers(context,name));
 			} catch (URISyntaxException e1) {
 				System.err
 						.println("Error parsing path to file in METS for file id "

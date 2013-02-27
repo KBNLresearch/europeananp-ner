@@ -1,8 +1,10 @@
 package nl.kb.europeananewspaper.NerAnnotater.output;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
 
@@ -13,7 +15,8 @@ public class HtmlResultHandler implements ResultHandler {
 
 	ContainerContext context;
 	String name;
-	FileWriter outputFile;
+	
+	Writer outputFile;
 	String spacePrefix="";
 	String continuationId=null;
 	String continuationLabel=null;
@@ -28,8 +31,8 @@ public class HtmlResultHandler implements ResultHandler {
 
 	public void startDocument() {
 		try {
-			outputFile = new FileWriter(new File(context.getOutputDirectory(),
-					name + ".html"));
+			outputFile = new BufferedWriter(new FileWriter(new File(context.getOutputDirectory(),
+					name + ".html")));
 
 			outputFile.write("	<!doctype html>\n" + "<html lang=en>\n"
 					+ "<head>\n" + "<meta charset=utf-8>\n"

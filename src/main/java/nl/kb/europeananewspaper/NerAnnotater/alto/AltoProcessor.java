@@ -22,7 +22,7 @@ import edu.stanford.nlp.util.CoreMap;
 public class AltoProcessor {
 
 	public static void handlePotentialAltoFile(URL potentialAltoFilename,
-			String mimeType, Locale lang, ResultHandler handler)
+			String mimeType, Locale lang, ResultHandler[] handler)
 			throws IOException {
 		if ("text/xml".equalsIgnoreCase(mimeType)
 				|| potentialAltoFilename.getFile().endsWith(".xml")) {
@@ -41,7 +41,9 @@ public class AltoProcessor {
 
 				// we have an Alto file
 
-				handler.startDocument();
+				for (ResultHandler h : handler) {
+					h.startDocument();
+				}
 				@SuppressWarnings("unchecked")
 				CRFClassifier<CoreMap> classifier = (CRFClassifier<CoreMap>) NERClassifiers
 						.getCRFClassifierForLanguage(lang);
@@ -52,37 +54,53 @@ public class AltoProcessor {
 				int classified = 0;
 				for (List<CoreMap> block : coreMapElements) {
 
-					handler.startTextBlock();
+					for (ResultHandler h : handler) {
+						h.startTextBlock();
+					}
 					List<CoreMap> classify = classifier.classify(block);
 					for (CoreMap label : classify) {
-						
-						if (label.get(HyphenatedLineBreak.class) != null) {
 
-							handler.newLine(label.get(HyphenatedLineBreak.class));
+						if (label.get(HyphenatedLineBreak.class) != null) {
+							for (ResultHandler h : handler) {
+								h.newLine(label.get(HyphenatedLineBreak.class));
+							}
 
 						} else {
 
 							totalNumberOfWords += 1;
 							if (!label.get(AnswerAnnotation.class).equals("O")) {
 								classified += 1;
-								handler.addToken(label.get(AltoStringID.class),
-										label.get(OriginalContent.class),
-										label.get(TextAnnotation.class),
-										label.get(AnswerAnnotation.class),
-										label.get(ContinuationAltoStringID.class));
+								for (ResultHandler h : handler) {
+									h.addToken(
+											label.get(AltoStringID.class),
+											label.get(OriginalContent.class),
+											label.get(TextAnnotation.class),
+											label.get(AnswerAnnotation.class),
+											label.get(ContinuationAltoStringID.class));
+								}
+
 							} else {
-								handler.addToken(label.get(AltoStringID.class),
-										label.get(OriginalContent.class),
-										label.get(TextAnnotation.class),
-										null,
-										label.get(ContinuationAltoStringID.class));
+								for (ResultHandler h : handler) {
+									h.addToken(
+											label.get(AltoStringID.class),
+											label.get(OriginalContent.class),
+											label.get(TextAnnotation.class),
+											null,
+											label.get(ContinuationAltoStringID.class));
+								}
+
 							}
 						}
 					}
-					handler.stopTextBlock();
+					for (ResultHandler h : handler) {
+						h.stopTextBlock();
+					}
+
 				}
 
-				handler.stopDocument();
+				for (ResultHandler h : handler) {
+					h.stopDocument();
+				}
 				System.out.println();
 				System.out.println("Statistics: "
 						+ classified
@@ -99,7 +117,9 @@ public class AltoProcessor {
 						+ potentialAltoFilename.toExternalForm());
 				throw e;
 			} finally {
-				handler.close();
+				for (ResultHandler h : handler) {
+					h.close();
+				}
 			}
 		}
 

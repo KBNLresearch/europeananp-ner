@@ -34,14 +34,14 @@ public class App {
 
 	static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
 	static File outputDirectoryRoot;
-	static String outputFormat;
+	static String[] outputFormats;
 	
 	public static File getOutputDirectoryRoot() {
 		return outputDirectoryRoot;
 	}
 	
-	public static String getOutputFormat() {
-		return outputFormat;
+	public static String[] getOutputFormats() {
+		return outputFormats;
 	}
 	
 	@SuppressWarnings("static-access")
@@ -50,7 +50,7 @@ public class App {
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption(OptionBuilder.withLongOpt("export")
-				.withDescription("use FORMAT for export: log (Default), csv, html").hasArg()
+				.withDescription("use FORMAT for export: log (Default), csv, html.\n Multiple formats:\" -f html -f csv\"").hasArgs()
 				.withArgName("FORMAT").withType(String.class).create("f"));
 
 		options.addOption(OptionBuilder
@@ -77,7 +77,7 @@ public class App {
 		options.addOption(OptionBuilder
 				.withLongOpt("models")
 				.withDescription(
-						"models for languages. Ex. de=/path/to/file/models")
+						"models for languages. Ex. -m de=/path/to/file/model_de.gz -m nl=/path/to/file/model_nl.gz")
 				.hasArgs().withArgName("language=filename")
 				.withValueSeparator().create("m"));
 		
@@ -85,7 +85,7 @@ public class App {
 				.withLongOpt("output-directory")
 				.withDescription(
 						"output DIRECTORY for result files. Default ./output")
-				.hasArgs().withArgName("DIRECTORY")
+				.hasArg().withArgName("DIRECTORY")
 				.withType(String.class).create("d"));
 
 		try {
@@ -93,9 +93,11 @@ public class App {
 			CommandLine line = parser.parse(options, args);
 
 			
-			outputFormat="log";
-			if (line.getOptionValue("f") != null) {
-				outputFormat=line.getOptionValue("f");
+			outputFormats=new String[]{"log"};
+			
+			String[] formats = line.getOptionValues("f");
+			if (formats != null&&formats.length>0) {
+				outputFormats=formats;
 
 			}
 			
@@ -142,12 +144,15 @@ public class App {
 		    
 			outputDirectoryRoot=new File(outputDirectory);
 			
+	
 			// all others should be files
 			List<?> fileList = line.getArgList();
 
 			BlockingQueue<Runnable> containerHandlePool = new LinkedBlockingQueue<Runnable>();
 
 			long startTime = System.currentTimeMillis();
+			//initialize preload of language classifier
+			NERClassifiers.getCRFClassifierForLanguage(lang);
 			ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
 					Math.min(2, maxThreads), maxThreads, 1000,
 					TimeUnit.MILLISECONDS, containerHandlePool);
