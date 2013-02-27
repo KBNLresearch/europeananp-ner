@@ -42,9 +42,21 @@
 						</manifest>
 					</archive>
 				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
+
+
 
 	<dependencies>
 		<dependency>
@@ -88,4 +100,6 @@
 			<version>3.1</version>
 		</dependency>
 	</dependencies>
+	
+	
 </project>
