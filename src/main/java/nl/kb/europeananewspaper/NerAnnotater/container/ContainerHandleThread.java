@@ -41,7 +41,6 @@ public class ContainerHandleThread implements Callable<Boolean> {
 		String fileName = split[split.length-1];
 		
 		File outputDir = new File(App.getOutputDirectoryRoot(),fileName+"-annotations");
-		System.out.println(outputDir.isDirectory());
 		if ((!outputDir.isDirectory())&&(!outputDir.mkdirs())) {
 			
 			throw new IllegalArgumentException("Could not create output directory "+outputDir.getAbsolutePath());
