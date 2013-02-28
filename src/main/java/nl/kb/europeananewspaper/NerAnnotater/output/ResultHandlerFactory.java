@@ -5,9 +5,21 @@ import java.util.ArrayList;
 import nl.kb.europeananewspaper.NerAnnotater.App;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
 
+/**
+ * Generates a list of result handlers for the configured output formats on a
+ * single ALTO document
+ * 
+ * @author rene
+ * 
+ */
 public class ResultHandlerFactory {
+	/**
+	 * @param context
+	 * @param name
+	 * @return a list of result handlers
+	 */
 	public static ResultHandler[] createResultHandlers(
-			ContainerContext context, String name) {
+			final ContainerContext context, final String name) {
 
 		String[] outputFormats = App.getOutputFormats();
 
@@ -15,7 +27,7 @@ public class ResultHandlerFactory {
 
 		for (String outputFormat : outputFormats) {
 			if (outputFormat.equals("log")) {
-				result.add(new LogResultHandler(name));
+				result.add(new LogResultHandler());
 			} else if (outputFormat.equals("csv")) {
 				result.add(new CsvResultHandler(context, name));
 			} else if (outputFormat.equals("html")) {
@@ -27,6 +39,7 @@ public class ResultHandlerFactory {
 						+ outputFormat);
 			}
 		}
-		return (ResultHandler[]) result.toArray(new ResultHandler[result.size()]);
+		return (ResultHandler[]) result
+				.toArray(new ResultHandler[result.size()]);
 	}
 }

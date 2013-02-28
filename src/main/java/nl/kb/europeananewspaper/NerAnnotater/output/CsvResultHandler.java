@@ -11,6 +11,13 @@ import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
+/**
+ * Output handler for a simple CSV format, that maintains a list of labelled
+ * tokens.
+ * 
+ * @author rene
+ * 
+ */
 public class CsvResultHandler implements ResultHandler {
 
 	ContainerContext context;
@@ -19,11 +26,15 @@ public class CsvResultHandler implements ResultHandler {
 	CsvListWriter csvListWriter;
 
 	final String[] header = new String[] { "wordId", "originalText", "text",
-			"label","continuationId" };
+			"label", "continuationId" };
 	final CellProcessor[] processors = new CellProcessor[] { new NotNull(),
-			new NotNull(), new NotNull(), new NotNull(),new NotNull() };
+			new NotNull(), new NotNull(), new NotNull(), new NotNull() };
 
-	public CsvResultHandler(ContainerContext context, String name) {
+	/**
+	 * @param context
+	 * @param name
+	 */
+	public CsvResultHandler(final ContainerContext context, final String name) {
 		this.context = context;
 		this.name = name;
 
@@ -50,11 +61,12 @@ public class CsvResultHandler implements ResultHandler {
 			}
 
 			try {
-				String continuationIdStr="";
-				if (continuationId!=null) {
-					continuationIdStr=continuationId;
+				String continuationIdStr = "";
+				if (continuationId != null) {
+					continuationIdStr = continuationId;
 				}
-				csvListWriter.write(wordid, originalContent, word, label,continuationIdStr);
+				csvListWriter.write(wordid, originalContent, word, label,
+						continuationIdStr);
 			} catch (IOException e) {
 				throw new IllegalStateException(
 						"Could not write to CSV writer for file "
@@ -76,27 +88,27 @@ public class CsvResultHandler implements ResultHandler {
 
 	public void startDocument() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void startTextBlock() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void stopTextBlock() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void stopDocument() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void newLine(boolean hyphenated) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

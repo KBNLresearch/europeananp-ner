@@ -1,16 +1,25 @@
 package nl.kb.europeananewspaper.NerAnnotater.output;
 
+/**
+ * Output handler that writes the result of the NER process to stdout
+ * 
+ * @author rene
+ * 
+ */
 public class LogResultHandler implements ResultHandler {
 
-	public LogResultHandler(String name) {
-		// TODO Auto-generated method stub
+	/**
+	 * 
+	 */
+	public LogResultHandler() {
 	}
 
 	public void addToken(String wordid, String originalContent, String word,
 			String label, String continuationId) {
 		if (label != null) {
 			System.out.println("Wordid: " + wordid + " OriginalContent"
-					+ originalContent + " Word: " + word + " Label: " + label+" ContinuationId: "+continuationId);
+					+ originalContent + " Word: " + word + " Label: " + label
+					+ " ContinuationId: " + continuationId);
 		}
 	}
 
@@ -29,7 +38,6 @@ public class LogResultHandler implements ResultHandler {
 
 	}
 
-
 	public void stopTextBlock() {
 		// TODO Auto-generated method stub
 
@@ -42,7 +50,7 @@ public class LogResultHandler implements ResultHandler {
 
 	public void newLine(boolean hyphenated) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

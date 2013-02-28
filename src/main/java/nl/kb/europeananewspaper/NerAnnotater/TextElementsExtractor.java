@@ -16,8 +16,18 @@ import org.jsoup.select.Elements;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 
+/**
+ * Converter from ALTO elements to tokens for Stanford NER
+ * 
+ * @author rene
+ * 
+ */
 public class TextElementsExtractor {
 
+	/**
+	 * @param altoDocument
+	 * @return a list of text blocks, represented by their tokens.
+	 */
 	public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
 		List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
 
@@ -58,10 +68,10 @@ public class TextElementsExtractor {
 	private static CoreLabel getWordToLabel(Element token,
 			Boolean wordSegmentAfterHyphenation) {
 
-		boolean continuesNextLine=false;
+		boolean continuesNextLine = false;
 		String cleanedContent;
-		Element nextNextSibling=null;
-		
+		Element nextNextSibling = null;
+
 		if (wordSegmentAfterHyphenation) {
 			cleanedContent = null;
 		} else {
@@ -69,21 +79,20 @@ public class TextElementsExtractor {
 			// content from the second for NER into the first token
 			String nextWordSuffix = "";
 			Element nextSibling = token.nextElementSibling();
-			
 
 			if (nextSibling != null
 					&& nextSibling.tagName().equalsIgnoreCase("hyp")) {
-				//get first String element of next line, if it exists
+				// get first String element of next line, if it exists
 				Element nextLine = nextSibling.parent().nextElementSibling();
 				if (nextLine != null) {
 					nextNextSibling = nextLine.child(0);
 					if (nextNextSibling != null) {
 						nextWordSuffix = nextNextSibling.attr("CONTENT");
 						if (nextWordSuffix == null)
-							nextWordSuffix = ""; 
-							else {
-								continuesNextLine=true;
-							}
+							nextWordSuffix = "";
+						else {
+							continuesNextLine = true;
+						}
 					}
 				}
 			}
@@ -96,7 +105,8 @@ public class TextElementsExtractor {
 		label.setWord(cleanedContent);
 		label.set(AltoStringID.class, calcuateAltoStringID(token));
 		if (continuesNextLine) {
-		 label.set(ContinuationAltoStringID.class,calcuateAltoStringID(nextNextSibling));
+			label.set(ContinuationAltoStringID.class,
+					calcuateAltoStringID(nextNextSibling));
 		}
 		return label;
 	}

@@ -16,13 +16,23 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
+/**
+ * Processor for METS containers
+ * 
+ * @author rene
+ * 
+ */
 public class MetsProcessor implements ContainerProcessor {
 
+	/**
+	 * the default instance of the METS processor
+	 */
 	public static MetsProcessor INSTANCE = new MetsProcessor();
 
-	public boolean processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
+	public boolean processFile(ContainerContext context, String urlStr,
+			Locale lang) throws IOException {
 
-		System.out.println("Processing METS file "+urlStr);
+		System.out.println("Processing METS file " + urlStr);
 		URL url = null;
 		File file = new File(urlStr);
 		if (file.exists()) {
@@ -34,16 +44,16 @@ public class MetsProcessor implements ContainerProcessor {
 		Document doc = null;
 
 		doc = Jsoup.parse(url.openStream(), "UTF-8", "", Parser.xmlParser());
-		
+
 		Elements elementsByTag = doc.getElementsByTag("mets:flocat");
-		
-		int count=0;
+
+		int count = 0;
 		for (Element e : elementsByTag) {
 			URL potentialAltoFilename;
 			try {
 				URI referencedFile = new URI(e.attr("xlink:href"));
 				if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
-					
+
 					String path = referencedFile.getPath();
 					String relativeToUrl = url.toString();
 					potentialAltoFilename = new URI(relativeToUrl.substring(0,
@@ -52,20 +62,21 @@ public class MetsProcessor implements ContainerProcessor {
 				} else {
 					potentialAltoFilename = referencedFile.normalize().toURL();
 				}
-				
-				String[] split = potentialAltoFilename.toExternalForm().split("/");
+
+				String[] split = potentialAltoFilename.toExternalForm().split(
+						"/");
 				String name;
-				if (split.length>0&&!split[split.length-1].isEmpty()) {
-					//name from url
-					name=split[split.length-1];
+				if (split.length > 0 && !split[split.length - 1].isEmpty()) {
+					// name from url
+					name = split[split.length - 1];
 				} else {
-					//Generic name, if not available
-					name="alto-"+(count++)+".xml";
+					// Generic name, if not available
+					name = "alto-" + (count++) + ".xml";
 				}
-				
+
 				AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, e
-						.parent().attr("mimetype"), lang,
-						ResultHandlerFactory.createResultHandlers(context,name));
+						.parent().attr("mimetype"), lang, ResultHandlerFactory
+						.createResultHandlers(context, name));
 			} catch (URISyntaxException e1) {
 				System.err
 						.println("Error parsing path to file in METS for file id "
@@ -75,7 +86,7 @@ public class MetsProcessor implements ContainerProcessor {
 			}
 
 		}
-		
-		return (count>0);
+
+		return (count > 0);
 	}
 }

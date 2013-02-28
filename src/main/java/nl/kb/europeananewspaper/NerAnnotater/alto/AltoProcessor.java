@@ -19,10 +19,23 @@ import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 
+/**
+ * ALTO file processing
+ * 
+ * @author rene
+ * 
+ */
 public class AltoProcessor {
 
-	public static void handlePotentialAltoFile(URL potentialAltoFilename,
-			String mimeType, Locale lang, ResultHandler[] handler)
+	/**
+	 * @param potentialAltoFilename
+	 * @param mimeType
+	 * @param lang
+	 * @param handler
+	 * @throws IOException
+	 */
+	public static void handlePotentialAltoFile(final URL potentialAltoFilename,
+			final String mimeType, final Locale lang, final ResultHandler[] handler)
 			throws IOException {
 		if ("text/xml".equalsIgnoreCase(mimeType)
 				|| potentialAltoFilename.getFile().endsWith(".xml")) {

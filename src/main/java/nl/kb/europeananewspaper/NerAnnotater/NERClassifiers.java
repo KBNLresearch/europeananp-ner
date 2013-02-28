@@ -13,6 +13,13 @@ import java.util.zip.GZIPInputStream;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 
+/**
+ * Singleton holder for preloaded classifiers
+ * 
+ * @author rene
+ * 
+ * 
+ */
 public class NERClassifiers {
 
 	@SuppressWarnings("rawtypes")
@@ -20,12 +27,22 @@ public class NERClassifiers {
 
 	static Properties langModels;
 
-	public static void setLanguageModels(Properties langModels) {
+	/**
+	 * @param langModels
+	 *            filenames of the classifier model for a language. E.g. de ->
+	 *            /path/to/file/model.gz
+	 */
+	public static void setLanguageModels(final Properties langModels) {
 		NERClassifiers.langModels = langModels;
 	}
 
+	/**
+	 * @param lang
+	 *            the language to get
+	 * @return the classifier for the language
+	 */
 	public synchronized static CRFClassifier<?> getCRFClassifierForLanguage(
-			Locale lang) {
+			final Locale lang) {
 		if (lang == null) {
 			throw new IllegalArgumentException(
 					"No language defined for classifier!");
