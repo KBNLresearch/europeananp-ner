@@ -15,7 +15,7 @@ See help for supported output formats.
 Basic usage:
 
 Help:
-	java -jar NerAnnotater --help
+    java -jar NerAnnotater --help
 	
 Print result to stdout for German language
-	java -Xmx800m -jar NerAnnotater.jar -l de -m de=/path/to/trainingmodels/german/hgc_175m_600.crf.ser.gz -n 8 /path/to/mets/AZ_19260425/AZ_19260425_mets.xml
+    java -Xmx800m -jar NerAnnotater.jar -l de -m de=/path/to/trainingmodels/german/hgc_175m_600.crf.ser.gz -n 8 /path/to/mets/AZ_19260425/AZ_19260425_mets.xml
