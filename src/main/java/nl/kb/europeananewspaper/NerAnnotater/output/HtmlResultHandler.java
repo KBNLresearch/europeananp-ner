@@ -133,4 +133,9 @@ public class HtmlResultHandler implements ResultHandler {
 
 	}
 
+	public void globalShutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

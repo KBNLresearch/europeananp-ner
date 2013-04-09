@@ -111,4 +111,9 @@ public class CsvResultHandler implements ResultHandler {
 
 	}
 
+	public void globalShutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

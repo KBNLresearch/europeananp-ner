@@ -65,4 +65,6 @@ public interface ResultHandler {
 	 * This is called in any case after the processing of the file.
 	 */
 	public void close();
+	
+	public void globalShutdown();
 }

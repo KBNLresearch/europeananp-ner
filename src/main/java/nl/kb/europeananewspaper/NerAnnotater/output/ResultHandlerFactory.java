@@ -1,6 +1,9 @@
 package nl.kb.europeananewspaper.NerAnnotater.output;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import nl.kb.europeananewspaper.NerAnnotater.App;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
@@ -17,7 +20,12 @@ public class ResultHandlerFactory {
 	 * @param context
 	 * @param name
 	 * @return a list of result handlers
+	 * @throws SQLException 
 	 */
+	
+	static Map<Class<? extends ResultHandler>, ResultHandler> registeredHandlers=new LinkedHashMap<Class<? extends ResultHandler>, ResultHandler>();
+	
+	
 	public static ResultHandler[] createResultHandlers(
 			final ContainerContext context, final String name) {
 
@@ -27,11 +35,26 @@ public class ResultHandlerFactory {
 
 		for (String outputFormat : outputFormats) {
 			if (outputFormat.equals("log")) {
-				result.add(new LogResultHandler());
+				LogResultHandler logResultHandler = new LogResultHandler();
+				registeredHandlers.put(LogResultHandler.class,logResultHandler);
+				result.add(logResultHandler);
 			} else if (outputFormat.equals("csv")) {
-				result.add(new CsvResultHandler(context, name));
+				CsvResultHandler csvResultHandler = new CsvResultHandler(context, name);
+				registeredHandlers.put(CsvResultHandler.class, csvResultHandler);
+				result.add(csvResultHandler);
 			} else if (outputFormat.equals("html")) {
-				result.add(new HtmlResultHandler(context, name));
+				HtmlResultHandler htmlResultHandler = new HtmlResultHandler(context, name);
+				registeredHandlers.put(HtmlResultHandler.class, htmlResultHandler);
+				result.add(htmlResultHandler);
+			} else if (outputFormat.equals("db")) {
+				try {
+					DbResultHandler dbResultHandler = new DbResultHandler(context, name);
+					registeredHandlers.put(DbResultHandler.class, dbResultHandler);
+					result.add(dbResultHandler);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			else {
@@ -41,5 +64,11 @@ public class ResultHandlerFactory {
 		}
 		return (ResultHandler[]) result
 				.toArray(new ResultHandler[result.size()]);
+	}
+	
+	public static void shutdownResultHandlers() {
+		for (Class c: registeredHandlers.keySet()) {
+			registeredHandlers.get(c).globalShutdown();
+		}
 	}
 }

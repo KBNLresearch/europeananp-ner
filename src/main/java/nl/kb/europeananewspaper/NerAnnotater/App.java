@@ -17,6 +17,7 @@ import nl.kb.europeananewspaper.NerAnnotater.container.ContainerHandleThread;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerProcessor;
 import nl.kb.europeananewspaper.NerAnnotater.container.DIDLProcessor;
 import nl.kb.europeananewspaper.NerAnnotater.container.MetsProcessor;
+import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -65,7 +66,7 @@ public class App {
 		options.addOption(OptionBuilder
 				.withLongOpt("export")
 				.withDescription(
-						"use FORMAT for export: log (Default), csv, html.\n Multiple formats:\" -f html -f csv\"")
+						"use FORMAT for export: log (Default), csv, html, db.\n Multiple formats:\" -f html -f csv\"")
 				.hasArgs().withArgName("FORMAT").withType(String.class)
 				.create("f"));
 
@@ -177,6 +178,9 @@ public class App {
 
 			threadPoolExecutor.shutdown();
 			threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			
+			ResultHandlerFactory.shutdownResultHandlers();
+			
 			System.out.println("Total processing time: "
 					+ (System.currentTimeMillis() - startTime));
 
