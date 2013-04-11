@@ -53,4 +53,9 @@ public class LogResultHandler implements ResultHandler {
 
 	}
 
+	public void globalShutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
