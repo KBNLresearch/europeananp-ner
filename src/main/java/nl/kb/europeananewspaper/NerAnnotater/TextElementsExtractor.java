@@ -134,7 +134,7 @@ public class TextElementsExtractor {
 		params.add(parentVpos);
 		params.add(parentHeight);
 		params.add(parentWidth);
-		params.add(new Integer(word.siblingIndex()).toString());
+		params.add(Integer.toString(word.siblingIndex()));
 		params.add(optionalStringHpos);
 		params.add(optionalStringVpos);
 		params.add(optionalStringHeight);

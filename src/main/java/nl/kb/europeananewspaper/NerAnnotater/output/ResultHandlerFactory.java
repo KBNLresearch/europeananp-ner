@@ -62,7 +62,7 @@ public class ResultHandlerFactory {
 						+ outputFormat);
 			}
 		}
-		return (ResultHandler[]) result
+		return result
 				.toArray(new ResultHandler[result.size()]);
 	}
 	
