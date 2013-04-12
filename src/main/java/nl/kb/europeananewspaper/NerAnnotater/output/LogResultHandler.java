@@ -28,7 +28,12 @@ public class LogResultHandler implements ResultHandler {
 
 	}
 
-	public void startDocument() {
+    @Override
+    public void globalShutdown() {
+        // TODO Auto-generated method stub
+    }
+
+    public void startDocument() {
 		// TODO Auto-generated method stub
 
 	}
