@@ -1,13 +1,13 @@
 Named Entity Recognition Annotator Tool for Europeana Newspaper
 ===============================================================
 
-This tool takes container documents (MPEG21-DIDL, METS), parses out all references to ALTO
+This tool takes container documents ([MPEG21-DIDL](http://xml.coverpages.org/mpeg21-didl.html), [METS](http://www.loc.gov/standards/mets/)), parses out all references to [ALTO](http://www.loc.gov/standards/alto/)
 files and tries to find named entities in the pages (with most models: Location, Person, 
 Organisation, Misc).
 The aim is to keep the physical location on the page available through the whole process 
-to be able to display the results in a viewer.
+to be able to highlight the results in a viewer.
 
-Stanford NER is used for tagging.
+[Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is used for tagging.
 
 See help for supported output formats.
 
