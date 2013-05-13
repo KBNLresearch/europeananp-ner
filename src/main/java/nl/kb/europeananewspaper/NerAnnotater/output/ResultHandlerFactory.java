@@ -17,15 +17,16 @@ import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
  */
 public class ResultHandlerFactory {
 	/**
-	 * @param context
-	 * @param name
-	 * @return a list of result handlers
-	 * @throws SQLException 
 	 */
 	
 	static Map<Class<? extends ResultHandler>, ResultHandler> registeredHandlers=new LinkedHashMap<Class<? extends ResultHandler>, ResultHandler>();
 	
 	
+	/**
+	 * @param context
+	 * @param name 
+	 * @return array of ResultHandlers according to the configuration
+	 */
 	public static ResultHandler[] createResultHandlers(
 			final ContainerContext context, final String name) {
 
@@ -66,12 +67,15 @@ public class ResultHandlerFactory {
 						+ outputFormat);
 			}
 		}
-		return (ResultHandler[]) result
+		return result
 				.toArray(new ResultHandler[result.size()]);
 	}
 	
+	/**
+	 * 
+	 */
 	public static void shutdownResultHandlers() {
-		for (Class c: registeredHandlers.keySet()) {
+		for (@SuppressWarnings("rawtypes") Class c: registeredHandlers.keySet()) {
 			registeredHandlers.get(c).globalShutdown();
 		}
 	}

@@ -11,6 +11,7 @@ import edu.stanford.nlp.ling.CoreAnnotation;
  */
 public class ContinuationAltoStringID implements CoreAnnotation<String> {
 
+	@Override
 	public Class<String> getType() {
 		return String.class;
 	}

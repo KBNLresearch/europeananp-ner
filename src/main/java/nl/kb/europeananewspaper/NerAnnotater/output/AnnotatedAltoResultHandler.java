@@ -8,10 +8,13 @@ import java.io.IOException;
 import nl.kb.europeananewspaper.NerAnnotater.TextElementsExtractor;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+/**
+ * @author rene
+ *
+ */
 public class AnnotatedAltoResultHandler implements ResultHandler {
 
 	private ContainerContext context;
@@ -20,6 +23,10 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
 	private Document altoDocument;
 	
 
+	/**
+	 * @param context
+	 * @param name
+	 */
 	public AnnotatedAltoResultHandler(final ContainerContext context, final String name) {
 		this.context = context;
 		this.name = name;

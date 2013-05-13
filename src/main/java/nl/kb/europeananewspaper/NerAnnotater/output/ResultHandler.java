@@ -68,7 +68,13 @@ public interface ResultHandler {
 	 */
 	public void close();
 	
+	/**
+	 * 
+	 */
 	public void globalShutdown();
 
+	/**
+	 * @param doc
+	 */
 	public void setAltoDocument(Document doc);
 }

@@ -1,9 +1,6 @@
 package nl.kb.europeananewspaper.NerAnnotater.output;
 
-import nl.kb.europeananewspaper.NerAnnotater.TextElementsExtractor;
-
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 /**
  * Output handler that writes the result of the NER process to stdout
@@ -20,6 +17,7 @@ public class LogResultHandler implements ResultHandler {
 	public LogResultHandler() {
 	}
 
+	@Override
 	public void addToken(String wordid, String originalContent, String word,
 			String label, String continuationId) {
 		if (label != null) {
@@ -31,36 +29,44 @@ public class LogResultHandler implements ResultHandler {
 		
 	}
 
+	@Override
 	public void close() {
 		System.out.println("Output finished");
 
 	}
 
+
+    @Override
 	public void startDocument() {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void startTextBlock() {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void stopTextBlock() {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void stopDocument() {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void newLine(boolean hyphenated) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void globalShutdown() {
 		// TODO Auto-generated method stub
 		

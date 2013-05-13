@@ -28,6 +28,7 @@ public class DIDLProcessor implements ContainerProcessor {
 	 */
 	public static DIDLProcessor INSTANCE = new DIDLProcessor();
 
+	@Override
 	public boolean processFile(ContainerContext context, String urlStr,
 			Locale lang) throws IOException {
 		URL url = null;

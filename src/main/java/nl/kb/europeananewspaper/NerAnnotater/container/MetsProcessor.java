@@ -29,6 +29,7 @@ public class MetsProcessor implements ContainerProcessor {
 	 */
 	public static MetsProcessor INSTANCE = new MetsProcessor();
 
+	@Override
 	public boolean processFile(ContainerContext context, String urlStr,
 			Locale lang) throws IOException {
 

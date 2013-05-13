@@ -10,6 +10,7 @@ import edu.stanford.nlp.ling.CoreAnnotation;
  */
 public class AltoStringID implements CoreAnnotation<String> {
 
+	@Override
 	public Class<String> getType() {
 		return String.class;
 	}

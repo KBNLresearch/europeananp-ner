@@ -121,8 +121,7 @@ public class AltoProcessor {
 						+ " out of "
 						+ totalNumberOfWords
 						+ " ("
-						+ (new Double(classified) / new Double(
-								totalNumberOfWords)) + ") classified");
+						+ ((double) classified / (double) totalNumberOfWords) + ") classified");
 				System.out.println("Total millisecs: "
 						+ (System.currentTimeMillis() - startTime));
 

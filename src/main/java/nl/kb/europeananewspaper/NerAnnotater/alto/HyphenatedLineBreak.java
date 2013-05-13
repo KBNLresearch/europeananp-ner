@@ -11,6 +11,7 @@ import edu.stanford.nlp.ling.CoreAnnotation;
  */
 public class HyphenatedLineBreak implements CoreAnnotation<Boolean> {
 
+	@Override
 	public Class<Boolean> getType() {
 		return Boolean.class;
 	}

@@ -190,7 +190,7 @@ public class App {
 
 			for (String key : results.keySet()) {
 				try {
-					if (results.get(key).get() == true) {
+					if (results.get(key).get()) {
 						successful += 1;
 					} else {
 						withErrors += 1;
