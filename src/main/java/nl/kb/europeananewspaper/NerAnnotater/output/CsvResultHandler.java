@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
 
+import org.jsoup.nodes.Document;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListWriter;
@@ -112,6 +113,12 @@ public class CsvResultHandler implements ResultHandler {
 	}
 
 	public void globalShutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setAltoDocument(Document doc) {
 		// TODO Auto-generated method stub
 		
 	}

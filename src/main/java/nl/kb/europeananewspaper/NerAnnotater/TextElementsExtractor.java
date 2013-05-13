@@ -2,6 +2,7 @@ package nl.kb.europeananewspaper.NerAnnotater;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import nl.kb.europeananewspaper.NerAnnotater.alto.AltoStringID;
 import nl.kb.europeananewspaper.NerAnnotater.alto.ContinuationAltoStringID;
@@ -23,6 +24,9 @@ import edu.stanford.nlp.util.CoreMap;
  * 
  */
 public class TextElementsExtractor {
+
+	private static final Logger logger = Logger
+			.getLogger("TextElementsExtractor.class");
 
 	/**
 	 * @param altoDocument
@@ -118,7 +122,6 @@ public class TextElementsExtractor {
 	}
 
 	private static String calcuateAltoStringID(Element word) {
-		// TODO Auto-generated method stub
 		Element parent = word.parent();
 
 		String parentHpos = nullsafe(parent.attr("HPOS"));
@@ -141,6 +144,41 @@ public class TextElementsExtractor {
 		params.add(optionalStringWidth);
 
 		return StringUtil.join(params, ":");
+	}
+
+	public static Element findAltoElementByStringID(Document altoDocument,
+			String id) {
+
+		if (id == null || id.isEmpty()) {
+			logger.warning("Trying to find element in ALTO document , with empty or null id");
+			return null;
+		}
+
+		if (altoDocument == null) {
+			logger.warning("Trying to find an element in an ALTO document, which is null");
+			return null;
+		}
+
+		String[] split = id.split(":");
+		if (split.length != 9) {
+			logger.warning("id does not seem to have the right format. Has "
+					+ split.length + " instead of 9 parameters");
+			return null;
+		}
+
+		Elements textlines = altoDocument.select("[HPOS=" + split[0] + "]")
+				.select("[VPOS=" + split[1] + "]")
+				.select("[HEIGHT=" + split[2] + "]")
+				.select("[WIDTH=" + split[3] + "]");
+				
+		for (Element elem:textlines) {
+			Element word = elem.child(new Integer(split[4]));
+			if (word!=null) {
+				return word;
+			}
+		}
+		return null;
+
 	}
 
 	private static String nullsafe(String attr) {

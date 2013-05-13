@@ -42,6 +42,10 @@ public class ResultHandlerFactory {
 				CsvResultHandler csvResultHandler = new CsvResultHandler(context, name);
 				registeredHandlers.put(CsvResultHandler.class, csvResultHandler);
 				result.add(csvResultHandler);
+			} else if (outputFormat.equals("alto")) {
+				AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context, name);
+				registeredHandlers.put(AnnotatedAltoResultHandler.class, annotatedAltoResultHandler);
+				result.add(annotatedAltoResultHandler);
 			} else if (outputFormat.equals("html")) {
 				HtmlResultHandler htmlResultHandler = new HtmlResultHandler(context, name);
 				registeredHandlers.put(HtmlResultHandler.class, htmlResultHandler);

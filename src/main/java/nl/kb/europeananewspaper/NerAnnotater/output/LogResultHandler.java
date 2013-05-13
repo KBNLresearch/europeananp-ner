@@ -1,5 +1,10 @@
 package nl.kb.europeananewspaper.NerAnnotater.output;
 
+import nl.kb.europeananewspaper.NerAnnotater.TextElementsExtractor;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 /**
  * Output handler that writes the result of the NER process to stdout
  * 
@@ -8,6 +13,7 @@ package nl.kb.europeananewspaper.NerAnnotater.output;
  */
 public class LogResultHandler implements ResultHandler {
 
+	Document altoDocument;
 	/**
 	 * 
 	 */
@@ -21,6 +27,8 @@ public class LogResultHandler implements ResultHandler {
 					+ originalContent + " Word: " + word + " Label: " + label
 					+ " ContinuationId: " + continuationId);
 		}
+		
+		
 	}
 
 	public void close() {
@@ -55,6 +63,12 @@ public class LogResultHandler implements ResultHandler {
 
 	public void globalShutdown() {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setAltoDocument(Document doc) {
+		altoDocument=doc;
 		
 	}
 

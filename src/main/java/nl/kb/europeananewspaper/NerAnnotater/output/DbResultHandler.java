@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.jsoup.nodes.Document;
+
 import nl.kb.europeananewspaper.NerAnnotater.App;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
 
@@ -120,5 +122,11 @@ public class DbResultHandler implements ResultHandler {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void setAltoDocument(Document doc) {
+		// TODO Auto-generated method stub
+		
 	}
 }

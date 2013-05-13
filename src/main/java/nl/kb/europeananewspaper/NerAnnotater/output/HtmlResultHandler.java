@@ -9,6 +9,7 @@ import java.io.Writer;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jsoup.nodes.Document;
 
 /**
  * Output for a simple HTML format, that tries to keep the logical structure
@@ -134,6 +135,12 @@ public class HtmlResultHandler implements ResultHandler {
 	}
 
 	public void globalShutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setAltoDocument(Document doc) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,5 +1,7 @@
 package nl.kb.europeananewspaper.NerAnnotater.output;
 
+import org.jsoup.nodes.Document;
+
 import nl.kb.europeananewspaper.NerAnnotater.TextElementsExtractor;
 
 /**
@@ -67,4 +69,6 @@ public interface ResultHandler {
 	public void close();
 	
 	public void globalShutdown();
+
+	public void setAltoDocument(Document doc);
 }

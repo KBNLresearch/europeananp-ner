@@ -56,6 +56,7 @@ public class AltoProcessor {
 
 				for (ResultHandler h : handler) {
 					h.startDocument();
+					h.setAltoDocument(doc);
 				}
 				@SuppressWarnings("unchecked")
 				CRFClassifier<CoreMap> classifier = (CRFClassifier<CoreMap>) NERClassifiers
