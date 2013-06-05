@@ -244,6 +244,7 @@ public class App {
 			helpFormatter.printHelp(
 					"java -jar NerAnnotater.jar [OPTIONS] [INPUTFILES..]",
 					options);
+			System.out.println("\nIf there are no input files specified, a list of filenames is read from stdin.");
 		}
 	}
 
