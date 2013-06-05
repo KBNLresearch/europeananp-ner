@@ -1,6 +1,9 @@
 package nl.kb.europeananewspaper.NerAnnotater;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -163,8 +166,23 @@ public class App {
 			outputDirectoryRoot = new File(outputDirectory);
 
 			// all others should be files
-			List<?> fileList = line.getArgList();
-
+			
+			List fileList = line.getArgList();
+			
+			if (fileList.isEmpty()) {
+				System.out.println("No file specified, read file list from stdin");
+				try{
+					BufferedReader br = 
+			                      new BufferedReader(new InputStreamReader(System.in));			 
+					String input;			 
+					while((input=br.readLine())!=null){
+						fileList.add(input);
+					}
+			 
+				} catch (IOException io){
+					io.printStackTrace();
+				}
+			}
 			BlockingQueue<Runnable> containerHandlePool = new LinkedBlockingQueue<Runnable>();
 
 			long startTime = System.currentTimeMillis();
@@ -174,11 +192,13 @@ public class App {
 					Math.min(2, maxThreads), maxThreads, 1000,
 					TimeUnit.MILLISECONDS, containerHandlePool);
 			for (Object arg : fileList) {
+				System.out.println(arg);
 				results.put(arg.toString(), threadPoolExecutor
 						.submit(new ContainerHandleThread(arg.toString(), lang,
 								processor)));
 			}
-
+			
+			
 			threadPoolExecutor.shutdown();
 			threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 			
@@ -227,6 +247,7 @@ public class App {
 			helpFormatter.printHelp(
 					"java -jar NerAnnotater.jar [OPTIONS] [INPUTFILES..]",
 					options);
+			System.out.println("\nIf there are no input files specified, a list of filenames is read from stdin.");
 		}
 	}
 
