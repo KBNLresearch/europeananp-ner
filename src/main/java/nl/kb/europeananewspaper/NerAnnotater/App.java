@@ -17,6 +17,7 @@ import nl.kb.europeananewspaper.NerAnnotater.container.ContainerHandleThread;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerProcessor;
 import nl.kb.europeananewspaper.NerAnnotater.container.DIDLProcessor;
 import nl.kb.europeananewspaper.NerAnnotater.container.MetsProcessor;
+import nl.kb.europeananewspaper.NerAnnotater.container.AltoLocalProcessor;
 import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
 
 import org.apache.commons.cli.CommandLine;
@@ -80,7 +81,7 @@ public class App {
 		options.addOption(OptionBuilder
 				.withLongOpt("container")
 				.withDescription(
-						"which FORMAT are the container input files: mets (Default), didl")
+						"which FORMAT are the container input files: mets (Default), didl, alto")
 				.hasArg().withArgName("FORMAT").withType(String.class)
 				.create("c"));
 
@@ -134,9 +135,11 @@ public class App {
 			if (line.getOptionValue("c") != null) {
 				System.out.println("Container format: "
 						+ line.getOptionValue("c"));
-				if (line.getOptionValue("c").equals("didl"))
+				if (line.getOptionValue("c").equals("didl")) {
 					processor = DIDLProcessor.INSTANCE;
-				else if (line.getOptionValue("c").equals("mets")) {
+				} else if (line.getOptionValue("c").equals("alto")) {
+					processor = AltoLocalProcessor.INSTANCE;
+				} else if (line.getOptionValue("c").equals("mets")) {
 					processor = MetsProcessor.INSTANCE;
 				} else {
 					throw new ParseException(
