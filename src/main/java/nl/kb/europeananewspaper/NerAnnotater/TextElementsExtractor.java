@@ -172,7 +172,7 @@ public class TextElementsExtractor {
 				.select("[WIDTH=" + split[3] + "]");
 				
 		for (Element elem:textlines) {
-			Element word = elem.child(new Integer(split[4]));
+			Element word = (Element) elem.childNode(new Integer(split[4]));
 			if (word!=null) {
 				return word;
 			}
