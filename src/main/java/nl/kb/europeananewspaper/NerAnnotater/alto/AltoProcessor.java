@@ -184,15 +184,15 @@ public class AltoProcessor {
                             // System.out.println(stanford);
                             if (!label.get(AnswerAnnotation.class).equals("O")) {
                                 classified += 1;
+                                // System.out.println(text);
+                                // System.out.println(label.get(TextAnnotation.class));
                                 for (ResultHandler h : handler) {
-                                    try {
-                                        h.addToken(
-                                                label.get(AltoStringID.class),
-                                                label.get(OriginalContent.class),
-                                                label.get(TextAnnotation.class),
-                                                label.get(AnswerAnnotation.class),
-                                                label.get(ContinuationAltoStringID.class));
-                                    } catch (Exception e) { };
+                                    h.addToken(
+                                            label.get(AltoStringID.class),
+                                            label.get(OriginalContent.class),
+                                            label.get(TextAnnotation.class),
+                                            label.get(AnswerAnnotation.class),
+                                            label.get(ContinuationAltoStringID.class));
                                 }
                             } else {
                                 for (ResultHandler h : handler) {

@@ -170,12 +170,15 @@ public class TextElementsExtractor {
 				.select("[VPOS=" + split[1] + "]")
 				.select("[HEIGHT=" + split[2] + "]")
 				.select("[WIDTH=" + split[3] + "]");
-				
+ 		// System.out.println(split.length);
+		// System.out.println(split[4]);
 		for (Element elem:textlines) {
-			Element word = (Element) elem.childNode(new Integer(split[4]));
-			if (word!=null) {
-				return word;
-			}
+		    if (new Integer(split[4]) <= elem.childNodeSize()) {
+	    		Element word = (Element) elem.childNode(new Integer(split[4]));
+		    	if (word!=null) {
+			    	return word;
+			    }
+            }
 		}
 		return null;
 
