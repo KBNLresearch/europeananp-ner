@@ -1,4 +1,4 @@
-Named Entity Recognition Tool for [Europeana Newspapers](http://www.europeana-newspapers.eu/)
+Named Entity Recognition Tool for [Europeana Newspapers](http://www.europeana-newspapers.eu/) [![Build Status](https://secure.travis-ci.org/KBNLresearch/europeananp-ner.png?branch=master)](http://travis-ci.org/KBNLresearch/europeananp-ner)
 ------------------------------------------------------
 
 This tool takes container documents ([MPEG21-DIDL](http://xml.coverpages.org/mpeg21-didl.html), [METS](http://www.loc.gov/standards/mets/)),
