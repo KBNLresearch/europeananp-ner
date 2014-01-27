@@ -4,12 +4,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import nl.kb.europeananewspaper.NerAnnotater.TextElementsExtractor;
 import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities;
 
 /**
  * @author rene
@@ -19,7 +21,7 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
 
 	private ContainerContext context;
 	private String name;
-	private BufferedWriter outputFile;
+	private PrintWriter outputFile;
 	private Document altoDocument;
 	
 
@@ -69,9 +71,9 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
 	@Override
 	public void stopDocument() {
 		try {
-			outputFile = new BufferedWriter(new FileWriter(new File(
-					context.getOutputDirectory(), name + ".alto.xml")));
-			outputFile.write(altoDocument.toString());
+                        outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto.xml"), "UTF-8");
+			outputFile.print(altoDocument.toString());
+			outputFile.flush();
 			outputFile.close();
 		} catch (IOException e) {
 			throw new IllegalStateException("Could not write to Alto XML file", e);

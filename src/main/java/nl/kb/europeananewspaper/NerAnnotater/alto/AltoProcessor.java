@@ -18,6 +18,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.jsoup.nodes.Entities.EscapeMode;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
@@ -61,7 +62,8 @@ public class AltoProcessor {
                         + potentialAltoFilename);
                 long startTime = System.currentTimeMillis();
                 Document doc = Jsoup.parse(potentialAltoFilename.openStream(),
-                        null, "", Parser.xmlParser());
+                        "UTF-8", "", Parser.xmlParser());
+                doc.outputSettings().escapeMode(EscapeMode.xhtml);
                 Elements elementsByTag = doc.getElementsByTag("alto");
                 if (elementsByTag.isEmpty()) {
                     System.err.println("Does not seem to be a ALTO file: "
