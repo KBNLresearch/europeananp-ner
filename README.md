@@ -1,4 +1,4 @@
-Named Entity Recognition Tool for [Europeana Newspapers](http://www.europeana-newspapers.eu/) [![Build Status](https://secure.travis-ci.org/KBNLresearch/europeananp-ner.png?branch=master)](http://travis-ci.org/KBNLresearch/europeananp-ner)
+Named Entity Recognition Tool for <br>[Europeana Newspapers](http://www.europeana-newspapers.eu/) [![Build Status](https://secure.travis-ci.org/KBNLresearch/europeananp-ner.png?branch=master)](http://travis-ci.org/KBNLresearch/europeananp-ner)
 ------------------------------------------------------
 
 This tool takes container documents ([MPEG21-DIDL](http://xml.coverpages.org/mpeg21-didl.html), [METS](http://www.loc.gov/standards/mets/)),
@@ -10,7 +10,7 @@ Currently, [Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is
 
 At the moment, the following output formats are implemented:
 
-* ALTO-with-Alternatives
+* ALTO-with-Alternatives (this will be changed to valid ALTO 2.1 once officially signed-off)
 * HTML
 * CSV (comma separated values)
 * SQL
