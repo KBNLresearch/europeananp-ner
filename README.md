@@ -10,7 +10,7 @@ Currently, [Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is
 
 At the moment, the following output formats are implemented:
 
-* ALTO-with-Alternatives (this will be changed to valid ALTO 2.1 once officially signed-off)
+* ALTO-with-Alternatives (this will be changed to valid [ALTO 2.1](https://github.com/altoxml/documentation/wiki/v2.1-Draft) once officially signed-off)
 * HTML
 * CSV (comma separated values)
 * SQL
