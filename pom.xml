@@ -32,7 +32,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>nl.kb.europeananewspaper.NerAnnotator.App</mainClass>
+							<mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -45,7 +45,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>nl.kb.europeananewspaper.NerAnnotator.App</mainClass>
+							<mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
