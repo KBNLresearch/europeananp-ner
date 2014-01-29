@@ -1,8 +1,8 @@
-package nl.kb.europeananewspaper.NerAnnotator;
-
-import static org.junit.Assert.assertTrue;
+package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 
 

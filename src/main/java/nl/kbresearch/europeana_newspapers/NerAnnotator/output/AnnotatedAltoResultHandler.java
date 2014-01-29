@@ -1,14 +1,13 @@
-package nl.kb.europeananewspaper.NerAnnotator.output;
+package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
+
+import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import nl.kb.europeananewspaper.NerAnnotator.TextElementsExtractor;
-import nl.kb.europeananewspaper.NerAnnotator.container.ContainerContext;
-
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 /**
  * @author rene

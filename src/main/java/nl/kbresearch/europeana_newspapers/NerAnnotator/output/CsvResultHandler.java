@@ -1,16 +1,15 @@
-package nl.kb.europeananewspaper.NerAnnotator.output;
+package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import nl.kb.europeananewspaper.NerAnnotator.container.ContainerContext;
-
+import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 import org.jsoup.nodes.Document;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Output handler for a simple CSV format, that maintains a list of labelled

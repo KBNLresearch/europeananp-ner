@@ -1,15 +1,10 @@
-package nl.kb.europeananewspaper.NerAnnotator.output;
+package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-
-import nl.kb.europeananewspaper.NerAnnotator.container.ContainerContext;
-
+import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.nodes.Document;
+
+import java.io.*;
 
 /**
  * Output for a simple HTML format, that tries to keep the logical structure

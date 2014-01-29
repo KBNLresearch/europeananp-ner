@@ -1,35 +1,15 @@
-package nl.kb.europeananewspaper.NerAnnotator;
+package nl.kbresearch.europeana_newspapers.NerAnnotator;
+
+import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
+import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import nl.kb.europeananewspaper.NerAnnotator.container.ContainerHandleThread;
-import nl.kb.europeananewspaper.NerAnnotator.container.ContainerProcessor;
-import nl.kb.europeananewspaper.NerAnnotator.container.DIDLProcessor;
-import nl.kb.europeananewspaper.NerAnnotator.container.MetsProcessor;
-import nl.kb.europeananewspaper.NerAnnotator.container.AltoLocalProcessor;
-import nl.kb.europeananewspaper.NerAnnotator.output.ResultHandlerFactory;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Command line interface of application

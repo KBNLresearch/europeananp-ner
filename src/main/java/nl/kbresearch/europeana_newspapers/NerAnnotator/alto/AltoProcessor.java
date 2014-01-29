@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotator.alto;
+package nl.kbresearch.europeana_newspapers.NerAnnotator.alto;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
@@ -6,9 +6,9 @@ import edu.stanford.nlp.ling.CoreAnnotations.OriginalTextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
-import nl.kb.europeananewspaper.NerAnnotator.NERClassifiers;
-import nl.kb.europeananewspaper.NerAnnotator.TextElementsExtractor;
-import nl.kb.europeananewspaper.NerAnnotator.output.ResultHandler;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;

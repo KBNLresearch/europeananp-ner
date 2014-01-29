@@ -1,7 +1,7 @@
-package nl.kb.europeananewspaper.NerAnnotator.output;
+package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import nl.kb.europeananewspaper.NerAnnotator.App;
-import nl.kb.europeananewspaper.NerAnnotator.container.ContainerContext;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.App;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

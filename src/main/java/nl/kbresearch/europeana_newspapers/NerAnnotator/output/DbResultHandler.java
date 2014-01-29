@@ -1,15 +1,10 @@
-package nl.kb.europeananewspaper.NerAnnotator.output;
+package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import nl.kbresearch.europeana_newspapers.NerAnnotator.App;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 import org.jsoup.nodes.Document;
 
-import nl.kb.europeananewspaper.NerAnnotator.App;
-import nl.kb.europeananewspaper.NerAnnotator.container.ContainerContext;
+import java.sql.*;
 
 public class DbResultHandler implements ResultHandler {
 

@@ -1,17 +1,13 @@
-package nl.kb.europeananewspaper.NerAnnotator;
+package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+
+import java.io.*;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
-
-import edu.stanford.nlp.ie.crf.CRFClassifier;
 
 /**
  * Singleton holder for preloaded classifiers

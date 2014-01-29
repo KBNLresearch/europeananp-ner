@@ -1,21 +1,19 @@
-package nl.kb.europeananewspaper.NerAnnotator;
+package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import nl.kb.europeananewspaper.NerAnnotator.alto.AltoStringID;
-import nl.kb.europeananewspaper.NerAnnotator.alto.ContinuationAltoStringID;
-import nl.kb.europeananewspaper.NerAnnotator.alto.HyphenatedLineBreak;
-import nl.kb.europeananewspaper.NerAnnotator.alto.OriginalContent;
-
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.util.CoreMap;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoStringID;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.ContinuationAltoStringID;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.HyphenatedLineBreak;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.OriginalContent;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.util.CoreMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Converter from ALTO elements to tokens for Stanford NER
