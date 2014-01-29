@@ -1,8 +1,8 @@
-package nl.kb.europeananewspaper.NerAnnotater.output;
+package nl.kb.europeananewspaper.NerAnnotator.output;
 
 import org.jsoup.nodes.Document;
 
-import nl.kb.europeananewspaper.NerAnnotater.TextElementsExtractor;
+import nl.kb.europeananewspaper.NerAnnotator.TextElementsExtractor;
 
 /**
  * Output handler for the result of the NER process on a single ALTO document

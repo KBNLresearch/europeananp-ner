@@ -1,10 +1,10 @@
-package nl.kb.europeananewspaper.NerAnnotater.container;
+package nl.kb.europeananewspaper.NerAnnotator.container;
 
 import java.io.File;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
-import nl.kb.europeananewspaper.NerAnnotater.App;
+import nl.kb.europeananewspaper.NerAnnotator.App;
 
 /**
  * Handles the processing lifecycle of a single container document.

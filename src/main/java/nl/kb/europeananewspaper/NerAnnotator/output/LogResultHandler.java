@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater.output;
+package nl.kb.europeananewspaper.NerAnnotator.output;
 
 import org.jsoup.nodes.Document;
 

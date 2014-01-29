@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater;
+package nl.kb.europeananewspaper.NerAnnotator;
 
 import static org.junit.Assert.assertTrue;
 

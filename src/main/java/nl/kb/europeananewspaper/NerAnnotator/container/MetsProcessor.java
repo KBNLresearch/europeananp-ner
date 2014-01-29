@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater.container;
+package nl.kb.europeananewspaper.NerAnnotator.container;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 
-import nl.kb.europeananewspaper.NerAnnotater.alto.AltoProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
+import nl.kb.europeananewspaper.NerAnnotator.alto.AltoProcessor;
+import nl.kb.europeananewspaper.NerAnnotator.output.ResultHandlerFactory;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

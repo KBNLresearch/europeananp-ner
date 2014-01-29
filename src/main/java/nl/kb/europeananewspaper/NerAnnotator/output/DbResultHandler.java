@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater.output;
+package nl.kb.europeananewspaper.NerAnnotator.output;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,8 +8,8 @@ import java.sql.Statement;
 
 import org.jsoup.nodes.Document;
 
-import nl.kb.europeananewspaper.NerAnnotater.App;
-import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
+import nl.kb.europeananewspaper.NerAnnotator.App;
+import nl.kb.europeananewspaper.NerAnnotator.container.ContainerContext;
 
 public class DbResultHandler implements ResultHandler {
 

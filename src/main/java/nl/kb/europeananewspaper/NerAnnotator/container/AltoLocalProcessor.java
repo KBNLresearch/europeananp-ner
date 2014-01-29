@@ -1,18 +1,12 @@
-package nl.kb.europeananewspaper.NerAnnotater.container;
+package nl.kb.europeananewspaper.NerAnnotator.container;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 
-import nl.kb.europeananewspaper.NerAnnotater.alto.AltoProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
+import nl.kb.europeananewspaper.NerAnnotator.alto.AltoProcessor;
+import nl.kb.europeananewspaper.NerAnnotator.output.ResultHandlerFactory;
 
 /**
  * Processor for MPEG21-DIDL files. This parser is tested with the KB DDD

@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater.alto;
+package nl.kb.europeananewspaper.NerAnnotator.alto;
 
 import edu.stanford.nlp.ling.CoreAnnotation;
 

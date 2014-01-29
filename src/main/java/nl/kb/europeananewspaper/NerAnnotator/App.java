@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater;
+package nl.kb.europeananewspaper.NerAnnotator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,12 +16,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import nl.kb.europeananewspaper.NerAnnotater.container.ContainerHandleThread;
-import nl.kb.europeananewspaper.NerAnnotater.container.ContainerProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.container.DIDLProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.container.MetsProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.container.AltoLocalProcessor;
-import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandlerFactory;
+import nl.kb.europeananewspaper.NerAnnotator.container.ContainerHandleThread;
+import nl.kb.europeananewspaper.NerAnnotator.container.ContainerProcessor;
+import nl.kb.europeananewspaper.NerAnnotator.container.DIDLProcessor;
+import nl.kb.europeananewspaper.NerAnnotator.container.MetsProcessor;
+import nl.kb.europeananewspaper.NerAnnotator.container.AltoLocalProcessor;
+import nl.kb.europeananewspaper.NerAnnotator.output.ResultHandlerFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -245,7 +245,7 @@ public class App {
 		} catch (org.apache.commons.cli.ParseException e) {
 			HelpFormatter helpFormatter = new HelpFormatter();
 			helpFormatter.printHelp(
-					"java -jar NerAnnotater.jar [OPTIONS] [INPUTFILES..]",
+					"java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]",
 					options);
 			System.out.println("\nIf there are no input files specified, a list of filenames is read from stdin.");
 		}

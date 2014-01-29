@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater;
+package nl.kb.europeananewspaper.NerAnnotator;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

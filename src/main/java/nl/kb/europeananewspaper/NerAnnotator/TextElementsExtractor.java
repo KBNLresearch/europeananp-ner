@@ -1,13 +1,13 @@
-package nl.kb.europeananewspaper.NerAnnotater;
+package nl.kb.europeananewspaper.NerAnnotator;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import nl.kb.europeananewspaper.NerAnnotater.alto.AltoStringID;
-import nl.kb.europeananewspaper.NerAnnotater.alto.ContinuationAltoStringID;
-import nl.kb.europeananewspaper.NerAnnotater.alto.HyphenatedLineBreak;
-import nl.kb.europeananewspaper.NerAnnotater.alto.OriginalContent;
+import nl.kb.europeananewspaper.NerAnnotator.alto.AltoStringID;
+import nl.kb.europeananewspaper.NerAnnotator.alto.ContinuationAltoStringID;
+import nl.kb.europeananewspaper.NerAnnotator.alto.HyphenatedLineBreak;
+import nl.kb.europeananewspaper.NerAnnotator.alto.OriginalContent;
 
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;

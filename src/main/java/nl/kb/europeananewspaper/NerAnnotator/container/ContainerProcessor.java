@@ -1,4 +1,4 @@
-package nl.kb.europeananewspaper.NerAnnotater.container;
+package nl.kb.europeananewspaper.NerAnnotator.container;
 
 import java.io.IOException;
 import java.util.Locale;

@@ -1,10 +1,10 @@
-package nl.kb.europeananewspaper.NerAnnotater.output;
+package nl.kb.europeananewspaper.NerAnnotator.output;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import nl.kb.europeananewspaper.NerAnnotater.container.ContainerContext;
+import nl.kb.europeananewspaper.NerAnnotator.container.ContainerContext;
 
 import org.jsoup.nodes.Document;
 import org.supercsv.cellprocessor.constraint.NotNull;
