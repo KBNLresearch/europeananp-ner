@@ -1,33 +1,23 @@
 package nl.kb.europeananewspaper.NerAnnotater.alto;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.Locale;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.OriginalTextAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.util.CoreMap;
 import nl.kb.europeananewspaper.NerAnnotater.NERClassifiers;
 import nl.kb.europeananewspaper.NerAnnotater.TextElementsExtractor;
 import nl.kb.europeananewspaper.NerAnnotater.output.ResultHandler;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
-import org.jsoup.nodes.Entities.EscapeMode;
 
-import edu.stanford.nlp.ie.crf.CRFClassifier;
-import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.OriginalTextAnnotation;
-import edu.stanford.nlp.util.CoreMap;
-
-import java.lang.Exception;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * ALTO file processing
@@ -155,7 +145,7 @@ public class AltoProcessor {
                             if (label.get(TextAnnotation.class) != null) {
                                 if (sentenceCount + offset < stanford_tokens.size()) {
                                     Set<String> stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
-                                    stanford = cleanWord(new String(stanfordKeyset.toArray(new String[0])[0]));
+                                    stanford = cleanWord(stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0]);
                                     stanfordClassification = (stanford_tokens.get(sentenceCount + offset).get(stanford));
                                     if (label.get(TextAnnotation.class).equals("")) {
                                         stanford = "";
@@ -171,7 +161,7 @@ public class AltoProcessor {
                                             offset += 1;
                                             if (sentenceCount + offset < stanford_tokens.size()) {
                                                 stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
-                                                stanford = stanford + new String(stanfordKeyset.toArray(new String[0])[0]);
+                                                stanford = stanford + stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0];
                                             } else {
                                                 match = true;
                                             }
