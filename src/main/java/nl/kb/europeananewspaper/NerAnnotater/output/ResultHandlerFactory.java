@@ -47,6 +47,10 @@ public class ResultHandlerFactory {
 				AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context, name);
 				registeredHandlers.put(AnnotatedAltoResultHandler.class, annotatedAltoResultHandler);
 				result.add(annotatedAltoResultHandler);
+                        } else if (outputFormat.equals("alto2_1")) {
+                                Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name);
+                                registeredHandlers.put(Alto2_1ResultHandler.class, alto2_1ResultHandler);
+                                result.add(alto2_1ResultHandler);
 			} else if (outputFormat.equals("html")) {
 				HtmlResultHandler htmlResultHandler = new HtmlResultHandler(context, name);
 				registeredHandlers.put(HtmlResultHandler.class, htmlResultHandler);
