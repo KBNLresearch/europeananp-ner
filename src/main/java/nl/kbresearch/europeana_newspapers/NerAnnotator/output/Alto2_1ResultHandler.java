@@ -153,7 +153,6 @@ public class Alto2_1ResultHandler implements ResultHandler {
             // add the tags in the order that where detected.
             for (HashMap s: this.Entity_list) {
                 Element tag = e.appendElement("NamedEntityTag");
-                tag.attr("id", "Tag" + (String)s.get("id"));
                 tag.attr("type", (String)s.get("label"));
                 tag.attr("label", (String)s.get("word"));
             }
