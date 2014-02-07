@@ -3,7 +3,9 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 import org.jsoup.nodes.Document;
+//import org.w3c.dom.Document;
 import org.jsoup.nodes.Element;
+//import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.IOException;
