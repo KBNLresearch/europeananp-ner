@@ -1,6 +1,7 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
 import org.jsoup.nodes.Document;
+//import org.w3c.dom.Document;
 
 /**
  * Output handler that writes the result of the NER process to stdout

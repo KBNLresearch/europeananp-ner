@@ -3,6 +3,7 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.nodes.Document;
+//import org.w3c.dom.Document;
 
 import java.io.*;
 

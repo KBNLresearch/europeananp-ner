@@ -1,6 +1,8 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
 import org.jsoup.nodes.Document;
+//import org.w3c.dom.Document;
+
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 
 /**
