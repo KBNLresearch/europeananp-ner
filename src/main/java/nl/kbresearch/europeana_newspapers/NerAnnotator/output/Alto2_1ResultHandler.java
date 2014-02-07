@@ -1,15 +1,12 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.ArrayList;
 
 import java.util.HashMap;
-import java.util.Map;
 
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
@@ -17,7 +14,6 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContex
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Entities;
 
 /**
  * @author rene
