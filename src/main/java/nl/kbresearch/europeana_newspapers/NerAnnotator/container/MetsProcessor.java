@@ -16,10 +16,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
+//import javax.xml.parsers.DocumentBuilderFactory;
+//import javax.xml.parsers.DocumentBuilder;
 //import org.w3c.dom.Document;
 //import org.w3c.dom.Element;
 //import org.w3c.dom.NodeList;
-//import javax.xml.parsers.DocumentBuilder;
 
 
 /**
@@ -51,8 +52,9 @@ public class MetsProcessor implements ContainerProcessor {
 		Document doc = null;
 
 		doc = Jsoup.parse(url.openStream(), "UTF-8", "", Parser.xmlParser());
-                // DocumentBuilder db = dbf.newDocumentBuilder();
-                // doc = db.parse(file);
+                //DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                //DocumentBuilder db = dbf.newDocumentBuilder();
+                //doc = db.parse(file);
 	
 		Elements elementsByTag = doc.getElementsByTag("mets:flocat");
 
