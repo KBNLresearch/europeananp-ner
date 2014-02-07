@@ -9,11 +9,18 @@ import edu.stanford.nlp.util.CoreMap;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+
+//import javax.xml.parsers.DocumentBuilderFactory;
+//import javax.xml.parsers.DocumentBuilder;
+//import org.w3c.dom.Document;
+//import org.w3c.dom.Element;
+//import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 import java.net.URL;
@@ -51,6 +58,12 @@ public class AltoProcessor {
                 System.out.println("Trying to process ALTO file "
                         + potentialAltoFilename);
                 long startTime = System.currentTimeMillis();
+                //DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                //File f = new File(potentialAltoFilename.getFile());
+                //DocumentBuilder db = dbf.newDocumentBuilder();
+                //Document doc = db.parse(f);
+                //
+                //TODO: Fix this loooooops
                 Document doc = Jsoup.parse(potentialAltoFilename.openStream(),
                         "UTF-8", "", Parser.xmlParser());
                 doc.outputSettings().escapeMode(EscapeMode.xhtml);
