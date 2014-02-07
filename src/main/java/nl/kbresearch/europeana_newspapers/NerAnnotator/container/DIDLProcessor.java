@@ -57,10 +57,28 @@ public class DIDLProcessor implements ContainerProcessor {
 		doc = Jsoup.parse(url.openStream(), "UTF-8", "", Parser.xmlParser());
 
 		Elements elementsByTag = doc.getElementsByTag("didl:resource");
+                //NodeList elementsByTag = doc.getElementsByTagName("didl:Resource");
 
 
-                // TODO: fix-thisloop!
 		int count = 0;
+
+                //for (int i = 0; i<elementsByTag.getLength(); i++) {
+                //Node tokens = elementsByTag.item(i);
+                //if (tokens.getNodeType() == Node.ELEMENT_NODE) {
+                //Element eElement = (Element) tokens;
+                //if (eElement.getAttribute("mimeType").equals("text/xml") {
+                //URL url2 = new URL(eElement.getAttribute("ref");
+                //String altoFilename = eElement.getAttribute("dcx:filename");
+       	        //if (altoFilename == null || altoFilename.isEmpty()) {
+	        //altoFilename = "alto-" + (count++) + ".xml";
+		//			}
+                //AltoProcessor.handlePotentialAltoFile(url2, eElement
+                //.getAttribute("mimetype"), lang, ResultHandlerFactory
+	        //.createResultHandlers(context, altoFilename));
+                //}
+                //}
+                //}
+
 		for (Element e : elementsByTag) {
 			if (e.attr("mimetype").equals("text/xml")) {
 				if (e.attr("ref").endsWith(":alto")) {
