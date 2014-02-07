@@ -14,6 +14,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
+//import org.w3c.dom.Document;
+//import org.w3c.dom.Element;
+//import org.w3c.dom.NodeList;
+//import javax.xml.parsers.DocumentBuilder;
+
+
 /**
  * Processor for MPEG21-DIDL files. This parser is tested with the KB DDD
  * Collection.
@@ -44,11 +50,16 @@ public class DIDLProcessor implements ContainerProcessor {
 
 		Document doc = null;
 
+                
 		System.out.println("Processing DIDL-File " + urlStr);
+                // DocumentBuilder db = dbf.newDocumentBuilder();
+                // doc = db.parse(file);
 		doc = Jsoup.parse(url.openStream(), "UTF-8", "", Parser.xmlParser());
 
 		Elements elementsByTag = doc.getElementsByTag("didl:resource");
 
+
+                // TODO: fix-thisloop!
 		int count = 0;
 		for (Element e : elementsByTag) {
 			if (e.attr("mimetype").equals("text/xml")) {
