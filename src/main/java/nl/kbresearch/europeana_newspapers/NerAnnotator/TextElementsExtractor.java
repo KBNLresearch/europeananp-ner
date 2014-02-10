@@ -49,20 +49,37 @@ public class TextElementsExtractor {
 		List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
 
 		Elements blocks = altoDocument.getElementsByTag("TextBlock");
+                //NodeList blocks = dom.getElementsByTagName("TextBlock");
+                //for (int i = 0; i<blocks.getLength(); i++) {
+                //Node tokens = blocks.item(i);
+                //if (tokens.getNodeType() == Node.ELEMENT_NODE) {
+
+
 		for (Element e : blocks) {
 			List<CoreMap> newBlock = new LinkedList<CoreMap>();
+                        //Element eElement = (Element) tokens;
+                        //NodeList textLineToken = eElement.getElementsByTagName("TextLine");
 
 			Elements tokens = e.getElementsByTag("TextLine");
 			Boolean firstSegmentAfterHyphenation = false;
+                        //for (int j = 0; j<textLineToken.getLength(); j++) {
 			for (Element token : tokens) {
-
+                                //Node tl = textLineToken.item(j);
+                                //if (tl.getNodeType() == Node.ELEMENT_NODE) {
+                                //Element tll = (Element) tl;
+                                //NodeList text = tll.getChildNodes();
 				Elements textLineTokens = token.children();
+                                //for (int k =0;k<text.getLength(); k++) {
+                                //if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
+                                //Element tx = (Element) text.item(k);
 				boolean hyphenatedEnd = false;
 				for (Element textLineToken : textLineTokens) {
+                                        //if (tx.getTagName() == "String") {
 					if (textLineToken.tagName().equalsIgnoreCase("string")) {
 						newBlock.add(getWordToLabel(textLineToken,
 								firstSegmentAfterHyphenation));
 						firstSegmentAfterHyphenation = false;
+                                        //if (tx.getTagName() == "Hyp") {
 					} else if (textLineToken.tagName().equalsIgnoreCase("hyp")) {
 						hyphenatedEnd = true;
 						firstSegmentAfterHyphenation = true;
@@ -135,6 +152,7 @@ public class TextElementsExtractor {
 	}
 
 	private static String calcuateAltoStringID(Element word) {
+                //Element parent = word.getParentNode();
 		Element parent = word.parent();
 
 		String parentHpos = nullsafe(parent.attr("HPOS"));
@@ -145,6 +163,20 @@ public class TextElementsExtractor {
 		String optionalStringVpos = nullsafe(word.attr("VPOS"));
 		String optionalStringWidth = nullsafe(word.attr("WIDTH"));
 		String optionalStringHeight = nullsafe(word.attr("HEIGHT"));
+
+
+
+                //String parentHpos = nullsafe(parent.getAttribute("HPOS"));
+                //String parentVpos = nullsafe(parent.getAttribute("VPOS"));
+                //String parentWidth = nullsafe(parent.getAttribute("WIDTH"));
+                //String parentHeight = nullsafe(parent.getAttribute("HEIGHT"));
+                //String optionalStringHpos = nullsafe(word.getAttribute("HPOS"));
+                //String optionalStringVpos = nullsafe(word.getAttribute("VPOS"));
+                //String optionalStringWidth = nullsafe(word.getAttribute("WIDTH"));
+                //String optionalStringHeight = nullsafe(word.getAttribute("HEIGHT"));
+ 
+
+
 		LinkedList<String> params = new LinkedList<String>();
 		params.add(parentHpos);
 		params.add(parentVpos);
@@ -178,6 +210,17 @@ public class TextElementsExtractor {
 					+ split.length + " instead of 9 parameters");
 			return null;
 		}
+
+
+
+                //String expression = "//String[@HPOS=" + split[0] + "][@VPOS='" + split[1] + "'][@HEIGHT='" + split[2] + "'][@WIDTH='" + split[3] + "']"; 
+                //XPath xpath = XPathFactory.newInstance().newXPath();
+                //try {
+                //NodeList nodes = (NodeList) xpath.evaluate(expression, altoDocument, XPathConstants.NODESET);
+                //Element ep = (Element) nodes.item(0);
+                //return(ep);
+                //} catch (XPathExpressionException ee) { }
+                //
 
 		Elements textlines = altoDocument.select("[HPOS=" + split[0] + "]")
 				.select("[VPOS=" + split[1] + "]")
