@@ -113,14 +113,20 @@ public class TextElementsExtractor {
 			// content from the second for NER into the first token
 			String nextWordSuffix = "";
 			Element nextSibling = token.nextElementSibling();
+                        //Element nextSibling = token.getNextSibling();
+
 
 			if (nextSibling != null
+                                        // nextSibling.tagName.equalsIgnoreCase("hyp") {
 					&& nextSibling.tagName().equalsIgnoreCase("hyp")) {
 				// get first String element of next line, if it exists
 				Element nextLine = nextSibling.parent().nextElementSibling();
+                                // Element nextLine = nextSibling.getParentNode().nextElementSibling();
 				if (nextLine != null) {
 					nextNextSibling = nextLine.child(0);
+                                        // nextNextSibling = nextLine.getFirstChild();
 					if (nextNextSibling != null) {
+                                                //nextWordSuffix = nextNextSibling.getAttribute("CONTENT");
 						nextWordSuffix = nextNextSibling.attr("CONTENT");
 						if (nextWordSuffix == null)
 							nextWordSuffix = "";
@@ -135,6 +141,7 @@ public class TextElementsExtractor {
 		}
 
 		CoreLabel label = new CoreLabel();
+		//label.set(OriginalContent.class, token.getAttribute("CONTENT"));
 		label.set(OriginalContent.class, token.attr("CONTENT"));
 		label.setWord(cleanedContent);
 		label.set(AltoStringID.class, calcuateAltoStringID(token));
@@ -182,6 +189,26 @@ public class TextElementsExtractor {
 		params.add(parentVpos);
 		params.add(parentHeight);
 		params.add(parentWidth);
+
+                // siblingIndex ??
+                /*
+                int indexOfNode(Node node) {
+                    int index;
+                    Node sibling;
+
+                    index = 0;
+                    while ((sibling = node.getPreviousSibling()) != null) {
+                        node = sibling;
+                        ++index;
+                    }
+
+                    return index;
+                }
+                */
+                //
+                //
+                //
+                //
 		params.add(Integer.toString(word.siblingIndex()));
 		params.add(optionalStringHpos);
 		params.add(optionalStringVpos);
