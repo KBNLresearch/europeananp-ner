@@ -2,6 +2,7 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
+
 import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
@@ -15,6 +16,7 @@ import java.util.concurrent.*;
  * Command line interface of application
  * 
  * @author rene
+ * @author Willem Jan Faber
  */
 public class App {
 

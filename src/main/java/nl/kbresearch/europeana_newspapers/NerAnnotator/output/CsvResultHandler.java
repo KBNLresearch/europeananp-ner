@@ -2,8 +2,8 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
-import org.jsoup.nodes.Document;
-//import org.w3c.dom.Document;
+//import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;

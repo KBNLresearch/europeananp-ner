@@ -1,27 +1,26 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.alto;
 
+import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
+
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.OriginalTextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
-//import javax.xml.parsers.DocumentBuilderFactory;
-//import javax.xml.parsers.DocumentBuilder;
-//import org.w3c.dom.Document;
-//import org.w3c.dom.Element;
-//import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -29,12 +28,11 @@ import java.util.*;
 /**
  * ALTO file processing
  * 
- * @author rene
+ * @author Rene
+ * @author Willem Jan Faber
  * 
  */
 public class AltoProcessor {
-
-
     private static String cleanWord(String attr) {
         String cleaned = attr.replace(".", "");
         cleaned = cleaned.replace(",", "");
@@ -54,27 +52,16 @@ public class AltoProcessor {
             throws IOException {
         if ("text/xml".equalsIgnoreCase(mimeType)
                 || potentialAltoFilename.getFile().endsWith(".xml")) {
+
             try {
                 System.out.println("Trying to process ALTO file "
                         + potentialAltoFilename);
                 long startTime = System.currentTimeMillis();
-                //DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                //File f = new File(potentialAltoFilename.getFile());
-                //DocumentBuilder db = dbf.newDocumentBuilder();
-                //Document doc = db.parse(f);
-                //
-                //TODO: Fix this loooooops
-                Document doc = Jsoup.parse(potentialAltoFilename.openStream(),
-                        "UTF-8", "", Parser.xmlParser());
-                doc.outputSettings().escapeMode(EscapeMode.xhtml);
-                Elements elementsByTag = doc.getElementsByTag("alto");
-                if (elementsByTag.isEmpty()) {
-                    System.err.println("Does not seem to be a ALTO file: "
-                            + potentialAltoFilename.toExternalForm());
-                    return;
-                }
+                File f = new File(potentialAltoFilename.getFile());
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document doc = db.parse(f);
 
-                // we have an Alto file
                 for (ResultHandler h : handler) {
                     h.startDocument();
                     h.setAltoDocument(doc);
@@ -184,14 +171,12 @@ public class AltoProcessor {
                             } else {
                                 offset -= 1;
                             }
-                            // System.out.println(stanford_tokens);
-                            // System.out.println(label.get(OriginalContent.class));
-                            // System.out.println(stanford);
                             if (!label.get(AnswerAnnotation.class).equals("O")) {
                                 classified += 1;
-                                // System.out.println(text);
-                                // System.out.println(label.get(TextAnnotation.class));
                                 for (ResultHandler h : handler) {
+                                    System.out.println("label");
+                                    System.out.println(label.get(AltoStringID.class));
+                                    System.out.println("label");
                                     h.addToken(
                                             label.get(AltoStringID.class),
                                             label.get(OriginalContent.class),
@@ -218,7 +203,7 @@ public class AltoProcessor {
                     }
 
                 }
-
+ 
                 for (ResultHandler h : handler) {
                     h.stopDocument();
                 }
@@ -232,16 +217,19 @@ public class AltoProcessor {
                         + ((double) classified / (double) totalNumberOfWords) + ") classified");
                 System.out.println("Total millisecs: "
                         + (System.currentTimeMillis() - startTime));
-
-            } catch (IOException e) {
+ 
+                } catch (IOException e) {
                 System.err.println("Could not read ALTO file "
                         + potentialAltoFilename.toExternalForm());
                 throw e;
-            } finally {
+            } catch (SAXException e) {
+
+            } catch (ParserConfigurationException e) {
+
+            }
                 for (ResultHandler h : handler) {
                     h.close();
                 }
             }
         }
     }
-}
