@@ -174,9 +174,9 @@ public class AltoProcessor {
                             if (!label.get(AnswerAnnotation.class).equals("O")) {
                                 classified += 1;
                                 for (ResultHandler h : handler) {
-                                    System.out.println("label");
-                                    System.out.println(label.get(AltoStringID.class));
-                                    System.out.println("label");
+                                    //System.out.println("label");
+                                    //System.out.println(label.get(AltoStringID.class));
+                                    //System.out.println("label");
                                     h.addToken(
                                             label.get(AltoStringID.class),
                                             label.get(OriginalContent.class),

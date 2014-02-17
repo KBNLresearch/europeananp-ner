@@ -12,11 +12,13 @@ import java.util.HashMap;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 
 /**
- * @author rene
+ * @author Rene
+ * @author Willem Jan Faber
  *
  */
 
@@ -74,6 +76,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
     public void addToken(String wordid, String originalContent, String word,
                          String label, String continuationid) {
 
+        /*
         HashMap mMap = new HashMap();
 
         // try to find out if this is a continuation of the previous word
@@ -117,7 +120,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
                 this.Entity_list.add(mMap);
             } else {
                 mMap.put("id", String.valueOf(this.tagCounter));
-                domElement.attr("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
+                //domElement.attr("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
                 mMap.put("label", label);
                 mMap.put("word", word);
                 this.Entity_list.add(mMap);
@@ -130,6 +133,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
             this.prevIsNamed = false;
 
         }
+        */
 
     }
 
@@ -140,30 +144,30 @@ public class Alto2_1ResultHandler implements ResultHandler {
 
     @Override
     public void stopDocument() {
-        try {
+//        try {
 
-            Element alto = altoDocument.select("alto").first();
-            alto.attr("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
-            alto.attr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            alto.attr("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
+            //Element alto = altoDocument.select("alto").first();
+            //alto.attr("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
+            //alto.attr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            //alto.attr("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
             // create the alto tags section.
-            altoDocument.select("Styles").after("<Tags>");
-            Element e = altoDocument.select("Tags").first();
+            //altoDocument.select("Styles").after("<Tags>");
+            //Element e = altoDocument.select("Tags").first();
 
             // add the tags in the order that where detected.
-            for (HashMap s: this.Entity_list) {
-                Element tag = e.appendElement("NamedEntityTag");
-                tag.attr("type", (String)s.get("label"));
-                tag.attr("label", (String)s.get("word"));
-            }
+            //for (HashMap s: this.Entity_list) {
+            //    Element tag = e.appendElement("NamedEntityTag");
+            //    tag.attr("type", (String)s.get("label"));
+            //    tag.attr("label", (String)s.get("word"));
+           // }
 
-            outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
-            outputFile.print(altoDocument.toString().replaceAll("></namedentitytag>", "/>"));
-            outputFile.flush();
-            outputFile.close();
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not write to Alto XML file", e);
-        }
+            //outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
+            //outputFile.print(altoDocument.toString().replaceAll("></namedentitytag>", "/>"));
+            //outputFile.flush();
+            //outputFile.close();
+ //       } catch (IOException e) {
+  //          throw new IllegalStateException("Could not write to Alto XML file", e);
+   //     }
     }
 
     @Override
