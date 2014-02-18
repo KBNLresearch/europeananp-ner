@@ -9,12 +9,12 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoProcessor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Processor for MPEG21-DIDL files. This parser is tested with the KB DDD
@@ -26,52 +26,55 @@ import javax.xml.parsers.DocumentBuilder;
  */
 public class DIDLProcessor implements ContainerProcessor {
 
-	/**
-	 * the default instance of the MPEG21-DIDL processor
-	 */
-	public static DIDLProcessor INSTANCE = new DIDLProcessor();
+    /**
+     * the default instance of the MPEG21-DIDL processor
+     */
+    public static DIDLProcessor INSTANCE = new DIDLProcessor();
 
-	@Override
-	public boolean processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
-		URL url = null;
-		File file = new File(urlStr);
+    @Override
+    public boolean processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
+        URL url = null;
+        File file = new File(urlStr);
 
-		if (file.exists()) {
+        if (file.exists()) {
                     url = file.toURI().toURL();
-		} else {
+        } else {
                     url = new URL(urlStr);
                     System.out.println("File not found, trying to get from URL: " + url.toExternalForm());
-		}
+        }
 
-		Document doc = null;
-		System.out.println("Processing DIDL-File " + urlStr);
+        Document doc = null;
+        System.out.println("Processing DIDL-File " + urlStr);
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		int count = 0;
+        int count = 0;
 
-                try {
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    doc = db.parse(file);
-                    NodeList elementsByTag = doc.getElementsByTagName("didl:Resource");
+        try {
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            doc = db.parse(file);
+            NodeList elementsByTag = doc.getElementsByTagName("didl:Resource");
 
-                    for (int i = 0; i<elementsByTag.getLength(); i++) {
-                        Node tokens = elementsByTag.item(i);
-                        if (tokens.getNodeType() == Node.ELEMENT_NODE) {
-                            Element eElement = (Element) tokens;
-                            if (eElement.getAttribute("mimeType").equals("text/xml")) {
-                                URL url2 = new URL(eElement.getAttribute("ref"));
-                                String altoFilename = eElement.getAttribute("dcx:filename");
-                                if (altoFilename == null || altoFilename.isEmpty()) {
-                                    altoFilename = "alto-" + (count++) + ".xml";
-                                }
-                                AltoProcessor.handlePotentialAltoFile(url2, eElement .getAttribute("mimetype"), lang, ResultHandlerFactory.createResultHandlers(context, altoFilename));
-                            }
+            for (int i = 0; i<elementsByTag.getLength(); i++) {
+                Node tokens = elementsByTag.item(i);
+                if (tokens.getNodeType() == Node.ELEMENT_NODE) {
+                    Element e = (Element) tokens;
+                    if (e.getAttribute("mimeType").equals("text/xml")) {
+                        URL url2 = new URL(e.getAttribute("ref"));
+                        String altoFilename = e.getAttribute("dcx:filename");
+                        if (altoFilename == null || altoFilename.isEmpty()) {
+                            altoFilename = "alto-" + (count++) + ".xml";
                         }
+                        AltoProcessor.handlePotentialAltoFile(url2, "text/xml", lang,
+                                                              ResultHandlerFactory.createResultHandlers(context, altoFilename));
                     }
-                } catch (javax.xml.parsers.ParserConfigurationException e) { 
-                    e.printStackTrace(); 
-                } catch (org.xml.sax.SAXException e) { 
-                    e.printStackTrace(); 
                 }
-		return (count > 0);
-	}
+            }
+            return (count > 0);
+        } catch (javax.xml.parsers.ParserConfigurationException e) { 
+            e.printStackTrace(); 
+            return false;
+        } catch (org.xml.sax.SAXException e) { 
+            e.printStackTrace(); 
+            return false;
+        }
+    }
 }
