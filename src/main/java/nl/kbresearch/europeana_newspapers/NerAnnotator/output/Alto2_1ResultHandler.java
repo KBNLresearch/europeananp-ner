@@ -1,23 +1,23 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.ArrayList;
-
-import java.util.HashMap;
-
-
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
+import java.io.*;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
 
 /**
- * @author Rene
  * @author Willem Jan Faber
  *
  */
@@ -28,9 +28,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
     private String name;
     private PrintWriter outputFile;
     private Document altoDocument;
-    //private List<String> Entity_list = new ArrayList<String>();
     private List<HashMap> Entity_list = new ArrayList();
-    // List<Map> list = new ArrayList();
 
     String continuationId = null;
     String continuationLabel = null;
@@ -53,30 +51,20 @@ public class Alto2_1ResultHandler implements ResultHandler {
     }
     @Override
     public void startDocument() {
-
-
     }
 
     @Override
     public void startTextBlock() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void newLine(boolean hyphenated) {
-        // TODO Auto-generated method stub
-
     }
 
-
-
-    ///  TODO Add alto2_1 handler here..
     @Override
     public void addToken(String wordid, String originalContent, String word,
                          String label, String continuationid) {
 
-        /*
         HashMap mMap = new HashMap();
 
         // try to find out if this is a continuation of the previous word
@@ -112,15 +100,14 @@ public class Alto2_1ResultHandler implements ResultHandler {
                 }
                 this.prevWord = word + " ";
                 this.prevType = label;
-
-                domElement.attr("TAGREFS", "Tag" + String.valueOf(this.tagCounter-1));
+                domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter-1));
                 mMap.put("id", String.valueOf(this.tagCounter-1));
                 mMap.put("label", label);
                 mMap.put("word", word);
                 this.Entity_list.add(mMap);
             } else {
                 mMap.put("id", String.valueOf(this.tagCounter));
-                //domElement.attr("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
+                domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter-1));
                 mMap.put("label", label);
                 mMap.put("word", word);
                 this.Entity_list.add(mMap);
@@ -133,53 +120,53 @@ public class Alto2_1ResultHandler implements ResultHandler {
             this.prevIsNamed = false;
 
         }
-        */
-
     }
 
     @Override
     public void stopTextBlock() {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void stopDocument() {
-//        try {
+        Element child = altoDocument.createElement("Tags");
+        for (HashMap s: this.Entity_list) {
+            Element childOfTheChild = altoDocument.createElement("NamedEntityTag");
+            childOfTheChild.setAttribute("type", (String) s.get("label"));
+            childOfTheChild.setAttribute("label", (String) s.get("word"));
+            child.appendChild(childOfTheChild);
+        }
 
-            //Element alto = altoDocument.select("alto").first();
-            //alto.attr("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
-            //alto.attr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            //alto.attr("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
-            // create the alto tags section.
-            //altoDocument.select("Styles").after("<Tags>");
-            //Element e = altoDocument.select("Tags").first();
+        NodeList alto = altoDocument.getElementsByTagName("Styles");
+        alto.item(0).getParentNode().appendChild(child);
+        Element alto_root = (Element) alto.item(0);
+        alto_root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        alto_root.setAttribute("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
+        alto_root.setAttribute("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
 
-            // add the tags in the order that where detected.
-            //for (HashMap s: this.Entity_list) {
-            //    Element tag = e.appendElement("NamedEntityTag");
-            //    tag.attr("type", (String)s.get("label"));
-            //    tag.attr("label", (String)s.get("word"));
-           // }
-
-            //outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
-            //outputFile.print(altoDocument.toString().replaceAll("></namedentitytag>", "/>"));
-            //outputFile.flush();
-            //outputFile.close();
- //       } catch (IOException e) {
-  //          throw new IllegalStateException("Could not write to Alto XML file", e);
-   //     }
+        try {
+            outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
+            DOMSource domSource = new DOMSource(altoDocument);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.transform(domSource, result);
+            outputFile.print(writer.toString());
+           outputFile.flush();
+            outputFile.close();
+       } catch(TransformerException e) {
+            e.printStackTrace();
+       } catch (IOException e) {
+            e.printStackTrace();
+       }
     }
 
     @Override
     public void close() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void globalShutdown() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

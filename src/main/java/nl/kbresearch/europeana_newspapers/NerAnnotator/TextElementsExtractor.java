@@ -41,6 +41,9 @@ public class TextElementsExtractor {
 	 * @param altoDocument
 	 * @return a list of text blocks, represented by their tokens.
 	 */
+
+
+        // CHECK THIS, THERE IS A BUG IN HERE SOMEWHERE!
 	public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
 	    List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
             NodeList blocks = altoDocument.getElementsByTagName("TextBlock");

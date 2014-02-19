@@ -56,11 +56,11 @@ public class ResultHandlerFactory {
                             registeredHandlers.put(HtmlResultHandler.class, htmlResultHandler);
                             result.add(htmlResultHandler);
                             break;
-                        //case "alto2_1":
-                        //    Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name);
-                        //    registeredHandlers.put(Alto2_1ResultHandler.class, alto2_1ResultHandler);
-                        //    result.add(alto2_1ResultHandler);
-                        //    break;
+                        case "alto2_1":
+                            Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name);
+                            registeredHandlers.put(Alto2_1ResultHandler.class, alto2_1ResultHandler);
+                            result.add(alto2_1ResultHandler);
+                            break;
                         case "db":
                             try {
                                 DbResultHandler dbResultHandler = new DbResultHandler(context, name);
