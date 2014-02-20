@@ -3,10 +3,11 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.App;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import java.sql.SQLException;
 
 /**
  * Generates a list of result handlers for the configured output formats on a

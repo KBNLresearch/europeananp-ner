@@ -81,6 +81,7 @@ public class MetsProcessor implements ContainerProcessor {
                             // Generic name, if not available
                             name = "alto-" + (count++) + ".xml";
                         }
+                        System.out.println(potentialAltoFilename);
                         AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, "text/xml",
                                                               lang, ResultHandlerFactory.createResultHandlers(context, name));
                    } catch (URISyntaxException ee) {
