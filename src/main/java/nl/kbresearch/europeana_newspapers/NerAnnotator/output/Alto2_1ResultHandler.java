@@ -133,11 +133,12 @@ public class Alto2_1ResultHandler implements ResultHandler {
             Element childOfTheChild = altoDocument.createElement("NamedEntityTag");
             childOfTheChild.setAttribute("type", (String) s.get("label"));
             childOfTheChild.setAttribute("label", (String) s.get("word"));
+            childOfTheChild.setAttribute("id", (String) s.get("id"));
             child.appendChild(childOfTheChild);
         }
 
-        NodeList alto = altoDocument.getElementsByTagName("Styles");
-        alto.item(0).getParentNode().appendChild(child);
+        NodeList alto = altoDocument.getElementsByTagName("alto");
+        altoDocument.getDocumentElement().appendChild(child);
         Element alto_root = (Element) alto.item(0);
         alto_root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         alto_root.setAttribute("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
@@ -150,9 +151,10 @@ public class Alto2_1ResultHandler implements ResultHandler {
             StreamResult result = new StreamResult(writer);
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(domSource, result);
             outputFile.print(writer.toString());
-           outputFile.flush();
+            outputFile.flush();
             outputFile.close();
        } catch(TransformerException e) {
             e.printStackTrace();

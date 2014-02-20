@@ -36,6 +36,7 @@ public class AltoProcessor {
     private static String cleanWord(String attr) {
         String cleaned = attr.replace(".", "");
         cleaned = cleaned.replace(",", "");
+        cleaned = cleaned.replace(";", "");
         return cleaned;
     }
 
@@ -100,7 +101,8 @@ public class AltoProcessor {
                         }
                     }
 
-                    System.out.println(text);
+                    //System.out.println("___");
+                    //System.out.println(text);
 
                     ArrayList<Map<String , String>> stanford_tokens  = new ArrayList<Map<String,String>>();
                     // Classify the output text, using the stanford tokenizer.
@@ -149,13 +151,13 @@ public class AltoProcessor {
                                     Set<String> stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
                                     stanford = cleanWord(stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0]);
                                     stanfordClassification = (stanford_tokens.get(sentenceCount + offset).get(stanford));
-                                    if (label.get(TextAnnotation.class).equals("")) {
+                                    if (cleanWord(label.get(TextAnnotation.class)).equals("")) {
                                         stanford = "";
                                         offset -= 1;
                                     }
-                                    while (!match) {
-                                        // System.out.println("Want: " + cleanWord(label.get(TextAnnotation.class)));
-                                        // System.out.println("Got: " + cleanWord(stanford));
+                                    while ((!match) && (cleanWord(label.get(TextAnnotation.class)).length() > 0)) {
+                                        //System.out.println("Want: " + cleanWord(label.get(TextAnnotation.class)));
+                                        //System.out.println("Got: " + cleanWord(stanford));
                                         if (stanford.equals(cleanWord(label.get(TextAnnotation.class)))) {
                                             match = true;
                                             label.set(AnswerAnnotation.class, stanfordClassification);
@@ -163,7 +165,11 @@ public class AltoProcessor {
                                             offset += 1;
                                             if (sentenceCount + offset < stanford_tokens.size()) {
                                                 stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
-                                                stanford = stanford + stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0];
+                                                if (stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0].equals(cleanWord(label.get(TextAnnotation.class)))) {
+                                                    match = true;
+                                                } else {
+                                                    stanford = stanford + stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0];
+                                                }
                                             } else {
                                                 match = true;
                                             }
@@ -176,11 +182,11 @@ public class AltoProcessor {
                             if (!label.get(AnswerAnnotation.class).equals("O")) {
                                 classified += 1;
                                 for (ResultHandler h : handler) {
-                                    System.out.println("label");
-                                    System.out.println(label.get(AltoStringID.class));
-                                    System.out.println(label.get(OriginalContent.class));
-                                    System.out.println(label.get(AnswerAnnotation.class));
-                                    System.out.println("label");
+                                    //System.out.println("label");
+                                    //System.out.println(label.get(AltoStringID.class));
+                                    //System.out.println(label.get(OriginalContent.class));
+                                    //System.out.println(label.get(AnswerAnnotation.class));
+                                    //System.out.println("label");
                                     h.addToken(
                                             label.get(AltoStringID.class),
                                             label.get(OriginalContent.class),

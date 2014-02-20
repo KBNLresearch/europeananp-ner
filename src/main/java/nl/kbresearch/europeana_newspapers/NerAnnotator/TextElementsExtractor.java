@@ -33,51 +33,47 @@ import edu.stanford.nlp.util.CoreMap;
  * @author Willem Jan Faber
  * 
  */
+
 public class TextElementsExtractor {
     private static final Logger logger = Logger.getLogger("TextElementsExtractor.class");
 
-   /**
+    /**
     * @param altoDocument
     * @return a list of text blocks, represented by their tokens.
     */
 
 
-   // CHECK THIS, THERE IS A BUG IN HERE SOMEWHERE!
-   //
-   public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
-       List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
-       NodeList blocks = altoDocument.getElementsByTagName("TextBlock");
-       System.out.println("**BL**");
-       System.out.println(blocks.getLength());
-       for (int i = 0; i<blocks.getLength(); i++) {
-           Node tokens = blocks.item(i);
-           if (tokens.getNodeType() == Node.ELEMENT_NODE) {
-               List<CoreMap> newBlock = new LinkedList<CoreMap>();
-               Element eElement = (Element) tokens;
-               NodeList textLineToken = tokens.getChildNodes();
-               Boolean firstSegmentAfterHyphenation = false;
-               boolean hyphenatedEnd = false;
-
-               for (int j = 0; j<textLineToken.getLength(); j++) {
+    public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
+        List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
+        NodeList blocks = altoDocument.getElementsByTagName("TextBlock");
+        for (int i = 0; i<blocks.getLength(); i++) {
+            Node tokens = blocks.item(i);
+            if (tokens.getNodeType() == Node.ELEMENT_NODE) {
+                List<CoreMap> newBlock = new LinkedList<CoreMap>();
+                Element eElement = (Element) tokens;
+                NodeList textLineToken = tokens.getChildNodes();
+                Boolean firstSegmentAfterHyphenation = false;
+                boolean hyphenatedEnd = false;
+                for (int j = 0; j<textLineToken.getLength(); j++) {
                    Node tl = textLineToken.item(j);
                    if (tl.getNodeType() == Node.ELEMENT_NODE) {
                        Element tll = (Element) tl;
                        NodeList text = tll.getChildNodes();
                        for (int k =0;k<text.getLength(); k++) {
                            if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
-                               Element tx = (Element) text.item(k);
-                               if (tx.getTagName().equalsIgnoreCase("string")) {
+                                Element tx = (Element) text.item(k);
+                                if (tx.getTagName().equalsIgnoreCase("string")) {
                                    newBlock.add(getWordToLabel(tx, firstSegmentAfterHyphenation));
                                    firstSegmentAfterHyphenation = false;
-                               } else if (tx.getTagName().equalsIgnoreCase("hyp")) {
+                                } else if (tx.getTagName().equalsIgnoreCase("hyp")) {
                                    hyphenatedEnd = true;
                                    firstSegmentAfterHyphenation = true;
-                               }
+                                }
+                                newBlock.add(getLineBreak(hyphenatedEnd));
                            }
                        }
-                       newBlock.add(getLineBreak(hyphenatedEnd));
                    }
-               }   
+               }
                result.add(newBlock);
            }
        }
@@ -92,9 +88,12 @@ public class TextElementsExtractor {
 
    private static CoreLabel getWordToLabel(Element token, Boolean wordSegmentAfterHyphenation) {
         boolean continuesNextLine = false;
+
         String cleanedContent;
+
         Node nextNextSibling = null;
         Node nextSiblingNode = null;
+
         Element nextSibling = null;
 
         if (wordSegmentAfterHyphenation) {
@@ -201,6 +200,6 @@ public class TextElementsExtractor {
    }
 
    private static String nullsafe(String attr) {
-           return attr == null ? "" : attr;
+        return attr == null ? "" : attr;
    }
 }
