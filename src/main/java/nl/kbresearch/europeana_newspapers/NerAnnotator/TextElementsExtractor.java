@@ -1,18 +1,13 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.util.CoreMap;
-
-import org.jsoup.helper.StringUtil;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoStringID;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.ContinuationAltoStringID;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.HyphenatedLineBreak;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.OriginalContent;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -23,6 +18,10 @@ import javax.xml.xpath.*;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.util.CoreMap;
+
+import org.jsoup.helper.StringUtil;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 
@@ -45,12 +44,17 @@ public class TextElementsExtractor {
 
     public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
         List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
+
+        // Find each TextBlock and loop over the contents.
         NodeList blocks = altoDocument.getElementsByTagName("TextBlock");
-        for (int i = 0; i<blocks.getLength(); i++) {
+         
+        for (int i = 0; i < blocks.getLength(); i++) {
             Node tokens = blocks.item(i);
             if (tokens.getNodeType() == Node.ELEMENT_NODE) {
                 List<CoreMap> newBlock = new LinkedList<CoreMap>();
                 Element eElement = (Element) tokens;
+
+                // Find the TextLine blocks and loop over them.
                 NodeList textLineToken = tokens.getChildNodes();
                 Boolean firstSegmentAfterHyphenation = false;
                 boolean hyphenatedEnd = false;
@@ -59,10 +63,11 @@ public class TextElementsExtractor {
                    if (tl.getNodeType() == Node.ELEMENT_NODE) {
                        Element tll = (Element) tl;
                        NodeList text = tll.getChildNodes();
-                       for (int k =0;k<text.getLength(); k++) {
+                       for (int k =0; k < text.getLength(); k++) {
                            if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
                                 Element tx = (Element) text.item(k);
                                 if (tx.getTagName().equalsIgnoreCase("string")) {
+                                    // Find only the 'String' nodes, and add them to this block
                                    newBlock.add(getWordToLabel(tx, firstSegmentAfterHyphenation));
                                    firstSegmentAfterHyphenation = false;
                                 } else if (tx.getTagName().equalsIgnoreCase("hyp")) {
@@ -99,35 +104,38 @@ public class TextElementsExtractor {
         if (wordSegmentAfterHyphenation) {
             cleanedContent = null;
         } else {
-            // if the word is at the end of line and hyphenated, pull the
+            // If the word is at the end of line and hyphenated, pull the
             // content from the second for NER into the first token
             String nextWordSuffix = "";
             nextSiblingNode = token.getNextSibling();
 
-            if (nextSiblingNode.getNodeType() == Node.ELEMENT_NODE) {
-                    nextSibling = (Element) nextSiblingNode;
+            if ((nextSiblingNode != null) && (nextSiblingNode.getNodeType() == Node.ELEMENT_NODE)) {
+                nextSibling = (Element) nextSiblingNode;
             }
 
-            if (nextSibling != null
-                            && nextSibling.getTagName().equalsIgnoreCase("hyp")) {
-                    // get first String element of next line, if it exists
-                    Node nextLine = nextSibling.getParentNode().getNextSibling();
-                    if (nextLine != null) {
-                            nextNextSibling = nextLine.getFirstChild();
-                            if (nextNextSibling != null) {
-                                    Element e = (Element) nextNextSibling;
-                                    nextWordSuffix = e.getAttribute("CONTENT");
-                                    if (nextWordSuffix == null)
-                                            nextWordSuffix = "";
-                                    else {
-                                            continuesNextLine = true;
-                                    }
-                            }
+            if ((nextSibling != null) && (nextSibling.getTagName().equalsIgnoreCase("hyp"))) {
+                // Get first String element of next line, if it exists
+                Node nextLine = nextSibling.getParentNode().getNextSibling();
+
+                if (nextLine != null) {
+                    nextNextSibling = nextLine.getFirstChild();
+                    if (nextNextSibling != null) {
+                        Element e = (Element) nextNextSibling;
+
+                        // Get the string's content
+                        nextWordSuffix = e.getAttribute("CONTENT");
+                        if (nextWordSuffix == null) {
+                            nextWordSuffix = "";
+                        } else {
+                            continuesNextLine = true;
+                        }
                     }
+                }
             }
             cleanedContent = cleanWord(token.getAttribute("CONTENT") + nextWordSuffix);
         }
 
+        // Create a label instance and add content/ alto_id
         CoreLabel label = new CoreLabel();
         label.set(OriginalContent.class, token.getAttribute("CONTENT"));
         label.setWord(cleanedContent);
@@ -149,20 +157,24 @@ public class TextElementsExtractor {
 
    private static String calcuateAltoStringID(Element word) {
        Element e = (Element) word;
+
        String parentHpos = nullsafe(e.getAttribute("HPOS"));
        String parentVpos = nullsafe(e.getAttribute("VPOS"));
        String parentWidth = nullsafe(e.getAttribute("WIDTH"));
        String parentHeight = nullsafe(e.getAttribute("HEIGHT"));
+
        String optionalStringHpos = nullsafe(e.getAttribute("HPOS"));
        String optionalStringVpos = nullsafe(e.getAttribute("VPOS"));
        String optionalStringWidth = nullsafe(e.getAttribute("WIDTH"));
        String optionalStringHeight = nullsafe(e.getAttribute("HEIGHT"));
 
        LinkedList<String> params = new LinkedList<String>();
+
        params.add(parentHpos);
        params.add(parentVpos);
        params.add(parentHeight);
        params.add(parentWidth);
+
        params.add(optionalStringHpos);
        params.add(optionalStringVpos);
        params.add(optionalStringHeight);

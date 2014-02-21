@@ -40,7 +40,6 @@ public class AltoProcessor {
         return cleaned;
     }
 
-
     /**
      * @param potentialAltoFilename
      * @param mimeType
@@ -48,15 +47,10 @@ public class AltoProcessor {
      * @param handler
      * @throws IOException
      */
-    public static void handlePotentialAltoFile(final URL potentialAltoFilename,
-            final String mimeType, final Locale lang, final ResultHandler[] handler)
-            throws IOException {
-        if ("text/xml".equalsIgnoreCase(mimeType)
-                || potentialAltoFilename.getFile().endsWith(".xml")) {
-
+    public static void handlePotentialAltoFile(final URL potentialAltoFilename, final String mimeType, final Locale lang, final ResultHandler[] handler) throws IOException {
+        if ("text/xml".equalsIgnoreCase(mimeType) || potentialAltoFilename.getFile().endsWith(".xml")) {
             try {
-                System.out.println("Trying to process ALTO file "
-                        + potentialAltoFilename);
+                System.out.println("Trying to process ALTO file " + potentialAltoFilename);
                 long startTime = System.currentTimeMillis();
                 File f = new File(potentialAltoFilename.getFile());
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -100,9 +94,6 @@ public class AltoProcessor {
                             // [OriginalContent=Rhap TextAnnotation=Rhapsodie AltoStringID=69:3233:45:880:33:850:3242:35:79 ContinuationAltoStringID=69:3274:43:878:1:69:3275:30:70 AnswerAnnotation=O]
                         }
                     }
-
-                    //System.out.println("___");
-                    //System.out.println(text);
 
                     ArrayList<Map<String , String>> stanford_tokens  = new ArrayList<Map<String,String>>();
                     // Classify the output text, using the stanford tokenizer.
@@ -211,7 +202,6 @@ public class AltoProcessor {
                     for (ResultHandler h : handler) {
                         h.stopTextBlock();
                     }
-
                 }
  
                 for (ResultHandler h : handler) {
@@ -223,7 +213,7 @@ public class AltoProcessor {
                         + classified
                         + " out of "
                         + totalNumberOfWords
-                        + "/ a " 
+                        + "/ " 
                         + ((double) classified / (double) totalNumberOfWords) + ") classified");
                 System.out.println("Total millisecs: "
                         + (System.currentTimeMillis() - startTime));
@@ -243,3 +233,4 @@ public class AltoProcessor {
             }
         }
     }
+    
