@@ -158,7 +158,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
             Element childOfTheChild = altoDocument.createElement("NamedEntityTag");
             childOfTheChild.setAttribute("TYPE", (String) s.get("label"));
             childOfTheChild.setAttribute("LABEL", (String) s.get("word"));
-            childOfTheChild.setAttribute("ID", (String) s.get("id"));
+            childOfTheChild.setAttribute("ID", "Tag" + (String) s.get("id"));
             child.appendChild(childOfTheChild);
         }
 
@@ -185,6 +185,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
 
             // Reformat output, because of additional nodes added.
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.transform(domSource, result);
 
             // Store results to file.
