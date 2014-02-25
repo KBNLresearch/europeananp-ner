@@ -186,6 +186,9 @@ public class Alto2_1ResultHandler implements ResultHandler {
             // Reformat output, because of additional nodes added.
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            // Set the right output encoding
+            transformer.setOutputProperty("encoding", "ISO-8859-1");
+            // Transform the input document to output
             transformer.transform(domSource, result);
 
             // Store results to file.
