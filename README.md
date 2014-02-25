@@ -24,3 +24,12 @@ Help:
 Print result to stdout for German language:
 
      java -Xmx800m -jar NerAnnotator.jar -c mets -f alto -l de -m de=/path/to/trainingmodels/german/hgc_175m_600.crf.ser.gz -n 2 /path/to/mets/AZ_19260425/AZ_19260425_mets.xml
+
+Trainin classifiers:
+
+    java  -Xmx800m -cp NerAnnotater-0.0.1-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen.prop
+
+    The austen.prop file (basic version) can be found here:
+
+    http://nlp.stanford.edu/downloads/ner-example/austen.prop
+
