@@ -86,22 +86,20 @@ public class Alto2_1ResultHandler implements ResultHandler {
             if ((label.equals("B-ORG") || (label.equals("I-ORG")))) {
                 label = "organization";
             }
-
+            if ((label.equals("B-MISC") || (label.equals("I-MISC")))) {
+                label = "miscellaneous";
+            }
 
             // Find the alto node with the corresponding wordid.
             // Needed for addint the TAGREFS attribute to the ALTO_string.
             Element domElement = TextElementsExtractor.findAltoElementByStringID(altoDocument, wordid);
 
-            if (this.prevIsNamed) {
+            if ((this.prevIsNamed) && (this.prevType.equals(label))) {
                 // This is a continuation of a label, eg. J.A de Vries..
                 // prevIsNamed indicates that the previous word was also a NE
-                if (!this.prevWord.equals("")) {
-                    if (this.prevType.equals(label)) {
-                        // Concatenation string to generate one label.
-                        word = this.prevWord + word;
-                        this.Entity_list.remove(this.Entity_list.size()-1);
-                    }
-                }
+                // Concatenation string to generate one label.
+                word = this.prevWord + word;
+                this.Entity_list.remove(this.Entity_list.size()-1);
 
                 this.prevWord = word + " ";
                 this.prevType = label;
@@ -149,7 +147,6 @@ public class Alto2_1ResultHandler implements ResultHandler {
 
     @Override
     public void stopDocument() {
-
         // Create xml:
         // <Tags><NamedEntityTag ID="Tag7" TYPE="Person" LABEL="James M Bigstaff "/></Tags>
         // Entity_list is populated with known NE's
