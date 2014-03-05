@@ -43,113 +43,64 @@ public class TextElementsExtractor {
 
 
     public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
+        // Still ugly, but functional, needs rewrite..
+        //
+        
         List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
-
-        // Find each TextBlock and loop over the contents.
         NodeList blocks = altoDocument.getElementsByTagName("TextBlock");
-         
         for (int i = 0; i < blocks.getLength(); i++) {
+            // Loop over TextBlock
             Node tokens = blocks.item(i);
             if (tokens.getNodeType() == Node.ELEMENT_NODE) {
                 List<CoreMap> newBlock = new LinkedList<CoreMap>();
                 Element eElement = (Element) tokens;
-
-                // Find the TextLine blocks and loop over them.
                 NodeList textLineToken = tokens.getChildNodes();
                 Boolean firstSegmentAfterHyphenation = false;
                 boolean hyphenatedEnd = false;
                 for (int j = 0; j<textLineToken.getLength(); j++) {
-                   Node tl = textLineToken.item(j);
-                   if (tl.getNodeType() == Node.ELEMENT_NODE) {
-                       Element tll = (Element) tl;
-                       NodeList text = tll.getChildNodes();
-                       for (int k =0; k < text.getLength(); k++) {
-                           if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
+                    // Loop over TextLine
+                    Node tl = textLineToken.item(j);
+                    if (tl.getNodeType() == Node.ELEMENT_NODE) {
+                        Element tll = (Element) tl;
+                        NodeList text = tll.getChildNodes();
+                        for (int k =0; k < text.getLength(); k++) {
+                            // Loop over String/SP/HYP
+                            if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
                                 Element tx = (Element) text.item(k);
                                 if (tx.getTagName().equalsIgnoreCase("string")) {
-                                    // Find only the 'String' nodes, and add them to this block
-                                   newBlock.add(getWordToLabel(tx, firstSegmentAfterHyphenation));
-                                   firstSegmentAfterHyphenation = false;
+                                    newBlock.add(getWordToLabel(tx)); 
                                 } else if (tx.getTagName().equalsIgnoreCase("hyp")) {
                                    hyphenatedEnd = true;
-                                   firstSegmentAfterHyphenation = true;
                                 }
                                 newBlock.add(getLineBreak(hyphenatedEnd));
-                           }
-                       }
-                   }
-               }
-               result.add(newBlock);
-           }
-       }
-       return result;
-   }
-
-   private static CoreMap getLineBreak(boolean hyphenatedEnd) {
-       CoreMap lineBreak = new CoreLabel();
-       lineBreak.set(HyphenatedLineBreak.class, hyphenatedEnd);
-       return lineBreak;
-   }
-
-   private static CoreLabel getWordToLabel(Element token, Boolean wordSegmentAfterHyphenation) {
-        boolean continuesNextLine = false;
-
-        String cleanedContent;
-
-        Node nextNextSibling = null;
-        Node nextSiblingNode = null;
-
-        Element nextSibling = null;
-
-        if (wordSegmentAfterHyphenation) {
-            cleanedContent = null;
-        } else {
-            // If the word is at the end of line and hyphenated, pull the
-            // content from the second for NER into the first token
-            String nextWordSuffix = "";
-            nextSiblingNode = token.getNextSibling();
-
-            if ((nextSiblingNode != null) && (nextSiblingNode.getNodeType() == Node.ELEMENT_NODE)) {
-                nextSibling = (Element) nextSiblingNode;
-            }
-
-            if ((nextSibling != null) && (nextSibling.getTagName().equalsIgnoreCase("hyp"))) {
-                // Get first String element of next line, if it exists
-                Node nextLine = nextSibling.getParentNode().getNextSibling();
-
-                if (nextLine != null) {
-                    nextNextSibling = nextLine.getFirstChild();
-                    if (nextNextSibling != null) {
-                        Element e = (Element) nextNextSibling;
-
-                        // Get the string's content
-                        nextWordSuffix = e.getAttribute("CONTENT");
-                        if (nextWordSuffix == null) {
-                            nextWordSuffix = "";
-                        } else {
-                            continuesNextLine = true;
+                            }
                         }
-                    }
-                }
-            }
-            cleanedContent = cleanWord(token.getAttribute("CONTENT") + nextWordSuffix);
-        }
+                    } 
+                } // TextLine
+                result.add(newBlock);
+            } // TextBlock
+        } // Alto
+        return result;
+    }
 
+    private static CoreMap getLineBreak(boolean hyphenatedEnd) {
+        CoreMap lineBreak = new CoreLabel();
+        lineBreak.set(HyphenatedLineBreak.class, hyphenatedEnd);
+        return lineBreak;
+    }
+
+    private static CoreLabel getWordToLabel(Element token) {
         // Create a label instance and add content/ alto_id
+        String Content = token.getAttribute("CONTENT");
+        String cleanedContent = cleanWord(Content);
         CoreLabel label = new CoreLabel();
-        label.set(OriginalContent.class, token.getAttribute("CONTENT"));
+        label.set(OriginalContent.class, Content);
         label.setWord(cleanedContent);
         label.set(AltoStringID.class, calcuateAltoStringID(token));
-
-        if (continuesNextLine) {
-            Element e = (Element) nextNextSibling;
-            label.set(ContinuationAltoStringID.class, calcuateAltoStringID(e));
-        }
-
         return label;
-   }
+    }
 
-   private static String cleanWord(String attr) {
+    private static String cleanWord(String attr) {
         String cleaned = attr.replace(".", "");
         cleaned = cleaned.replace(",", "");
         return cleaned;
@@ -183,32 +134,31 @@ public class TextElementsExtractor {
        return StringUtil.join(params, ":");
    }
 
-   public static Element findAltoElementByStringID(Document altoDocument, String id) {
-       if (id == null || id.isEmpty()) {
-           logger.warning("Trying to find element in ALTO document , with empty or null id");
-           return null;
-       }
+    public static Element findAltoElementByStringID(Document altoDocument, String id) {
+        if (id == null || id.isEmpty()) {
+            logger.warning("Trying to find element in ALTO document , with empty or null id");
+            return null;
+        }
 
-       if (altoDocument == null) {
-           logger.warning("Trying to find an element in an ALTO document, which is null");
-           return null;
-       }
+        if (altoDocument == null) {
+            logger.warning("Trying to find an element in an ALTO document, which is null");
+            return null;
+        }
 
-       String[] split = id.split(":");
-       String expression = "//String[@HPOS='" + split[0] + "'][@VPOS='" + split[1] + "'][@HEIGHT='" + split[2] + "'][@WIDTH='" + split[3] + "']"; 
-       XPath xpath = XPathFactory.newInstance().newXPath();
+        String[] split = id.split(":");
+        String expression = "//String[@HPOS='" + split[0] + "'][@VPOS='" + split[1] + "'][@HEIGHT='" + split[2] + "'][@WIDTH='" + split[3] + "']"; 
+        XPath xpath = XPathFactory.newInstance().newXPath();
 
-       try {
-           NodeList nodes = (NodeList) xpath.evaluate(expression, altoDocument, XPathConstants.NODESET);
-           Element ep = (Element) nodes.item(0);
-           if (ep !=null) {
-               return(ep);
-           }
-       } catch (XPathExpressionException e) { 
-           e.printStackTrace(); 
-       }
-
-       return null;
+        try {
+            NodeList nodes = (NodeList) xpath.evaluate(expression, altoDocument, XPathConstants.NODESET);
+            Element ep = (Element) nodes.item(0);
+            if (ep !=null) {
+                return(ep);
+            }
+        } catch (XPathExpressionException e) { 
+            e.printStackTrace(); 
+        }
+        return null;
    }
 
    private static String nullsafe(String attr) {
