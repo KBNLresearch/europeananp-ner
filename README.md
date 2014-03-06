@@ -4,7 +4,7 @@ Named Entity Recognition Tool for <br>[Europeana Newspapers](http://www.european
 This tool takes container documents ([MPEG21-DIDL](http://xml.coverpages.org/mpeg21-didl.html), [METS](http://www.loc.gov/standards/mets/)),
 parses out all references to [ALTO](http://www.loc.gov/standards/alto/) files and tries to find named entities in the pages
 (with most models: Location, Person, Organisation, Misc). The aim is to keep the physical location on the page available through the whole process
-to be able to highlight the results in a viewer.
+to be able to highlight the results in a viewer. Read more about it on the KBNLresearch [blog](http://researchkb.wordpress.com/2014/03/03/ner-newspapers/).
 
 Currently, [Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is used for tagging.
 
@@ -24,3 +24,12 @@ Help:
 Print result to stdout for German language:
 
      java -Xmx800m -jar NerAnnotator.jar -c mets -f alto -l de -m de=/path/to/trainingmodels/german/hgc_175m_600.crf.ser.gz -n 2 /path/to/mets/AZ_19260425/AZ_19260425_mets.xml
+
+Training classifiers:
+
+    java  -Xmx800m -cp NerAnnotator-0.0.1-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen.prop
+
+The austen.prop file (basic version) can be found here:
+
+    http://nlp.stanford.edu/downloads/ner-example/austen.prop
+
