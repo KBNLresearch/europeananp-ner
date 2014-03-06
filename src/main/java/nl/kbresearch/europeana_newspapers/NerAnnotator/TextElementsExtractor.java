@@ -1,29 +1,23 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.util.CoreMap;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoStringID;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.ContinuationAltoStringID;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.HyphenatedLineBreak;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.OriginalContent;
+import org.jsoup.helper.StringUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-import javax.xml.xpath.*;
-
-import org.xml.sax.*;
-import org.w3c.dom.*;
-
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.util.CoreMap;
-
-import org.jsoup.helper.StringUtil;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.util.CoreMap;
 
 /**
  * Converter from ALTO elements to tokens for Stanford NER
@@ -136,7 +130,7 @@ public class TextElementsExtractor {
 
     public static Element findAltoElementByStringID(Document altoDocument, String id) {
         if (id == null || id.isEmpty()) {
-            logger.warning("Trying to find element in ALTO document , with empty or null id");
+            logger.warning("Trying to find element in ALTO document, with empty or null id");
             return null;
         }
 

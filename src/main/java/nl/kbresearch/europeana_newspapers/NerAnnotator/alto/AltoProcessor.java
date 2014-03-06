@@ -1,25 +1,20 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.alto;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
-
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.OriginalTextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-
+import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -75,7 +70,7 @@ public class AltoProcessor {
             int totalNumberOfWords = 0;
             int classified = 0;
 
-            Map<String,String> awnser = new HashMap<String, String>();
+            Map<String,String> answer = new HashMap<String, String>();
 
             for (List<CoreMap> block : coreMapElements) {
                 int sentenceCount = 0;
@@ -86,7 +81,7 @@ public class AltoProcessor {
                     h.startTextBlock();
                 }
                 
-                // Loop over the alto to extract text elements. Make one long string (sentance).
+                // Loop over the alto to extract text elements. Make one long string (sentence).
                 List<CoreMap> classify_alto = classifier_alto.classify(block);
                 String text = "";
 
@@ -105,16 +100,16 @@ public class AltoProcessor {
                 List<List<CoreLabel>> out = classifier_text.classify(text);
                 Map<String, String> map = new HashMap<String, String>();
 
-                // Loop over the stanford tokenzied words to map them to the alto later on.
+                // Loop over the stanford tokenized words to map them to the alto later on.
                 for (List<CoreLabel> sentence : out) {
                     for (CoreLabel label: sentence) {
                         if (label.get(HyphenatedLineBreak.class) == null) {
                             StringTokenizer st = new StringTokenizer(label.get(OriginalTextAnnotation.class));
                             // Sometimes the stanford tokenizer does not cut on whitespace (with numbers).
                             while (st.hasMoreTokens()) {
-                                awnser = new HashMap<String, String>();
-                                awnser.put(st.nextToken(), label.get(AnswerAnnotation.class));
-                                stanford_tokens.add(offsetCount, awnser);
+                                answer = new HashMap<String, String>();
+                                answer.put(st.nextToken(), label.get(AnswerAnnotation.class));
+                                stanford_tokens.add(offsetCount, answer);
                                 offsetCount += 1;
                             }
                             // label :

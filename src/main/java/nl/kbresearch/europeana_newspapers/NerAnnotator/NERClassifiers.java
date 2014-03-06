@@ -25,7 +25,7 @@ public class NERClassifiers {
 
     /**
      * @param langModels
-     *            filenames of the classifier model for a language. E.g. de ->
+     *            file names of the classifier model for a language. E.g. de ->
      *            /path/to/file/model.gz
      */
     public static void setLanguageModels(final Properties langModels) {

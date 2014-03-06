@@ -2,16 +2,14 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
+import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.util.*;
 import java.util.concurrent.*;
-
-import org.apache.commons.cli.*;
 
 /**
  * Command line interface of application
@@ -230,7 +228,7 @@ public class App {
                         helpFormatter.printHelp(
                                         "java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]",
                                         options);
-                        System.out.println("\nIf there are no input files specified, a list of filenames is read from stdin.");
+                        System.out.println("\nIf there are no input files specified, a list of file names is read from stdin.");
                 }
         }
 
