@@ -27,7 +27,7 @@ Print result to stdout for German language:
 
 Training classifiers:
 
-    java  -Xmx800m -cp NerAnnotater-0.0.1-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen.prop
+    java  -Xmx800m -cp NerAnnotator-0.0.1-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen.prop
 
 The austen.prop file (basic version) can be found here:
 
