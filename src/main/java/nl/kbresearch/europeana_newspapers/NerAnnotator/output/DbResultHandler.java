@@ -2,8 +2,7 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.App;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
-
-import org.w3c.dom.Document;
+import org.jsoup.nodes.Document;
 
 import java.sql.*;
 
