@@ -1,26 +1,24 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.ArrayList;
-
-import java.util.HashMap;
-import java.util.Map;
-
-
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Entities;
+import java.io.*;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
- * @author rene
+ * @author Willem Jan Faber
  *
  */
 
@@ -30,9 +28,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
     private String name;
     private PrintWriter outputFile;
     private Document altoDocument;
-    //private List<String> Entity_list = new ArrayList<String>();
     private List<HashMap> Entity_list = new ArrayList();
-    // List<Map> list = new ArrayList();
 
     String continuationId = null;
     String continuationLabel = null;
@@ -51,33 +47,22 @@ public class Alto2_1ResultHandler implements ResultHandler {
     public Alto2_1ResultHandler(final ContainerContext context, final String name) {
         this.context = context;
         this.name = name;
-
     }
+
     @Override
     public void startDocument() {
-
-
     }
 
     @Override
     public void startTextBlock() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void newLine(boolean hyphenated) {
-        // TODO Auto-generated method stub
-
     }
 
-
-
-    ///  TODO Add alto2_1 handler here..
     @Override
-    public void addToken(String wordid, String originalContent, String word,
-                         String label, String continuationid) {
-
+    public void addToken(String wordid, String originalContent, String word, String label, String continuationid) {
         HashMap mMap = new HashMap();
 
         // try to find out if this is a continuation of the previous word
@@ -91,6 +76,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
         }
 
         if (label != null) {
+            // Reformat the label to a more readable form.
             if ((label.equals("B-LOC")) || (label.equals("I-LOC"))) {
                 label = "location";
             }
@@ -100,30 +86,50 @@ public class Alto2_1ResultHandler implements ResultHandler {
             if ((label.equals("B-ORG") || (label.equals("I-ORG")))) {
                 label = "organization";
             }
+            if ((label.equals("B-MISC") || (label.equals("I-MISC")))) {
+                label = "miscellaneous";
+            }
 
+            // Find the alto node with the corresponding wordid.
+            // Needed for addint the TAGREFS attribute to the ALTO_string.
             Element domElement = TextElementsExtractor.findAltoElementByStringID(altoDocument, wordid);
 
-            if (this.prevIsNamed) {
-                if (!this.prevWord.equals("")) {
-                    if (this.prevType.equals(label)) {
-                        // Concatenation string to generate one label.
-                        word = this.prevWord + word;
-                        this.Entity_list.remove(this.Entity_list.size()-1);
-                    }
-                }
+            if ((this.prevIsNamed) && (this.prevType.equals(label))) {
+                // This is a continuation of a label, eg. J.A de Vries..
+                // prevIsNamed indicates that the previous word was also a NE
+                // Concatenation string to generate one label.
+                word = this.prevWord + word;
+                this.Entity_list.remove(this.Entity_list.size()-1);
+
                 this.prevWord = word + " ";
                 this.prevType = label;
 
-                domElement.attr("TAGREFS", "Tag" + String.valueOf(this.tagCounter-1));
-                mMap.put("id", String.valueOf(this.tagCounter-1));
+                // Add the TAGREFS attribute to the corresponding String in the alto.
+                if (this.tagCounter > 0) {
+                    // Prevent negative tag numbers :)
+                    domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter-1));
+                    mMap.put("id", String.valueOf(this.tagCounter-1));
+                } else {
+                    domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
+                    mMap.put("id", String.valueOf(this.tagCounter));
+                }
+
+                // Create mapping for the TAGS header part of alto2_1
                 mMap.put("label", label);
                 mMap.put("word", word);
+
+                // Add tagref mapping to the list.
                 this.Entity_list.add(mMap);
             } else {
+                // Add the TAGREFS attribute to the corresponding String in the alto.
+                domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
+
+                // Create mapping for the TAGS header part of alto2_1
                 mMap.put("id", String.valueOf(this.tagCounter));
-                domElement.attr("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
                 mMap.put("label", label);
                 mMap.put("word", word);
+
+                // Add tagref mapping to the list.
                 this.Entity_list.add(mMap);
                 this.tagCounter += 1;
                 this.prevWord = word + " ";
@@ -132,60 +138,78 @@ public class Alto2_1ResultHandler implements ResultHandler {
             this.prevIsNamed = true;
         } else {
             this.prevIsNamed = false;
-
         }
-
     }
 
     @Override
     public void stopTextBlock() {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void stopDocument() {
+        // Create xml:
+        // <Tags><NamedEntityTag ID="Tag7" TYPE="Person" LABEL="James M Bigstaff "/></Tags>
+        // Entity_list is populated with known NE's
+        Element child = altoDocument.createElement("Tags");
+        for (HashMap s: this.Entity_list) {
+            Element childOfTheChild = altoDocument.createElement("NamedEntityTag");
+            childOfTheChild.setAttribute("TYPE", (String) s.get("label"));
+            childOfTheChild.setAttribute("LABEL", (String) s.get("word"));
+            childOfTheChild.setAttribute("ID", "Tag" + (String) s.get("id"));
+            child.appendChild(childOfTheChild);
+        }
+
+        // TODO Fix the entry point at which the child is inserted into the Alto.
+        altoDocument.getDocumentElement().appendChild(child);
+
+        // Rewrite alto header to match new 2_1-draft
+        NodeList alto = altoDocument.getElementsByTagName("alto");
+        Element alto_root = (Element) alto.item(0);
+        alto_root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        alto_root.setAttribute("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
+        alto_root.setAttribute("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
+
         try {
-
-            Element alto = altoDocument.select("alto").first();
-            alto.attr("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
-            alto.attr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            alto.attr("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
-            // create the alto tags section.
-            altoDocument.select("Styles").after("<Tags>");
-            Element e = altoDocument.select("Tags").first();
-
-            // add the tags in the order that where detected.
-            for (HashMap s: this.Entity_list) {
-                Element tag = e.appendElement("NamedEntityTag");
-                tag.attr("id", "Tag" + (String)s.get("id"));
-                tag.attr("type", (String)s.get("label"));
-                tag.attr("label", (String)s.get("word"));
-            }
-
+            // Output file for alto2_1 format.
             outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
-            outputFile.print(altoDocument.toString().replaceAll("></namedentitytag>", "/>"));
+
+            DOMSource domSource = new DOMSource(altoDocument);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+
+            // Reformat output, because of additional nodes added.
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            // Set the right output encoding
+            transformer.setOutputProperty("encoding", "ISO-8859-1");
+            // Transform the input document to output
+            transformer.transform(domSource, result);
+
+            // Store results to file.
+            outputFile.print(writer.toString());
             outputFile.flush();
             outputFile.close();
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not write to Alto XML file", e);
-        }
+
+       } catch(TransformerException e) {
+            e.printStackTrace();
+       } catch (IOException e) {
+            e.printStackTrace();
+       }
     }
 
     @Override
     public void close() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void globalShutdown() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setAltoDocument(Document doc) {
-        altoDocument=doc;
-
+        altoDocument = doc;
     }
 }
