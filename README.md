@@ -10,7 +10,8 @@ Currently, [Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is
 
 At the moment, the following output formats are implemented:
 
-* ALTO-with-Alternatives (this will be changed to valid [ALTO 2.1](https://github.com/altoxml/documentation/wiki/v2.1-Draft) once officially signed-off)
+* ALTO-with-Alternatives
+* ALTO [2.1](https://github.com/altoxml/documentation/wiki/v2.1-Draft)
 * HTML
 * CSV (comma separated values)
 * SQL
@@ -27,9 +28,25 @@ Print result to stdout for German language:
 
 Training classifiers:
 
-    java  -Xmx800m -cp NerAnnotator-0.0.1-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen.prop
+    To be able to compare your results with a base-line we've provided some test files located in the 'test-files' directory.
+    Running the following command :
+
+        java -Xmx5G -cp target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop test-files/austen_dutch.prop
+
+    Should result in a file called 'eunews_dutch.crf.gz' located in the directory 'test-files', the size of the classifier should be around 1Mb.
+
+    To verify the NER software use the created classifier to process the provided example file.
+
+        java -jar target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar -c alto -d out -f alto -l nl -m nl=./test-files/eunews_dutch.crf.gz -n 8 ./test-files/dutch_alto.xml
+
+    Compare the output with te provided example output.
+
+        diff out/dutch_alto.xml-annotations/dutch_alto.xml.alto.xml ./test-files/dutch_alto_processed_output.xml
+        5972d5971
+        < <!-- urn=ddd:000014177:mpeg21:p001:alto -->
+
+    This same prcedure can be done with the German example files.
 
 The austen.prop file (basic version) can be found here:
 
     http://nlp.stanford.edu/downloads/ner-example/austen.prop
-
