@@ -37,9 +37,6 @@ public class TextElementsExtractor {
 
 
     public static List<List<CoreMap>> getCoreMapElements(Document altoDocument) {
-        // Still ugly, but functional, needs rewrite..
-        //
-        
         List<List<CoreMap>> result = new LinkedList<List<CoreMap>>();
         NodeList blocks = altoDocument.getElementsByTagName("TextBlock");
         for (int i = 0; i < blocks.getLength(); i++) {
@@ -51,6 +48,7 @@ public class TextElementsExtractor {
                 NodeList textLineToken = tokens.getChildNodes();
                 Boolean firstSegmentAfterHyphenation = false;
                 boolean hyphenatedEnd = false;
+                Element hyphenWord = null;
                 for (int j = 0; j<textLineToken.getLength(); j++) {
                     // Loop over TextLine
                     Node tl = textLineToken.item(j);
@@ -62,7 +60,28 @@ public class TextElementsExtractor {
                             if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
                                 Element tx = (Element) text.item(k);
                                 if (tx.getTagName().equalsIgnoreCase("string")) {
-                                    newBlock.add(getWordToLabel(tx)); 
+                                    if (hyphenatedEnd) {
+                                        hyphenatedEnd = false;
+                                        // Join the previous part of the word with the current
+                                        // newBlock.add(getWordToLabel(hyphenWord,
+                                        //             hyphenWord.getAttribute("CONTENT") + 
+                                         //            tx.getAttribute("CONTENT"))); 
+                                        newBlock.add(getWordToLabel(tx,
+                                                    hyphenWord.getAttribute("CONTENT") + 
+                                                    tx.getAttribute("CONTENT"))); 
+                                    } else {
+                                        // If the next block is an hypen, 
+                                        // we might not want to add the block here..
+                                        if (isNextHyphen(textLineToken, j)) {
+                                            newBlock.add(getWordToLabel(tx, "")); 
+                                            hyphenatedEnd = false;
+                                            hyphenWord = tx;
+                                        } else {
+                                            newBlock.add(getWordToLabel(tx, "")); 
+                                            hyphenatedEnd = false;
+                                            hyphenWord = tx;
+                                        }
+                                    }
                                 } else if (tx.getTagName().equalsIgnoreCase("hyp")) {
                                    hyphenatedEnd = true;
                                 }
@@ -77,20 +96,51 @@ public class TextElementsExtractor {
         return result;
     }
 
+    private static boolean isNextHyphen(NodeList textLineToken, int a) {
+        for (int j = a; j<textLineToken.getLength(); j++) {
+            // Loop over TextLine
+            Node tl = textLineToken.item(j);
+            if (tl.getNodeType() == Node.ELEMENT_NODE) {
+                Element tll = (Element) tl;
+                NodeList text = tll.getChildNodes();
+                for (int k =0; k < text.getLength(); k++) {
+                    // Loop over String/SP/HYP
+                    if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
+                        Element tx = (Element) text.item(k);
+                        if (tx.getTagName().equalsIgnoreCase("hyp")) {
+                            return true;
+                        }
+                    }
+                }
+            } 
+        }
+        return false;
+    }
+
     private static CoreMap getLineBreak(boolean hyphenatedEnd) {
         CoreMap lineBreak = new CoreLabel();
         lineBreak.set(HyphenatedLineBreak.class, hyphenatedEnd);
         return lineBreak;
     }
 
-    private static CoreLabel getWordToLabel(Element token) {
+    private static CoreLabel getWordToLabel(Element token, String completeWord) {
         // Create a label instance and add content/ alto_id
-        String Content = token.getAttribute("CONTENT");
-        String cleanedContent = cleanWord(Content);
+        // If the word was hypenated, use the completeWord to create a label
         CoreLabel label = new CoreLabel();
-        label.set(OriginalContent.class, Content);
-        label.setWord(cleanedContent);
-        label.set(AltoStringID.class, calcuateAltoStringID(token));
+
+        if (completeWord.equalsIgnoreCase("")) {
+            String Content = token.getAttribute("CONTENT");
+            String cleanedContent = cleanWord(Content);
+            label.set(OriginalContent.class, Content);
+            label.setWord(cleanedContent);
+            label.set(AltoStringID.class, calcuateAltoStringID(token));
+        } else {
+            String Content = completeWord;
+            String cleanedContent = cleanWord(Content);
+            label.set(OriginalContent.class, Content);
+            label.setWord(cleanedContent);
+            label.set(AltoStringID.class, calcuateAltoStringID(token));
+        }
         return label;
     }
 
