@@ -46,9 +46,9 @@ public class TextElementsExtractor {
                 List<CoreMap> newBlock = new LinkedList<CoreMap>();
                 Element eElement = (Element) tokens;
                 NodeList textLineToken = tokens.getChildNodes();
-                Boolean firstSegmentAfterHyphenation = false;
                 boolean hyphenatedEnd = false;
                 Element hyphenWord = null;
+
                 for (int j = 0; j<textLineToken.getLength(); j++) {
                     // Loop over TextLine
                     Node tl = textLineToken.item(j);
@@ -62,18 +62,19 @@ public class TextElementsExtractor {
                                 if (tx.getTagName().equalsIgnoreCase("string")) {
                                     if (hyphenatedEnd) {
                                         hyphenatedEnd = false;
-                                        // Join the previous part of the word with the current
-                                        // newBlock.add(getWordToLabel(hyphenWord,
-                                        //             hyphenWord.getAttribute("CONTENT") + 
-                                         //            tx.getAttribute("CONTENT"))); 
+                                        // Join the previous part of the word with the current word
+                                        // Hyphe-nation -> Hyphenation
                                         newBlock.add(getWordToLabel(tx,
                                                     hyphenWord.getAttribute("CONTENT") + 
                                                     tx.getAttribute("CONTENT"))); 
                                     } else {
-                                        // If the next block is an hypen, 
-                                        // we might not want to add the block here..
-                                        if (isNextHyphen(textLineToken, j)) {
-                                            newBlock.add(getWordToLabel(tx, "")); 
+                                        if (isNextHyphen(text, k + 1)) {
+                                            // If the next item is a hypen, 
+                                            // get next word-part, and join the strings
+                                            newBlock.add(getWordToLabel(tx, 
+                                                        tx.getAttribute("CONTENT") + 
+                                                        lookupNextWord(textLineToken, 
+                                                        j + 1)));
                                             hyphenatedEnd = false;
                                             hyphenWord = tx;
                                         } else {
@@ -96,8 +97,8 @@ public class TextElementsExtractor {
         return result;
     }
 
-    private static boolean isNextHyphen(NodeList textLineToken, int a) {
-        for (int j = a; j<textLineToken.getLength(); j++) {
+    private static String lookupNextWord(NodeList textLineToken, int offset) {
+        for (int j = offset; j<textLineToken.getLength(); j++) {
             // Loop over TextLine
             Node tl = textLineToken.item(j);
             if (tl.getNodeType() == Node.ELEMENT_NODE) {
@@ -107,12 +108,29 @@ public class TextElementsExtractor {
                     // Loop over String/SP/HYP
                     if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
                         Element tx = (Element) text.item(k);
-                        if (tx.getTagName().equalsIgnoreCase("hyp")) {
-                            return true;
+                        if (tx.getTagName().equalsIgnoreCase("string")) {
+                            return tx.getAttribute("CONTENT");
                         }
                     }
                 }
-            } 
+            }
+        }
+        return "";
+    }
+
+
+    private static boolean isNextHyphen(NodeList text, int offset) {
+        // Loop over the next item in the TextLine block,
+        // and return true if the next item is a hyphen
+        for (int k = offset; k < text.getLength(); k++) {
+            if (text.item(k).getNodeType() == Node.ELEMENT_NODE) {
+                Element tx = (Element) text.item(k);
+                if (tx.getTagName().equalsIgnoreCase("string")) {
+                        return false;
+                } else if (tx.getTagName().equalsIgnoreCase("hyp")) {
+                        return true;
+                }
+            }
         }
         return false;
     }
