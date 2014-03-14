@@ -66,13 +66,13 @@ public class Alto2_1ResultHandler implements ResultHandler {
         HashMap mMap = new HashMap();
 
         // try to find out if this is a continuation of the previous word
-        if (continuationId != null) {
-            this.continuationId = continuationId;
+        if (continuationid != null) {
+            this.continuationId = continuationid;
             this.continuationLabel = label;
-        }
+         }
 
         if (wordid.equals(this.continuationId)) {
-            label = continuationLabel;
+            label = this.continuationLabel;
         }
 
         if (label != null) {
@@ -98,17 +98,21 @@ public class Alto2_1ResultHandler implements ResultHandler {
                 // This is a continuation of a label, eg. J.A de Vries..
                 // prevIsNamed indicates that the previous word was also a NE
                 // Concatenation string to generate one label.
-                word = this.prevWord + word;
-                this.Entity_list.remove(this.Entity_list.size()-1);
+                
+                if (!word.equalsIgnoreCase(this.prevWord.trim())) { 
+                    // Don't double label names on a hypened word.
+                    word = this.prevWord + word;
+                } 
 
+                this.Entity_list.remove(this.Entity_list.size()-1);
                 this.prevWord = word + " ";
                 this.prevType = label;
 
                 // Add the TAGREFS attribute to the corresponding String in the alto.
                 if (this.tagCounter > 0) {
                     // Prevent negative tag numbers :)
-                    domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter-1));
-                    mMap.put("id", String.valueOf(this.tagCounter-1));
+                    domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter - 1));
+                    mMap.put("id", String.valueOf(this.tagCounter - 1));
                 } else {
                     domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
                     mMap.put("id", String.valueOf(this.tagCounter));
@@ -159,10 +163,8 @@ public class Alto2_1ResultHandler implements ResultHandler {
             child.appendChild(childOfTheChild);
         }
 
-        // TODO Fix the entry point at which the child is inserted into the Alto.
         altoDocument.getDocumentElement().appendChild(child);
 
-        // Rewrite alto header to match new 2_1-draft
         NodeList alto = altoDocument.getElementsByTagName("alto");
         Element alto_root = (Element) alto.item(0);
         alto_root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
