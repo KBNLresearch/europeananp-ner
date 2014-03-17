@@ -34,6 +34,8 @@ import javax.xml.xpath.XPathFactory;
 
 public class TextElementsExtractor {
     private static final Logger logger = Logger.getLogger("TextElementsExtractor.class");
+
+
     /**
     * @param altoDocument
     * @return a list of text blocks, represented by their tokens.
@@ -74,10 +76,17 @@ public class TextElementsExtractor {
                                             // If the next item is a hypen, 
                                             // get next word-part, and join the strings
                                             Element nextElement = lookupNextWord(textLineToken, j);
-                                            newBlock.add(getWordToLabel(textLineElement, 
-                                                        textLineElement.getAttribute("CONTENT")
-                                                        + nextElement.getAttribute("CONTENT"),
-                                                        nextElement));
+
+                                            if (textLineElement != null && 
+                                                    textLineElement.getAttribute("CONTENT") != null &&
+                                                    nextElement != null &&
+                                                    nextElement.getAttribute("CONTENT") != null) {
+
+                                                newBlock.add(getWordToLabel(textLineElement, 
+                                                             textLineElement.getAttribute("CONTENT") + nextElement.getAttribute("CONTENT"),
+                                                             nextElement));
+
+                                            }
                                             hyphenatedEnd = false;
                                             hyphenWord = textLineElement;
                                         } else {
