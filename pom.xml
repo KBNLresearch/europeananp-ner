@@ -79,7 +79,7 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.7.2</version>
 		</dependency>
-               <dependency>
+        <dependency>
 			<groupId>org.dspace</groupId>
 			<artifactId>mets</artifactId>
 			<version>1.5.2</version>

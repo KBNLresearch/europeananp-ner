@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Read the output from the stanford tagger,
-# and print the named entities only.
+# and print only the named entities.
 
 #  Copyright (c) 2013 Koninklijke Bibliotheek
 #
@@ -17,7 +17,6 @@
 #  You should have received a copy of the European Union Public Licence
 #  along with this program. If not, see
 #  http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1
-
 
 import os
 import sys

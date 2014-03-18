@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-# Open an ALTO file an print the text to stdout.
-# This is usefull to compare the output of stanford-vanille 
+# Open an ALTO file and print the text to stdout.
+# This is useful to compare the output of stanford-vanilla
 # against the europeana-ner.
 
 #  Copyright (c) 2013 Koninklijke Bibliotheek
@@ -78,7 +78,7 @@ def alto_to_text(argv):
             text_outputfile.close()
             sys.stdout.write("Wrote %s bytes to %s\n" % (str(len(alto_text)), text_outputfilename))
         else:
-            sys.stdout.write("Error: %s allready exists, did not overwrite file\n" % text_outputfilename)
+            sys.stdout.write("Error: %s already exists, did not overwrite file\n" % text_outputfilename)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
