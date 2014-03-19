@@ -1,14 +1,16 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.alto;
 
+import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
+
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.OriginalTextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -28,18 +30,6 @@ import java.util.*;
  * 
  */
 public class AltoProcessor {
-    private static String cleanWord(String attr) {
-        String cleaned = attr.replace(".", "");
-        cleaned = cleaned.replace(",", "");
-        cleaned = cleaned.replace(";", "");
-        cleaned = cleaned.replace(")", "");
-        cleaned = cleaned.replace("(", "");
-        cleaned = cleaned.replace("?", "");
-        cleaned = cleaned.replace("'", "");
-        cleaned = cleaned.replace("\"", "");
-        return cleaned;
-    }
-
     /**
      * @param potentialAltoFilename
      * @param mimeType
@@ -109,11 +99,11 @@ public class AltoProcessor {
                 for (List<CoreLabel> sentence : out) {
                     for (CoreLabel label: sentence) {
                         if (label.get(HyphenatedLineBreak.class) == null) {
-                            StringTokenizer st = new StringTokenizer(cleanWord(label.get(OriginalTextAnnotation.class)));
+                            StringTokenizer st = new StringTokenizer(TextElementsExtractor.cleanWord(label.get(OriginalTextAnnotation.class)));
                             // Sometimes the stanford tokenizer does not cut on whitespace (with numbers).
                             while (st.hasMoreTokens()) {
                                 answer = new HashMap<String, String>();
-                                answer.put(st.nextToken(), cleanWord(label.get(AnswerAnnotation.class)));
+                                answer.put(st.nextToken(), TextElementsExtractor.cleanWord(label.get(AnswerAnnotation.class)));
                                 stanford_tokens.add(offsetCount, answer);
                                 offsetCount += 1;
                             }
@@ -146,23 +136,23 @@ public class AltoProcessor {
                             if (sentenceCount + offset < stanford_tokens.size()) {
 
                                 Set<String> stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
-                                stanford = cleanWord(stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0]);
+                                stanford = TextElementsExtractor.cleanWord(stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0]);
                                 stanfordClassification = (stanford_tokens.get(sentenceCount + offset).get(stanford));
 
-                                if (cleanWord(label.get(TextAnnotation.class)).equals("")) {
+                                if (TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)).equals("")) {
                                     stanford = "";
                                     offset -= 1;
                                 }
 
-                                while ((!match) && (cleanWord(label.get(TextAnnotation.class)).length() > 0)) {
-                                    if (stanford.equals(cleanWord(label.get(TextAnnotation.class)))) {
+                                while ((!match) && (TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)).length() > 0)) {
+                                    if (stanford.equals(TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)))) {
                                         match = true;
                                         label.set(AnswerAnnotation.class, stanfordClassification);
                                     } else {
                                         offset += 1;
                                         if (sentenceCount + offset < stanford_tokens.size()) {
                                             stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
-                                            if (stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0].equals(cleanWord(label.get(TextAnnotation.class)))) {
+                                            if (stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0].equals(TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)))) {
                                                 match = true;
                                             } else {
                                                 stanford = stanford + stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0];

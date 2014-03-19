@@ -179,12 +179,13 @@ public class TextElementsExtractor {
         return label;
     }
 
-    private static String cleanWord(String attr) {
+    public static String cleanWord(String attr) {
         String cleaned = attr.replace(".", "");
         cleaned = cleaned.replace(",", "");
         cleaned = cleaned.replace(")", "");
         cleaned = cleaned.replace("(", "");
         cleaned = cleaned.replace(".", "");
+        cleaned = cleaned.replace(":", "");
         cleaned = cleaned.replace(";", "");
         cleaned = cleaned.replace("'", "");
         cleaned = cleaned.replace("\"", "");
