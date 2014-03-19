@@ -53,7 +53,7 @@ public class TextElementsExtractor {
                 boolean hyphenatedEnd = false;
                 Element hyphenWord = null;
 
-                for (int j = 0; j<textLineToken.getLength(); j++) {
+                for (int j = 0; j < textLineToken.getLength(); j++) {
                     // Loop over TextLine
                     Node textLineNode = textLineToken.item(j);
                     if (textLineNode.getNodeType() == Node.ELEMENT_NODE) {

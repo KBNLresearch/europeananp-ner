@@ -92,7 +92,7 @@ public class AltoProcessor {
 
                 for (CoreMap label : classify_alto) {
                     if (label.get(HyphenatedLineBreak.class) == null) {
-                        String word = cleanWord(label.get(OriginalContent.class));
+                        String word = label.get(OriginalContent.class);
                         text = text + word + " ";
                         // label:
                         // [OriginalContent=Verhulst; TextAnnotation=Verhulst; AltoStringID=69:3233:45:880:29:677:3237:37:143 AnswerAnnotation=O]
@@ -109,11 +109,11 @@ public class AltoProcessor {
                 for (List<CoreLabel> sentence : out) {
                     for (CoreLabel label: sentence) {
                         if (label.get(HyphenatedLineBreak.class) == null) {
-                            StringTokenizer st = new StringTokenizer(label.get(OriginalTextAnnotation.class));
+                            StringTokenizer st = new StringTokenizer(cleanWord(label.get(OriginalTextAnnotation.class)));
                             // Sometimes the stanford tokenizer does not cut on whitespace (with numbers).
                             while (st.hasMoreTokens()) {
                                 answer = new HashMap<String, String>();
-                                answer.put(st.nextToken(), label.get(AnswerAnnotation.class));
+                                answer.put(st.nextToken(), cleanWord(label.get(AnswerAnnotation.class)));
                                 stanford_tokens.add(offsetCount, answer);
                                 offsetCount += 1;
                             }
