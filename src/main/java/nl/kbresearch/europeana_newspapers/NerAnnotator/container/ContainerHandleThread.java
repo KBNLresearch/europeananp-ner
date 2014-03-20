@@ -17,30 +17,32 @@ public class ContainerHandleThread implements Callable<Boolean> {
 	private String filePath;
 	private Locale lang;
 	private ContainerProcessor processor;
+        private String md5sum;
 
 	/**
 	 * @param filePath
 	 * @param lang
 	 * @param processor
+	 * @param md5sum
 	 */
-	public ContainerHandleThread(final String filePath, final Locale lang,
-			final ContainerProcessor processor) {
-		this.filePath = filePath;
-		this.lang = lang;
-		this.processor = processor;
+	public ContainerHandleThread(final String filePath, final Locale lang, final ContainerProcessor processor, final String md5sum) {
+            this.filePath = filePath;
+            this.lang = lang;
+            this.processor = processor;
+            this.md5sum = md5sum;
 	}
 
 	@Override
 	public Boolean call() throws Exception {
-		try {
-			ContainerContext containerContext = new ContainerContext();
-			containerContext.setOutputDirectory(getOutputDirectory());
-			processor.processFile(containerContext, filePath, lang);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+            try {
+                ContainerContext containerContext = new ContainerContext();
+                containerContext.setOutputDirectory(getOutputDirectory());
+                processor.processFile(containerContext, filePath, lang, md5sum);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
 	}
 
 	private File getOutputDirectory() {

@@ -16,37 +16,28 @@ import java.util.Locale;
  * 
  */
 public class AltoLocalProcessor implements ContainerProcessor {
+    public static AltoLocalProcessor INSTANCE = new AltoLocalProcessor();
 
-	/**
-	 * the default instance of the Alto processor
-	 */
-	public static AltoLocalProcessor INSTANCE = new AltoLocalProcessor();
+    @Override
+    public boolean processFile(ContainerContext context, String urlStr, Locale lang, String md5sum) throws IOException {
+        URL url = null;
+        File file = new File(urlStr);
 
-	@Override
-	public boolean processFile(ContainerContext context, String urlStr,
-			Locale lang) throws IOException {
-		URL url = null;
-		File file = new File(urlStr);
-		if (file.exists()) {
-			url = file.toURI().toURL();
-		} else {
+        if (file.exists()) {
+            url = file.toURI().toURL();
+        } else {
+            url = new URL(urlStr);
+            System.out.println("File not found, trying to get from URL: " + url.toExternalForm());
+        }
 
-			url = new URL(urlStr);
-			System.out.println("File not found, trying to get from URL: "
-					+ url.toExternalForm());
-		}
+        System.out.println("Processing Alto-File " + urlStr);
 
-		System.out.println("Processing Alto-File " + urlStr);
+        String[] split = urlStr.split("/");
+        String altoFilename = split[split.length - 1];
 
-		String[] split = urlStr.split("/");
-		String altoFilename = split[split.length - 1];
+        AltoProcessor.handlePotentialAltoFile(url, "text/xml" ,lang, md5sum, 
+                ResultHandlerFactory.createResultHandlers(context, altoFilename, md5sum));
 
-		AltoProcessor.handlePotentialAltoFile(url, "text/xml"
-  			,lang, ResultHandlerFactory
-			.createResultHandlers(context, altoFilename));
-
-		return (true);
-
-	}
-
+        return (true);
+    }
 }

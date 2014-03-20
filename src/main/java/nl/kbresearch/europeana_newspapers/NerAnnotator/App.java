@@ -2,12 +2,18 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
+
 import org.apache.commons.cli.*;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
 import java.io.InputStreamReader;
+import java.io.IOException;
+
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -17,6 +23,10 @@ import java.util.concurrent.*;
  * @author rene
  * @author Willem Jan Faber
  */
+
+
+
+
 public class App {
     static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
     static File outputDirectoryRoot;
@@ -36,6 +46,23 @@ public class App {
         return outputFormats;
     }
 
+
+    /**
+     * @return the md5sum of the current running jar
+     */
+    private static String getMD5sum() {
+        String md5sum = "";
+        String path = App.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        File jarFile = new File(path);
+        try {
+            byte[] artifactBytes = FileUtils.readFileToByteArray(jarFile);
+            md5sum = DigestUtils.md5Hex(artifactBytes);
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        }
+        return md5sum;
+    }
+
     /**
      * @param args
      * @throws ClassCastException
@@ -47,6 +74,7 @@ public class App {
 
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
+
         options.addOption(OptionBuilder
                         .withLongOpt("export")
                         .withDescription("use FORMAT for export: log (Default), csv, html, db, alto, alto2_1.\n Multiple formats:\" -f html -f csv\"")
@@ -85,23 +113,22 @@ public class App {
 
         try {
             CommandLine line = parser.parse(options, args);
+            ContainerProcessor processor = MetsProcessor.INSTANCE;
+            int maxThreads = 8;
+            Locale lang = Locale.ENGLISH;
             outputFormats = new String[] { "log" };
             String[] formats = line.getOptionValues("f");
-            Locale lang = Locale.ENGLISH;
-            int maxThreads = 8;
-            ContainerProcessor processor = MetsProcessor.INSTANCE;
 
             if (formats != null && formats.length > 0) {
-                    outputFormats = formats;
-
+                outputFormats = formats;
             }
 
             if (line.getOptionValue("l") != null) {
-                    lang = new Locale(line.getOptionValue("l"));
+                lang = new Locale(line.getOptionValue("l"));
             }
 
             if (line.getOptionValue("n") != null) {
-                    maxThreads = new Integer(line.getOptionValue("n"));
+                maxThreads = new Integer(line.getOptionValue("n"));
             }
 
             if (line.getOptionValue("c") != null) {
@@ -159,9 +186,8 @@ public class App {
                     maxThreads, 1000, TimeUnit.MILLISECONDS, containerHandlePool);
             for (Object arg : fileList) {
                 System.out.println(arg);
-                results.put(arg.toString(), threadPoolExecutor.submit(new ContainerHandleThread(arg.toString(), lang, processor)));
+                results.put(arg.toString(), threadPoolExecutor.submit(new ContainerHandleThread(arg.toString(), lang, processor, getMD5sum())));
             }
-            
             
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
@@ -169,7 +195,6 @@ public class App {
             ResultHandlerFactory.shutdownResultHandlers();
             
             System.out.println("Total processing time: " + (System.currentTimeMillis() - startTime)); 
-
             boolean errors = false;
             int successful = 0;
             int withErrors = 0;

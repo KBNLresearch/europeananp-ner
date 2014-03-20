@@ -9,6 +9,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -23,14 +24,17 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
     private String name;
     private PrintWriter outputFile;
     private Document altoDocument;
+    private String md5sum;
 
     /**
      * @param context
      * @param name
+     * @param md5sum
      */
-    public AnnotatedAltoResultHandler(final ContainerContext context, final String name) {
+    public AnnotatedAltoResultHandler(final ContainerContext context, final String name, final String md5sum) {
         this.context = context;
         this.name = name;
+        this.md5sum = md5sum;
     }
 
     @Override
@@ -64,6 +68,13 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
         try {
             // Output file for alto format.
             outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto.xml"), "UTF-8");
+
+
+            Element element = altoDocument.getDocumentElement();
+            Comment comment = altoDocument.createComment("md5sum: " + md5sum);
+            element.getParentNode().insertBefore(comment, element);
+
+
             DOMSource domSource = new DOMSource(altoDocument);
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);

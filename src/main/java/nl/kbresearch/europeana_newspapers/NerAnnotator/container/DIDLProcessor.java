@@ -32,7 +32,7 @@ public class DIDLProcessor implements ContainerProcessor {
     public static DIDLProcessor INSTANCE = new DIDLProcessor();
 
     @Override
-    public boolean processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
+    public boolean processFile(ContainerContext context, String urlStr, Locale lang, String md5sum) throws IOException {
         URL url = null;
         File file = new File(urlStr);
 
@@ -63,8 +63,8 @@ public class DIDLProcessor implements ContainerProcessor {
                         if (altoFilename == null || altoFilename.isEmpty()) {
                             altoFilename = "alto-" + (count++) + ".xml";
                         }
-                        AltoProcessor.handlePotentialAltoFile(url2, "text/xml", lang,
-                                                              ResultHandlerFactory.createResultHandlers(context, altoFilename));
+                        AltoProcessor.handlePotentialAltoFile(url2, "text/xml", lang, md5sum, 
+                                                              ResultHandlerFactory.createResultHandlers(context, altoFilename, md5sum));
                     }
                 }
             }

@@ -40,7 +40,7 @@ public class MetsProcessor implements ContainerProcessor {
     public static MetsProcessor INSTANCE = new MetsProcessor();
 
     @Override
-    public boolean processFile(ContainerContext context, String urlStr, Locale lang) throws IOException {
+    public boolean processFile(ContainerContext context, String urlStr, Locale lang, String md5sum) throws IOException {
         System.out.println("Processing METS file " + urlStr);
         URL url = null;
         File file = new File(urlStr);
@@ -83,7 +83,7 @@ public class MetsProcessor implements ContainerProcessor {
                         }
                         System.out.println(potentialAltoFilename);
                         AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, "text/xml",
-                                                              lang, ResultHandlerFactory.createResultHandlers(context, name));
+                                                              lang, md5sum, ResultHandlerFactory.createResultHandlers(context, name, md5sum));
                    } catch (URISyntaxException ee) {
                         System.err.println("Error parsing path to file in METS for file id " + e.getAttribute("ID"));
                         ee.printStackTrace();

@@ -23,9 +23,10 @@ public class ResultHandlerFactory {
     /**
      * @param context
      * @param name 
+     * @param md5sum
      * @return array of ResultHandlers according to the configuration
      */
-    public static ResultHandler[] createResultHandlers(final ContainerContext context, final String name) {
+    public static ResultHandler[] createResultHandlers(final ContainerContext context, final String name, final String md5sum) {
         String[] outputFormats = App.getOutputFormats();
         ArrayList<ResultHandler> result = new ArrayList<ResultHandler>();
 
@@ -37,12 +38,12 @@ public class ResultHandlerFactory {
                     result.add(logResultHandler);
                     break;
                 case "csv":
-                    CsvResultHandler csvResultHandler = new CsvResultHandler(context, name);
+                    CsvResultHandler csvResultHandler = new CsvResultHandler(context, name );
                     registeredHandlers.put(CsvResultHandler.class, csvResultHandler);
                     result.add(csvResultHandler);
                     break;
                 case "alto":
-                    AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context, name);
+                    AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context, name, md5sum);
                     registeredHandlers.put(AnnotatedAltoResultHandler.class, annotatedAltoResultHandler);
                     result.add(annotatedAltoResultHandler);
                     break;
@@ -52,13 +53,13 @@ public class ResultHandlerFactory {
                     result.add(htmlResultHandler);
                     break;
                 case "alto2_1":
-                    Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name);
+                    Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name );
                     registeredHandlers.put(Alto2_1ResultHandler.class, alto2_1ResultHandler);
                     result.add(alto2_1ResultHandler);
                     break;
                 case "db":
                     try {
-                        DbResultHandler dbResultHandler = new DbResultHandler(context, name);
+                        DbResultHandler dbResultHandler = new DbResultHandler(context, name );
                         registeredHandlers.put(DbResultHandler.class, dbResultHandler);
                         result.add(dbResultHandler);
                     } catch (SQLException e) {
