@@ -12,8 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.jsoup.helper.StringUtil;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -180,30 +178,26 @@ public class TextElementsExtractor {
     }
 
     public static String cleanWord(String attr) {
-        String cleaned = attr.replace(".", "");
-        cleaned = cleaned.replace(",", "");
-        cleaned = cleaned.replace(")", "");
-        cleaned = cleaned.replace("(", "");
-        cleaned = cleaned.replace(".", "");
-        cleaned = cleaned.replace(":", "");
-        cleaned = cleaned.replace(";", "");
-        cleaned = cleaned.replace("'", "");
-        cleaned = cleaned.replace("\"", "");
+        String[] removeChars = {".", ",", ")", "(", ";", "'", "\"", "}", "{"};
+        String cleaned = attr;
+        for (int i=0; i < removeChars.length; i++) {
+            String remove = removeChars[i];
+            cleaned = cleaned.replace(remove, "");
+        }
         return cleaned;
    }
 
    private static String calcuateAltoStringID(Element word) {
-       Element e = (Element) word;
+       String parentHpos = nullsafe(word.getAttribute("HPOS"));
+       String parentVpos = nullsafe(word.getAttribute("VPOS"));
+       String parentWidth = nullsafe(word.getAttribute("WIDTH"));
+       String parentHeight = nullsafe(word.getAttribute("HEIGHT"));
 
-       String parentHpos = nullsafe(e.getAttribute("HPOS"));
-       String parentVpos = nullsafe(e.getAttribute("VPOS"));
-       String parentWidth = nullsafe(e.getAttribute("WIDTH"));
-       String parentHeight = nullsafe(e.getAttribute("HEIGHT"));
+       String optionalStringHpos = nullsafe(word.getAttribute("HPOS"));
 
-       String optionalStringHpos = nullsafe(e.getAttribute("HPOS"));
-       String optionalStringVpos = nullsafe(e.getAttribute("VPOS"));
-       String optionalStringWidth = nullsafe(e.getAttribute("WIDTH"));
-       String optionalStringHeight = nullsafe(e.getAttribute("HEIGHT"));
+       String optionalStringVpos = nullsafe(word.getAttribute("VPOS"));
+       String optionalStringWidth = nullsafe(word.getAttribute("WIDTH"));
+       String optionalStringHeight = nullsafe(word.getAttribute("HEIGHT"));
 
        LinkedList<String> params = new LinkedList<String>();
 
@@ -217,7 +211,17 @@ public class TextElementsExtractor {
        params.add(optionalStringHeight);
        params.add(optionalStringWidth);
 
-       return StringUtil.join(params, ":");
+       String alto_id = "";
+
+       for (String s : params) {
+           if (alto_id.equals("")) {
+               alto_id = s;
+            } else {
+               alto_id +=  ":" + s;
+            }
+       }
+
+       return alto_id;
    }
 
     public static Element findAltoElementByStringID(Document altoDocument, String id) {
