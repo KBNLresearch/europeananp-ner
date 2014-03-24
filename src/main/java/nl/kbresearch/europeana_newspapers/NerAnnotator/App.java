@@ -50,9 +50,8 @@ public class App {
     /**
      * @return the md5sum of the current running jar
      */
-    private static String getMD5sum() {
+    private static String getMD5sum(String path) {
         String md5sum = "";
-        String path = App.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         File jarFile = new File(path);
         try {
             byte[] artifactBytes = FileUtils.readFileToByteArray(jarFile);
@@ -153,6 +152,12 @@ public class App {
 
             NERClassifiers.setLanguageModels(optionProperties);
 
+            String classifierFileName = "";
+            for (String name: optionProperties.stringPropertyNames()) {
+                classifierFileName = optionProperties.getProperty(name);
+                break;
+            }
+
             String outputDirectory = line.getOptionValue("d");
             if (outputDirectory == null || outputDirectory.isEmpty()) {
                 outputDirectory = "." + File.separator + "output";
@@ -183,7 +188,9 @@ public class App {
             // initialize preload of language classifier
             NERClassifiers.getCRFClassifierForLanguage(lang);
 
-            String versionString = "Version: " +App.class.getPackage().getSpecificationVersion() + " md5sum: " + getMD5sum();
+            String path = App.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            String versionString = "Version: " + App.class.getPackage().getSpecificationVersion() + " md5sum: " + getMD5sum(path);
+            versionString += "\nClassifier: " + classifierFileName + " md5sum: " + getMD5sum(classifierFileName);
 
 
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads), 
