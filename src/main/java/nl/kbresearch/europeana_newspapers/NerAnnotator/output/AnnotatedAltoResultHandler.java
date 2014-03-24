@@ -4,6 +4,8 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -69,7 +71,16 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
             // Output file for alto format.
             outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto.xml"), "UTF-8");
 
+
+
             Element element = altoDocument.getDocumentElement();
+
+            // Get current date, and add it to the comment line
+            Calendar currentDate = Calendar.getInstance();
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
+            String dateNow = formatter.format(currentDate.getTime());
+            versionString += " Date/time NER-extraction: " + dateNow + "\n";
+
             // Add the version information to the output xml.
             Comment comment = altoDocument.createComment(versionString);
             element.getParentNode().insertBefore(comment, element);
