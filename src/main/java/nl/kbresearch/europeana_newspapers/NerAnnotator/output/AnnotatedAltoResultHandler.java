@@ -24,17 +24,17 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
     private String name;
     private PrintWriter outputFile;
     private Document altoDocument;
-    private String md5sum;
+    private String versionString;
 
     /**
      * @param context
      * @param name
-     * @param md5sum
+     * @param versionString
      */
-    public AnnotatedAltoResultHandler(final ContainerContext context, final String name, final String md5sum) {
+    public AnnotatedAltoResultHandler(final ContainerContext context, final String name, final String versionString) {
         this.context = context;
         this.name = name;
-        this.md5sum = md5sum;
+        this.versionString = versionString;
     }
 
     @Override
@@ -69,9 +69,9 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
             // Output file for alto format.
             outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto.xml"), "UTF-8");
 
-
             Element element = altoDocument.getDocumentElement();
-            Comment comment = altoDocument.createComment("md5sum: " + md5sum);
+            // Add the version information to the output xml.
+            Comment comment = altoDocument.createComment(versionString);
             element.getParentNode().insertBefore(comment, element);
 
 

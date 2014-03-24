@@ -75,6 +75,7 @@ public class App {
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
 
+
         options.addOption(OptionBuilder
                         .withLongOpt("export")
                         .withDescription("use FORMAT for export: log (Default), csv, html, db, alto, alto2_1.\n Multiple formats:\" -f html -f csv\"")
@@ -182,11 +183,14 @@ public class App {
             // initialize preload of language classifier
             NERClassifiers.getCRFClassifierForLanguage(lang);
 
+            String versionString = "Version: " +App.class.getPackage().getSpecificationVersion() + " md5sum: " + getMD5sum();
+
+
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads), 
                     maxThreads, 1000, TimeUnit.MILLISECONDS, containerHandlePool);
             for (Object arg : fileList) {
                 System.out.println(arg);
-                results.put(arg.toString(), threadPoolExecutor.submit(new ContainerHandleThread(arg.toString(), lang, processor, getMD5sum())));
+                results.put(arg.toString(), threadPoolExecutor.submit(new ContainerHandleThread(arg.toString(), lang, processor, versionString)));
             }
             
             threadPoolExecutor.shutdown();

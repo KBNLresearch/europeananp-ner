@@ -31,6 +31,8 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
+                                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 							<classpathPrefix>lib/</classpathPrefix>
 							<mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
 						</manifest>
@@ -45,6 +47,8 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
+                                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 							<mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
 						</manifest>
 					</archive>
