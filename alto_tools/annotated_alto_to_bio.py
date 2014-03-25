@@ -50,6 +50,7 @@ import locale
 import xml.etree.ElementTree as ET
 from lxml import html
 
+
 sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout) 
 
 
@@ -58,7 +59,7 @@ MIN_ENTITY_REQ = 1
 
 
 def annotated_alto_to_bio(filename):
-    fh = open(filename, 'r')
+    fh = codecs.open(filename,"r","utf-8") #open(filename, 'r')
     alto_data = fh.read()
     fh.close()
     
@@ -97,9 +98,9 @@ def annotated_alto_to_bio(filename):
             sentence_mapping.append(word_entity_mapping)
 
             if entity:
-                sentence += " " + html.fromstring(word).text.strip()
+                sentence += u" " + html.fromstring(word).text.strip()
             else:
-                sentence += " " + html.fromstring(word).text.strip()
+                sentence += u" " + html.fromstring(word).text.strip()
 
             if (sentence.endswith(".") or sentence.endswith("?") or sentence.endswith("!")) \
                     and foundone and len(sentence) > MIN_CHAR_PER_LINE and entity_count > MIN_ENTITY_REQ: 
