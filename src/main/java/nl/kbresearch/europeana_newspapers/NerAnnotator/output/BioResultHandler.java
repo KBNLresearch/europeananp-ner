@@ -17,7 +17,12 @@ public class BioResultHandler implements ResultHandler {
     String continuationId = null;
     String continuationLabel = null;
     String name;
+    String sentence;
     Writer outputFile;
+    int labelCount = 0;
+
+    final static int minSentenceLength = 20;
+    final static int minEntitiesCount = 1;
 
     /**
      * @param context
@@ -37,6 +42,8 @@ public class BioResultHandler implements ResultHandler {
     }
 
     public void startTextBlock() {
+        this.sentence = "";
+        this.labelCount = 0;
     }
 
     public void newLine(boolean hyphenated) {
@@ -54,6 +61,39 @@ public class BioResultHandler implements ResultHandler {
             label = continuationLabel;
         }
 
+        if (label != null) {
+            this.labelCount += 1;
+        }
+
+        if (originalContent != null) {
+
+            // This should be added to linked list, key->value style
+            if (label != null) {
+                if (originalContent.endsWith(".")) {
+                    this.sentence += " <" + label + ">" + originalContent + "</" + label + ">."; 
+                } else { 
+                    this.sentence += " <" + label +">" + originalContent + "</" + label + ">"; 
+                }
+            } else {
+                this.sentence += " " + originalContent;
+            }
+        }
+
+        if ((this.sentence.length() > minSentenceLength) && (this.sentence.endsWith(".")) && (this.labelCount > minEntitiesCount)) {
+            System.out.println(this.sentence);
+
+            for (String part: this.sentence.split(" ")) {
+                if (part.length() > 1) {
+                    System.out.println(part);
+                }
+
+            }
+            this.sentence = "";
+            this.labelCount = 0;
+        }
+    
+        /*
+
         try {
             if (label == null) {
                 outputFile.write(originalContent + " POS O\n");
@@ -62,9 +102,11 @@ public class BioResultHandler implements ResultHandler {
                                  + " POS "
                                  + label + "\n");
             }
+            
         } catch (IOException e) {
             throw new IllegalStateException("Could not write to BIO file", e);
         }
+        */
     }
 
     public void stopTextBlock() {

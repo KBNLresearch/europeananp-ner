@@ -67,7 +67,7 @@ public class NERClassifiers {
                 throw new IllegalArgumentException("No language model found for language " + lang.getDisplayCountry());
             }
 
-            System.out.println("Done");
+            System.out.println("Done loading classifier");
             classifierMap.put(lang, classifier);
         }
 
