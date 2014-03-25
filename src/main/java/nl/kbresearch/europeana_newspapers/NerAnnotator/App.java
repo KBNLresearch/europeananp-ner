@@ -24,23 +24,20 @@ import java.util.concurrent.*;
  * @author Willem Jan Faber
  */
 
-
-
-
 public class App {
     static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
     static File outputDirectoryRoot;
     static String[] outputFormats;
 
     /**
-     * @return the root for the output files
+     * @return root for the output files
      */
     public static File getOutputDirectoryRoot() {
         return outputDirectoryRoot;
     }
 
     /**
-     * @return the list of output formats to be generated
+     * @return list of output formats to be generated
      */
     public static String[] getOutputFormats() {
         return outputFormats;
@@ -48,7 +45,7 @@ public class App {
 
 
     /**
-     * @return the md5sum of the current running jar
+     * @return md5sum of file given path
      */
     private static String getMD5sum(String path) {
         String md5sum = "";
@@ -73,7 +70,6 @@ public class App {
 
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
-
 
         options.addOption(OptionBuilder
                         .withLongOpt("export")
@@ -185,26 +181,31 @@ public class App {
 
             long startTime = System.currentTimeMillis();
 
-            // initialize preload of language classifier
+            // Load classifier
             NERClassifiers.getCRFClassifierForLanguage(lang);
 
+            // Fetch the version from maven settings
             String path = App.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            // Generate an md5sum from the current running jar
             String versionString = "Version: " + App.class.getPackage().getSpecificationVersion() + " md5sum: " + getMD5sum(path);
+            // Generate an md5sum for the used classifier 
             versionString += "\nClassifier: " + classifierFileName + " md5sum: " + getMD5sum(classifierFileName);
 
+            // Create the needed threads
+            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads), maxThreads, 1000, TimeUnit.MILLISECONDS, containerHandlePool);
 
-            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads), 
-                    maxThreads, 1000, TimeUnit.MILLISECONDS, containerHandlePool);
             for (Object arg : fileList) {
                 System.out.println(arg);
+                // Fire up the created threads
                 results.put(arg.toString(), threadPoolExecutor.submit(new ContainerHandleThread(arg.toString(), lang, processor, versionString)));
             }
-            
+           
+            // Shutdown and wait for threads to end
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-            
             ResultHandlerFactory.shutdownResultHandlers();
-            
+           
+            // Display stats to stdout
             System.out.println("Total processing time: " + (System.currentTimeMillis() - startTime)); 
             boolean errors = false;
             int successful = 0;
@@ -229,10 +230,10 @@ public class App {
             System.out.println(successful + " container documents successfully processed, " + withErrors + " with errors.");
 
             if (errors) {
-                System.err.println("There were ERRORS while processing");
+                System.err.println("There were errors while processing.");
                 System.exit(1);
             } else {
-                System.out.println("SUCCESSFUL");
+                System.out.println("Successful.");
                 System.exit(0);
             }
         } catch (org.apache.commons.cli.ParseException e) {
