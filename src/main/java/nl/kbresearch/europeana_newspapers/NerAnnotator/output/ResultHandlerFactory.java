@@ -57,6 +57,11 @@ public class ResultHandlerFactory {
                     registeredHandlers.put(Alto2_1ResultHandler.class, alto2_1ResultHandler);
                     result.add(alto2_1ResultHandler);
                     break;
+                case "bio":
+                    BioResultHandler bioResultHandler = new BioResultHandler(context, name);
+                    registeredHandlers.put(BioResultHandler.class, bioResultHandler);
+                    result.add(bioResultHandler);
+                    break;
                 case "db":
                     try {
                         DbResultHandler dbResultHandler = new DbResultHandler(context, name );

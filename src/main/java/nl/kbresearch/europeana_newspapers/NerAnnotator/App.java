@@ -77,7 +77,7 @@ public class App {
 
         options.addOption(OptionBuilder
                         .withLongOpt("export")
-                        .withDescription("use FORMAT for export: log (Default), csv, html, db, alto, alto2_1.\n Multiple formats:\" -f html -f csv\"")
+                        .withDescription("use FORMAT for export: log (Default), csv, html, db, alto, alto2_1, bio.\n Multiple formats:\" -f html -f csv\"")
                         .hasArgs().withArgName("FORMAT").withType(String.class)
                         .create("f"));
 
