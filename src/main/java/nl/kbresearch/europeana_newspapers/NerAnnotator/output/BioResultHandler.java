@@ -6,8 +6,6 @@ import java.io.*;
 
 import org.w3c.dom.Document;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 /**
  * Output for the stanford-ner bio file format.
  * 
@@ -16,12 +14,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 public class BioResultHandler implements ResultHandler {
     ContainerContext context;
-    String name;
-
-    Writer outputFile;
-    String spacePrefix = "";
     String continuationId = null;
     String continuationLabel = null;
+    String name;
+    Writer outputFile;
 
     /**
      * @param context
@@ -41,32 +37,16 @@ public class BioResultHandler implements ResultHandler {
     }
 
     public void startTextBlock() {
-        try {
-            outputFile.write("\n");
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not write to BIO file", e);
-        }
-        spacePrefix = "";
     }
 
     public void newLine(boolean hyphenated) {
-        try {
-            if (hyphenated) {
-                outputFile.write("&#8208;\n");
-            } else {
-                outputFile.write("\n");
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not write to BIO file", e);
-        }
-        spacePrefix = "";
     }
 
     public void addToken(String wordid, String originalContent, String word, String label, String continuationId) {
         // Find out if this is a continuation of the previous word
         if (continuationId != null) {
-                this.continuationId = continuationId;
-                this.continuationLabel = label;
+            this.continuationId = continuationId;
+            this.continuationLabel = label;
         }
 
         // Replace the label if it is an continuation
@@ -76,25 +56,18 @@ public class BioResultHandler implements ResultHandler {
 
         try {
             if (label == null) {
-                outputFile.write(StringEscapeUtils.escapeHtml4(spacePrefix + originalContent));
+                outputFile.write(originalContent + " POS O\n");
             } else {
-                outputFile.write(spacePrefix
-                                 + StringEscapeUtils.escapeHtml4(originalContent)
+                outputFile.write(originalContent
                                  + " POS "
-                                 + StringEscapeUtils.escapeHtml4(label) );
+                                 + label + "\n");
             }
         } catch (IOException e) {
             throw new IllegalStateException("Could not write to BIO file", e);
         }
-        spacePrefix = " ";
     }
 
     public void stopTextBlock() {
-        try {
-            outputFile.write("\n");
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not write to BIO file", e);
-        }
     }
 
     public void stopDocument() {
