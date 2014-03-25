@@ -4,6 +4,10 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContex
 
 import java.io.*;
 
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+
 import org.w3c.dom.Document;
 
 /**
@@ -21,6 +25,10 @@ public class BioResultHandler implements ResultHandler {
     Writer outputFile;
     int labelCount = 0;
 
+    List<HashMap> labels = new ArrayList();
+
+    // Fiddle with these values to reduce or increase 
+    // noise in the output BIO file.
     final static int minSentenceLength = 20;
     final static int minEntitiesCount = 1;
 
@@ -43,6 +51,7 @@ public class BioResultHandler implements ResultHandler {
 
     public void startTextBlock() {
         this.sentence = "";
+        this.labels = new ArrayList();
         this.labelCount = 0;
     }
 
@@ -66,47 +75,40 @@ public class BioResultHandler implements ResultHandler {
         }
 
         if (originalContent != null) {
-
-            // This should be added to linked list, key->value style
             if (label != null) {
-                if (originalContent.endsWith(".")) {
-                    this.sentence += " <" + label + ">" + originalContent + "</" + label + ">."; 
-                } else { 
-                    this.sentence += " <" + label +">" + originalContent + "</" + label + ">"; 
-                }
+                HashMap entry = new HashMap();
+                entry.put(originalContent, label);
+                this.labels.add(entry);
             } else {
-                this.sentence += " " + originalContent;
+                HashMap entry = new HashMap();
+                entry.put(originalContent, "");
+                this.labels.add(entry);
             }
+            this.sentence += " " + originalContent;
         }
 
         if ((this.sentence.length() > minSentenceLength) && (this.sentence.endsWith(".")) && (this.labelCount > minEntitiesCount)) {
-            System.out.println(this.sentence);
-
-            for (String part: this.sentence.split(" ")) {
-                if (part.length() > 1) {
-                    System.out.println(part);
+            for (HashMap part: this.labels) {
+                String outword = (String) part.keySet().toArray()[0];
+                String outlabel = (String) part.get(outword);
+                if (outlabel.equals("")) {
+                    try {
+                        outputFile.write(outword + " POS O\n");
+                    } catch (IOException e) {
+                        throw new IllegalStateException("Could not write to BIO file", e);
+                    }
+                } else {
+                    try {
+                        outputFile.write(outword + " POS " + outlabel + "\n");
+                    } catch (IOException e) {
+                        throw new IllegalStateException("Could not write to BIO file", e);
+                    }
                 }
-
             }
             this.sentence = "";
+            this.labels = new ArrayList();
             this.labelCount = 0;
         }
-    
-        /*
-
-        try {
-            if (label == null) {
-                outputFile.write(originalContent + " POS O\n");
-            } else {
-                outputFile.write(originalContent
-                                 + " POS "
-                                 + label + "\n");
-            }
-            
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not write to BIO file", e);
-        }
-        */
     }
 
     public void stopTextBlock() {
