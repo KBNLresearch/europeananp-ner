@@ -26,7 +26,7 @@ public class ResultHandlerFactory {
      * @param md5sum
      * @return array of ResultHandlers according to the configuration
      */
-    public static ResultHandler[] createResultHandlers(final ContainerContext context, final String name, final String md5sum) {
+    public static ResultHandler[] createResultHandlers(final ContainerContext context, final String name, final String versionString) {
         String[] outputFormats = App.getOutputFormats();
         ArrayList<ResultHandler> result = new ArrayList<ResultHandler>();
 
@@ -43,7 +43,7 @@ public class ResultHandlerFactory {
                     result.add(csvResultHandler);
                     break;
                 case "alto":
-                    AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context, name, md5sum);
+                    AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context, name, versionString);
                     registeredHandlers.put(AnnotatedAltoResultHandler.class, annotatedAltoResultHandler);
                     result.add(annotatedAltoResultHandler);
                     break;
@@ -53,7 +53,7 @@ public class ResultHandlerFactory {
                     result.add(htmlResultHandler);
                     break;
                 case "alto2_1":
-                    Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name );
+                    Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name, versionString);
                     registeredHandlers.put(Alto2_1ResultHandler.class, alto2_1ResultHandler);
                     result.add(alto2_1ResultHandler);
                     break;

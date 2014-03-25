@@ -5,14 +5,17 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContex
 
 import java.io.*;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,6 +31,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
     private String name;
     private PrintWriter outputFile;
     private Document altoDocument;
+    private String versionString;
     private List<HashMap> Entity_list = new ArrayList();
 
     String continuationId = null;
@@ -44,9 +48,10 @@ public class Alto2_1ResultHandler implements ResultHandler {
      * @param context
      * @param name
      */
-    public Alto2_1ResultHandler(final ContainerContext context, final String name) {
+    public Alto2_1ResultHandler(final ContainerContext context, final String name, final String versionString) {
         this.context = context;
         this.name = name;
+        this.versionString = versionString;
     }
 
     @Override
@@ -174,6 +179,17 @@ public class Alto2_1ResultHandler implements ResultHandler {
         try {
             // Output file for alto2_1 format.
             outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
+
+            Element element = altoDocument.getDocumentElement();
+            // Get current date, and add it to the comment line
+            Calendar currentDate = Calendar.getInstance();
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
+            String dateNow = formatter.format(currentDate.getTime());
+            versionString += " Date/time NER-extraction: " + dateNow + "\n";
+
+            // Add the version information to the output xml.
+            Comment comment = altoDocument.createComment(versionString);
+            element.getParentNode().insertBefore(comment, element);
 
             DOMSource domSource = new DOMSource(altoDocument);
             StringWriter writer = new StringWriter();
