@@ -13,6 +13,7 @@ import edu.stanford.nlp.util.CoreMap;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,13 +46,19 @@ public class AltoProcessor {
             return (-1);
         }
         */
-        try {
+         try {
             System.out.println("Trying to process ALTO file " + potentialAltoFilename);
             long startTime = System.currentTimeMillis();
-            File f = new File(potentialAltoFilename.getFile());
+            InputSource input_file = null;
+            try {
+                input_file = new InputSource(potentialAltoFilename.openStream());
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(f);
+            Document doc = db.parse(input_file);
 
             for (ResultHandler h : handler) {
                 h.startDocument();

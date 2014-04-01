@@ -57,7 +57,7 @@ public class DIDLProcessor implements ContainerProcessor {
                 Node tokens = elementsByTag.item(i);
                 if (tokens.getNodeType() == Node.ELEMENT_NODE) {
                     Element e = (Element) tokens;
-                    if (e.getAttribute("mimeType").equals("text/xml")) {
+                    if (e.getAttribute("mimeType").equals("text/xml") && (e.getAttribute("ref").endsWith(":alto"))) {
                         URL url2 = new URL(e.getAttribute("ref"));
                         String altoFilename = e.getAttribute("dcx:filename");
                         if (altoFilename == null || altoFilename.isEmpty()) {
