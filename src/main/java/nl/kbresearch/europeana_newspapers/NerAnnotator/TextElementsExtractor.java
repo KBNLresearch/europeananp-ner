@@ -1,17 +1,11 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoStringID;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.HyphenatedLineBreak;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.OriginalContent;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.ContinuationAltoStringID;
-
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoStringID;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.ContinuationAltoStringID;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.HyphenatedLineBreak;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.OriginalContent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,6 +15,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
+// import java.util.concurrent.ConcurrentHashMap;
+// import javax.xml.parsers.*;
+// import javax.xml.transform.*;
+// import javax.xml.transform.dom.*;
+// import javax.xml.transform.stream.*;
 
 /**
  * Converter from ALTO elements to tokens for Stanford NER

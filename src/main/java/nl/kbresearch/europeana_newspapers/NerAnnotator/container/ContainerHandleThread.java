@@ -50,7 +50,19 @@ public class ContainerHandleThread implements Callable<Boolean> {
 		while (cleanedPath.endsWith("/")) {
 			cleanedPath = cleanedPath.substring(0, cleanedPath.length() - 1);
 		}
-		String[] split = cleanedPath.split("/");
+
+        // BEGIN spelvar **********************
+        while (cleanedPath.endsWith("/") || cleanedPath.endsWith("\\")) {
+            cleanedPath = cleanedPath.substring(0, cleanedPath.length() - 1);
+        }
+
+        String rightSeparator = "/";
+        if (cleanedPath.split("/").length < cleanedPath.split("\\\\").length)
+            rightSeparator = "\\\\";
+
+        String[] split = cleanedPath.split(rightSeparator);
+        // END spelvar **********************
+
 		String fileName = split[split.length - 1];
 
 		File outputDir = new File(App.getOutputDirectoryRoot(), fileName

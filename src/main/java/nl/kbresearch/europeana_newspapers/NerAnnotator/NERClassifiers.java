@@ -3,11 +3,10 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 
 import java.io.*;
-
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -20,6 +19,34 @@ import java.util.zip.GZIPInputStream;
 public class NERClassifiers {
     @SuppressWarnings("rawtypes")
     static Map<Locale, CRFClassifier> classifierMap = new ConcurrentHashMap<Locale, CRFClassifier>();
+
+    // begin spelvar ***************
+    static Map<Locale, Boolean> svMap = new ConcurrentHashMap<Locale, Boolean>();
+    static boolean useSpelvar;
+    static ConcurrentHashMap<String, String> svPropsHM = new ConcurrentHashMap<String, String>();
+
+    /**
+     * @param langModels
+     *            filenames of the classifier model for a language. E.g. de ->
+     *            /path/to/file/model.gz
+     */
+    public static void setLanguageModels(
+            final Properties langModels,
+            boolean useSpelvar,
+            ConcurrentHashMap<String, String> svPropsHM) {
+
+        NERClassifiers.langModels = langModels;
+
+        // spelling variation
+        NERClassifiers.useSpelvar = useSpelvar;		// use spelvariation or not
+        NERClassifiers.svPropsHM = svPropsHM;		// spelvariation properties
+    }
+
+
+    public static Boolean useSpelvar(Locale lang){
+        return svMap.get(lang);
+    }
+    // end spelvar ***************
 
     static Properties langModels;
 
@@ -52,7 +79,31 @@ public class NERClassifiers {
                     System.out.println(langKey + " -> " + langModels.getProperty(langKey.toString()));
                     if (lang.getLanguage().equals(new Locale(langKey.toString()).getLanguage())) {
                         // Populate the classifier with the specified classifier from the command line
-                        classifier = CRFClassifier.getClassifier(getDefaultInputModelStream(langModels.getProperty(langKey.toString()), lang));
+
+                        // begin spelvar ***********************
+                        if (NERClassifiers.useSpelvar) {
+
+                            System.out.println("## Start ImpactCRFClassifier ##");
+
+                            svMap.put(lang, true);
+
+                            // load the NERT classifier
+                            File file = new File(langModels.getProperty(langKey.toString()));
+                            classifier = ImpactCRFClassifier.getClassifier(file);
+                            // set the sv props
+                            ((ImpactCRFClassifier) classifier).setSvPropHM(NERClassifiers.svPropsHM);
+                            ((ImpactCRFClassifier) classifier).setUseSpelvar(true);
+                        }
+                        // end spelvar ***********************
+
+                        else
+                        {
+                            svMap.put(lang, false); // added for spelvar, when it shouldn't been used
+
+                            classifier = CRFClassifier.getClassifier(
+                                    getDefaultInputModelStream(langModels.getProperty(langKey.toString()), lang));
+
+                        }
                     }
                 }
             } catch (ClassCastException e) {
@@ -70,6 +121,8 @@ public class NERClassifiers {
             System.out.println("Done loading classifier");
             classifierMap.put(lang, classifier);
         }
+
+        System.out.println( "## Classifier type : "+ classifierMap.get(lang).getClass().getName() + " ## " );
 
         return classifierMap.get(lang);
     }

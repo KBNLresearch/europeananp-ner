@@ -2,18 +2,14 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
-
 import org.apache.commons.cli.*;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
-
-import org.apache.commons.io.FileUtils;
-
-import java.io.InputStreamReader;
 import java.io.IOException;
-
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -95,6 +91,31 @@ public class App {
                         .hasArg().withArgName("THREADS").withType(Integer.class)
                         .create("n"));
 
+        // begin spelvar ***************************************
+
+        options.addOption(OptionBuilder
+                .withLongOpt("spelvar")
+                .withDescription(
+                        "use spelling variation analysis (true/false). Default false ")
+                .hasArg().withArgName("SPELVAR").withType(String.class)
+                .create("sv"));
+
+        options.addOption(OptionBuilder
+                .withLongOpt("svphontrans")
+                .withDescription(
+                        "path to the spelling variation phonetic transcription rules file ")
+                .hasArg().withArgName("svPhonTrans").withType(String.class)
+                .create("svpt"));
+
+        options.addOption(OptionBuilder
+                .withLongOpt("minwordlength")
+                .withDescription(
+                        "minimal number of characters a word must have to be processed by the spelling variation module. Default 2 ")
+                .hasArg().withArgName("MinWordLength").withType(Integer.class)
+                .create("mwl"));
+
+        // end spelvar ***************************************
+
         options.addOption(OptionBuilder
                         .withLongOpt("models")
                         .withDescription("models for languages. Ex. -m de=/path/to/file/model_de.gz -m nl=/path/to/file/model_nl.gz")
@@ -108,6 +129,7 @@ public class App {
                         .create("d"));
 
         try {
+            // parse the command line arguments
             CommandLine line = parser.parse(options, args);
             ContainerProcessor processor = MetsProcessor.INSTANCE;
             int maxThreads = 8;
@@ -126,6 +148,25 @@ public class App {
             if (line.getOptionValue("n") != null) {
                 maxThreads = new Integer(line.getOptionValue("n"));
             }
+
+            // begin spelvar *********************************
+
+            ConcurrentHashMap<String, String> svPropsHM = new ConcurrentHashMap<String, String>();
+            boolean useSpelvar = false;
+
+            if (line.getOptionValue("sv") != null) {
+                useSpelvar = line.getOptionValue("sv").equalsIgnoreCase("true");
+            }
+            if (line.getOptionValue("svpt") != null) {
+                svPropsHM.put("svPhonTrans", line.getOptionValue("svpt"));
+            }
+            if (line.getOptionValue("mwl") != null) {
+                svPropsHM.put("minwordlength", line.getOptionValue("mwl"));
+            }
+
+            // end spelvar *********************************
+
+            processor = MetsProcessor.INSTANCE;
 
             if (line.getOptionValue("c") != null) {
                 System.out.println("Container format: " + line.getOptionValue("c"));
@@ -146,7 +187,11 @@ public class App {
                 throw new ParseException("No language models defined!");
             }
 
-            NERClassifiers.setLanguageModels(optionProperties);
+            // spelvar
+
+            NERClassifiers.setLanguageModels(optionProperties, useSpelvar, svPropsHM);
+
+            // spelvar
 
             String classifierFileName = "";
             for (String name: optionProperties.stringPropertyNames()) {

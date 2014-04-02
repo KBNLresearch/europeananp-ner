@@ -1,27 +1,26 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.alto;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
-
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.OriginalTextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
-
+import nl.kbresearch.europeana_newspapers.NerAnnotator.ImpactCRFClassifier;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandler;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ALTO file processing
@@ -31,6 +30,18 @@ import java.util.*;
  * 
  */
 public class AltoProcessor {
+    private static String cleanWord(String attr) {
+        String cleaned = attr.replace(".", "");
+        cleaned = cleaned.replace(",", "");
+        cleaned = cleaned.replace(";", "");
+        cleaned = cleaned.replace(")", "");
+        cleaned = cleaned.replace("(", "");
+        cleaned = cleaned.replace("?", "");
+        cleaned = cleaned.replace("'", "");
+        cleaned = cleaned.replace("\"", "");
+        return cleaned;
+    }
+
     /**
      * @param potentialAltoFilename
      * @param mimeType
@@ -46,7 +57,7 @@ public class AltoProcessor {
             return (-1);
         }
         */
-         try {
+        try {
             System.out.println("Trying to process ALTO file " + potentialAltoFilename);
             long startTime = System.currentTimeMillis();
             InputSource input_file = null;
@@ -70,10 +81,26 @@ public class AltoProcessor {
             CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(lang);
             List<List<CoreMap>> coreMapElements = TextElementsExtractor.getCoreMapElements(doc);
 
+            // BEGIN spel var *********************
+
+            if (NERClassifiers.useSpelvar(lang)) {
+
+                // read the spelvar settings
+                ConcurrentHashMap<String, String> svProps = ((ImpactCRFClassifier) classifier_alto).getSvPropHM();
+
+                // convert alto to bio  for spelvar module
+                String str = convertAlto2Bio(coreMapElements);
+
+                // initialize spelvar module
+                ((ImpactCRFClassifier) classifier_alto).initSpelVarModuleForExtracting(str, svProps);
+            }
+
+            // END spel var *********************
+
             int totalNumberOfWords = 0;
             int classified = 0;
 
-            Map<String,String> answer = new HashMap<String, String>();
+            Map<String, String> answer = new HashMap<String, String>();
 
             for (List<CoreMap> block : coreMapElements) {
                 int sentenceCount = 0;
@@ -83,14 +110,18 @@ public class AltoProcessor {
                 for (ResultHandler h : handler) {
                     h.startTextBlock();
                 }
-                
+
                 // Loop over the alto to extract text elements. Make one long string (sentence).
-                List<CoreMap> classify_alto = classifier_alto.classify(block);
+                List<CoreMap> classify_alto = (NERClassifiers.useSpelvar(lang))
+                        ?
+                        ((ImpactCRFClassifier) classifier_alto).classify(block)    // spelvar
+                        :
+                        classifier_alto.classify(block);
                 String text = "";
 
                 for (CoreMap label : classify_alto) {
                     if (label.get(HyphenatedLineBreak.class) == null) {
-                        String word = label.get(OriginalContent.class);
+                        String word = cleanWord(label.get(OriginalContent.class));
                         text = text + word + " ";
                         // label:
                         // [OriginalContent=Verhulst; TextAnnotation=Verhulst; AltoStringID=69:3233:45:880:29:677:3237:37:143 AnswerAnnotation=O]
@@ -98,14 +129,18 @@ public class AltoProcessor {
                     }
                 }
 
-                ArrayList<Map<String , String>> stanford_tokens  = new ArrayList<Map<String,String>>();
+                ArrayList<Map<String, String>> stanford_tokens = new ArrayList<Map<String, String>>();
                 // Classify the output text, using the stanford tokenizer.
-                List<List<CoreLabel>> out = classifier_text.classify(text);
+                List<List<CoreLabel>> out = (NERClassifiers.useSpelvar(lang))
+                        ?
+                        ((ImpactCRFClassifier) classifier_text).classify(text)    // spelvar
+                        :
+                        classifier_text.classify(text);
                 Map<String, String> map = new HashMap<String, String>();
 
                 // Loop over the stanford tokenized words to map them to the alto later on.
                 for (List<CoreLabel> sentence : out) {
-                    for (CoreLabel label: sentence) {
+                    for (CoreLabel label : sentence) {
                         if (label.get(HyphenatedLineBreak.class) == null) {
                             StringTokenizer st = new StringTokenizer(TextElementsExtractor.cleanWord(label.get(OriginalTextAnnotation.class)));
                             // Sometimes the stanford tokenizer does not cut on whitespace (with numbers).
@@ -153,6 +188,8 @@ public class AltoProcessor {
                                 }
 
                                 while ((!match) && (TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)).length() > 0)) {
+                                    //System.out.println("Want: " + cleanWord(label.get(TextAnnotation.class)));
+                                    //System.out.println("Got: " + cleanWord(stanford));
                                     if (stanford.equals(TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)))) {
                                         match = true;
                                         label.set(AnswerAnnotation.class, stanfordClassification);
@@ -177,6 +214,11 @@ public class AltoProcessor {
                         if (!label.get(AnswerAnnotation.class).equals("O")) {
                             classified += 1;
                             for (ResultHandler h : handler) {
+                                //System.out.println("label");
+                                //System.out.println(label.get(AltoStringID.class));
+                                //System.out.println(label.get(OriginalContent.class));
+                                //System.out.println(label.get(AnswerAnnotation.class));
+                                //System.out.println("label");
                                 h.addToken(
                                         label.get(AltoStringID.class),
                                         label.get(OriginalContent.class),
@@ -212,7 +254,7 @@ public class AltoProcessor {
                     + classified
                     + " out of "
                     + totalNumberOfWords
-                    + "/ " 
+                    + "/ "
                     + ((double) classified / (double) totalNumberOfWords) + ") classified");
             System.out.println("Total millisecs: "
                     + (System.currentTimeMillis() - startTime));
@@ -229,5 +271,22 @@ public class AltoProcessor {
             h.close();
         }
         return (1);
+    }
+    // convert a Alto document into a Bio document, for use in the spelvar module
+    private static String convertAlto2Bio(List<List<CoreMap>> coreMapElements){
+
+        StringBuilder sb = new StringBuilder();
+        for (List<CoreMap> block : coreMapElements) {
+            for (CoreMap label : block) {
+
+                String word = label.get(OriginalContent.class);
+                if (word == null) continue;
+
+                sb.append( word ); // the actual word
+                sb.append(" POS"); // this part won't be read, but it's needed to meet the bio format
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 }

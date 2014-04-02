@@ -2,23 +2,26 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import java.io.*;
-
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-
-import org.w3c.dom.Comment;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * @author Willem Jan Faber
@@ -168,8 +171,10 @@ public class Alto2_1ResultHandler implements ResultHandler {
             child.appendChild(childOfTheChild);
         }
 
+        // TODO Fix the entry point at which the child is inserted into the Alto.
         altoDocument.getDocumentElement().appendChild(child);
 
+        // TODO Rewrite alto header to match new 2_1-draft
         NodeList alto = altoDocument.getElementsByTagName("alto");
         Element alto_root = (Element) alto.item(0);
         alto_root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");

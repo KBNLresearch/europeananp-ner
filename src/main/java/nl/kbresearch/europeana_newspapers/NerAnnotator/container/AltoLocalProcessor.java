@@ -16,6 +16,9 @@ import java.util.Locale;
  * 
  */
 public class AltoLocalProcessor implements ContainerProcessor {
+    /**
+     * the default instance of the Alto processor
+     */
     public static AltoLocalProcessor INSTANCE = new AltoLocalProcessor();
 
     @Override
@@ -32,7 +35,14 @@ public class AltoLocalProcessor implements ContainerProcessor {
 
         System.out.println("Processing Alto-File " + urlStr);
 
-        String[] split = urlStr.split("/");
+        // BEGIN spelvar **********************
+        String rightSeparator = "/";
+        if (urlStr.split("/").length<urlStr.split("\\\\").length)
+            rightSeparator = "\\\\";
+
+        String[] split = urlStr.split(rightSeparator);
+        // END spelvar **********************
+
         String altoFilename = split[split.length - 1];
 
         AltoProcessor.handlePotentialAltoFile(url, "text/xml" ,lang, md5sum, 
