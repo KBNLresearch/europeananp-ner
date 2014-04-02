@@ -64,26 +64,28 @@ public class MetsProcessor implements ContainerProcessor {
                     Element e = (Element) tokens;
                     URL potentialAltoFilename;
                     try {
-                        URI referencedFile = new URI(e.getAttribute("xlink:href"));
-                        if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
-                            String path = referencedFile.getPath();
-                            String relativeToUrl = url.toString();
-                            potentialAltoFilename = new URI(relativeToUrl.substring(0, relativeToUrl.lastIndexOf("/")) + path).normalize() .toURL();
-                        } else {
-                            potentialAltoFilename = referencedFile.normalize().toURL();
+                        if (e.getAttribute("xlink:href").endsWith(".xml")) {
+                            URI referencedFile = new URI(e.getAttribute("xlink:href"));
+                            if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
+                                String path = referencedFile.getPath();
+                                String relativeToUrl = url.toString();
+                                potentialAltoFilename = new URI(relativeToUrl.substring(0, relativeToUrl.lastIndexOf("/")) + path).normalize() .toURL();
+                            } else {
+                                potentialAltoFilename = referencedFile.normalize().toURL();
+                            }
+                            String[] split = potentialAltoFilename.toExternalForm().split("/");
+                            String name;
+                            if (split.length > 0 && !split[split.length - 1].isEmpty()) {
+                                // name from url
+                                name = split[split.length - 1];
+                            } else {
+                                // Generic name, if not available
+                                name = "alto-" + (count++) + ".xml";
+                            }
+                            System.out.println(potentialAltoFilename);
+                            AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, "text/xml",
+                                                                  lang, md5sum, ResultHandlerFactory.createResultHandlers(context, name, md5sum));
                         }
-                        String[] split = potentialAltoFilename.toExternalForm().split("/");
-                        String name;
-                        if (split.length > 0 && !split[split.length - 1].isEmpty()) {
-                            // name from url
-                            name = split[split.length - 1];
-                        } else {
-                            // Generic name, if not available
-                            name = "alto-" + (count++) + ".xml";
-                        }
-                        System.out.println(potentialAltoFilename);
-                        AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, "text/xml",
-                                                              lang, md5sum, ResultHandlerFactory.createResultHandlers(context, name, md5sum));
                    } catch (URISyntaxException ee) {
                         System.err.println("Error parsing path to file in METS for file id " + e.getAttribute("ID"));
                         ee.printStackTrace();
