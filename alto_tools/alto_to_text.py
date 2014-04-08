@@ -59,19 +59,33 @@ def get_textblock_range(xmltree_alto_data, start, end):
         if item.tag.endswith("TextBlock"):
             if is_in_range:
                 blocks.append(item.attrib.get("ID"))
-
             if item.attrib.get("ID") == start:
                 blocks.append(start)
                 is_in_range = True
             if item.attrib.get("ID") == end:
                 is_in_range = False
                 blocks.append(end)
+
+    if not end in blocks:
+        return []
+
     return blocks
 
-def alto_to_disk(alto_filename, blocks=["P1_TB00007"], blocks_range = False): #["P1_TB00007"]):
+def alto_to_disk(alto_filename, blocks = [], blocks_range = False):
     xmltree_alto_data = xml_to_xmltree(alto_filename)
 
-    print get_textblock_range(xmltree_alto_data, "a", "b")
+    if blocks_range:
+        if len(get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])) == 0:
+            sys.stdout.write("Error: Could not find a range spanning from %s to %s, aborting\n" % (blocks[0], blocks[1]))
+            usage()
+    elif len(blocks) >0:
+        for item in blocks:
+            if len(get_textblock_range(xmltree_alto_data, item, item)) == 0:
+                sys.stdout.write("Error: Could not find block %s, aborting\n" % item)
+                usage()
+
+        
+
     alto_text = u""
     prev_was_hyp = False
 
@@ -126,6 +140,7 @@ def alto_to_disk(alto_filename, blocks=["P1_TB00007"], blocks_range = False): #[
     sys.stdout.write("Wrote %s bytes to %s\n" % (str(len(alto_text)), text_outputfilename))
 
 def alto_to_text():
+    blocks = False
     if not sys.argv[1].startswith('--'):
         for item in sys.argv[1:]:
             if item.lower().startswith('http'):
@@ -143,7 +158,19 @@ def alto_to_text():
             else:
                 fetch_via_http = False
                 alto_files = glob.glob(sys.argv[2])
- 
+
+    if blocks:
+        blocks = blocks.split('=')[1]
+        if blocks.find('-') > -1 and blocks.find(',') <= -1:
+            blocks = [blocks.split('-')[0], blocks.split('-')[1]]
+            block_range = True
+        else:
+            blocks = blocks.split(',')
+            block_range = False
+    else:
+        blocks = []
+        block_range = False
+
     if len(alto_files) <= 0 and not fetch_via_http:
         sys.stdout.write("No ALTO files found in path %s\n" % sys.argv[1])
         usage()
@@ -155,7 +182,7 @@ def alto_to_text():
             print filename
     else:
         for alto_filename in alto_files:
-            alto_to_disk(alto_filename)
+            alto_to_disk(alto_filename, blocks, block_range)
 
 def usage():
     sys.stdout.write("Usage: %s [--blocks=a,b,c --blocks=a-c] path_to_alto_files\n\n" % sys.argv[0])
