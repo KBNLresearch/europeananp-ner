@@ -35,7 +35,10 @@ import xml.etree.ElementTree as ET
 
 sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
+DEBUG = True
+
 def xml_to_xmltree(alto_filename):
+    ''' Convert xml file to element tree '''
     alto_file = open(alto_filename, "rb")
     sys.stdout.write("Converting %s to text\n" % alto_filename)
     alto_data = alto_file.read()
@@ -51,6 +54,7 @@ def xml_to_xmltree(alto_filename):
     return ET.fromstring(alto_data)
 
 def get_textblock_range(xmltree_alto_data, start, end):
+    ''' Get all the block-id's within the range '''
     blocks = []
 
     is_in_range = False
@@ -66,25 +70,30 @@ def get_textblock_range(xmltree_alto_data, start, end):
                 is_in_range = False
                 blocks.append(end)
 
-    if not end in blocks:
+    if not (end or start) in blocks:
         return []
 
     return blocks
 
 def alto_to_disk(alto_filename, blocks = [], blocks_range = False):
+    ''' Grab the selected text blocks and write them to disk '''
     xmltree_alto_data = xml_to_xmltree(alto_filename)
 
+    # Check if the given blocks are actually in the ALTO file.
     if blocks_range:
+        if DEBUG: print "Block range mode"
         if len(get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])) == 0:
             sys.stdout.write("Error: Could not find a range spanning from %s to %s, aborting\n" % (blocks[0], blocks[1]))
             usage()
+        # Reassign blocks with all the text-blocks in the specified range.
+        blocks = get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])
     elif len(blocks) >0:
         for item in blocks:
             if len(get_textblock_range(xmltree_alto_data, item, item)) == 0:
                 sys.stdout.write("Error: Could not find block %s, aborting\n" % item)
                 usage()
 
-        
+    if DEBUG: print blocks
 
     alto_text = u""
     prev_was_hyp = False
