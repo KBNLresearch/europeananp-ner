@@ -30,12 +30,13 @@ import glob
 import codecs
 import locale
 import urllib
+import tempfile
 
 import xml.etree.ElementTree as ET
 
 sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
-DEBUG = True
+TMPDIR = tempfile.gettempdir()
 
 def xml_to_xmltree(alto_filename):
     ''' Convert xml file to element tree '''
@@ -81,7 +82,6 @@ def alto_to_disk(alto_filename, blocks = [], blocks_range = False):
 
     # Check if the given blocks are actually in the ALTO file.
     if blocks_range:
-        if DEBUG: print "Block range mode"
         if len(get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])) == 0:
             sys.stdout.write("Error: Could not find a range spanning from %s to %s, aborting\n" % (blocks[0], blocks[1]))
             usage()
@@ -92,8 +92,6 @@ def alto_to_disk(alto_filename, blocks = [], blocks_range = False):
             if len(get_textblock_range(xmltree_alto_data, item, item)) == 0:
                 sys.stdout.write("Error: Could not find block %s, aborting\n" % item)
                 usage()
-
-    if DEBUG: print blocks
 
     alto_text = u""
     prev_was_hyp = False
@@ -148,28 +146,42 @@ def alto_to_disk(alto_filename, blocks = [], blocks_range = False):
     text_outputfile.close()
     sys.stdout.write("Wrote %s bytes to %s\n" % (str(len(alto_text)), text_outputfilename))
 
-def alto_to_text():
+def parse_arguments():
     blocks = False
-    if not sys.argv[1].startswith('--'):
-        for item in sys.argv[1:]:
+    alto_files = []
+    fetch_via_http = False
+    output_filename = ""
+
+    arguments = sys.argv[1:]
+
+    for item in arguments:
+        if item.startswith('--'):
+            if not item.find('=') > -1:
+                sys.stdout.write("Could not parse argument %s, missing '=' sign.\n" % item)
+                usage()
+            param_name = item[2:].lower().split('=')[0]
+            param_value = item.split('=')[1]
+
+            if param_name == 'blocks':
+                blocks = param_value
+
+            if param_name == 'output':
+                output_filename = param_value
+        else:
             if item.lower().startswith('http'):
+                alto_files.append(item)
                 fetch_via_http = True
             else:
                 fetch_via_http = False
-                alto_files = glob.glob(sys.argv[1])
-    else:
-        blocks = sys.argv[1]
-        if len(sys.argv) <= 2:
-            usage()
-        for item in sys.argv[2:]:
-            if item.lower().startswith('http'):
-                fetch_via_http = True
-            else:
-                fetch_via_http = False
-                alto_files = glob.glob(sys.argv[2])
+                for item in glob.glob(item):
+                    alto_files.append(item)
+
+    return blocks, alto_files, fetch_via_http, output_filename
+
+def alto_to_text():
+    blocks, alto_files, fetch_via_http, output_filename = parse_arguments()
 
     if blocks:
-        blocks = blocks.split('=')[1]
         if blocks.find('-') > -1 and blocks.find(',') <= -1:
             blocks = [blocks.split('-')[0], blocks.split('-')[1]]
             block_range = True
@@ -188,13 +200,16 @@ def alto_to_text():
         for url in sys.argv[1:]:
             data = urllib.urlopen(url).read()
             filename = url.split('/')[-1].split('.')[0]
-            print filename
+            fh = open(TMPDIR + os.sep + filename, 'wb')
+            fh.write(data)
+            fh.close()
+            alto_to_disk(TMPDIR + os.sep + filename, blocks, block_range, output_filename)
     else:
         for alto_filename in alto_files:
-            alto_to_disk(alto_filename, blocks, block_range)
+            alto_to_disk(alto_filename, blocks, block_range, output_filename)
 
 def usage():
-    sys.stdout.write("Usage: %s [--blocks=a,b,c --blocks=a-c] path_to_alto_files\n\n" % sys.argv[0])
+    sys.stdout.write("Usage: %s [--blocks=a,b,c --blocks=a-c] [--output=/path_to_output_file] path_to_alto_files\n\n" % sys.argv[0])
     sys.stdout.write("The (optional) blocks parameter is used to extract only certain parts of the ALTO document.\n")
     sys.exit(-1)
 
