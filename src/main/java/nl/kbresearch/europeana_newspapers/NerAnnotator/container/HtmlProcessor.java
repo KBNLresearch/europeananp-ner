@@ -18,12 +18,12 @@ import org.apache.commons.io.FileUtils;
  * @author Willem Jan Faber
  * 
  */
-public class TextProcessor implements ContainerProcessor {
+public class HtmlProcessor implements ContainerProcessor {
 
     /**
      * the default instance of the Text processor
      */
-    public static TextProcessor INSTANCE = new TextProcessor();
+    public static HtmlProcessor INSTANCE = new HtmlProcessor();
 
     @Override
     public boolean processFile(ContainerContext context, String urlStr, Locale lang, String md5sum) throws IOException {
