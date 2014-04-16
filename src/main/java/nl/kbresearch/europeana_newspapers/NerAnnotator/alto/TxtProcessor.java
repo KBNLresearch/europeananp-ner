@@ -48,9 +48,14 @@ public class TxtProcessor {
         BufferedReader in = new BufferedReader(new InputStreamReader(potentialTextFilename.openStream()));
         String text="";
         String inputLine;
+
         while ((inputLine = in.readLine()) != null)
             text += inputLine;
         in.close();
+
+        if (mimeType.equals("html")) {
+            // REMOVE HTML TAGS and pare 
+        }
 
         // Run the selected classifier over the text
         List<List<CoreLabel>> out = classifier_text.classify(text);
