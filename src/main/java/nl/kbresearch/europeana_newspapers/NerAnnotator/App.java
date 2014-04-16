@@ -73,7 +73,7 @@ public class App {
 
         options.addOption(OptionBuilder
                         .withLongOpt("export")
-                        .withDescription("use FORMAT for export: log (Default), csv, html, db, alto, alto2_1, bio.\n Multiple formats:\" -f html -f csv\"")
+                        .withDescription("Output type: log (Default), csv, html, db, alto, alto2_1, bio.\n Multiple formats:\" -f html -f csv\"")
                         .hasArgs().withArgName("FORMAT").withType(String.class)
                         .create("f"));
 
@@ -85,7 +85,7 @@ public class App {
 
         options.addOption(OptionBuilder
                         .withLongOpt("container")
-                        .withDescription("which FORMAT are the container input files: mets (Default), didl, alto")
+                        .withDescription("Input type: mets (Default), didl, alto, text, html")
                         .hasArg().withArgName("FORMAT").withType(String.class)
                         .create("c"));
 
@@ -135,6 +135,10 @@ public class App {
                     processor = AltoLocalProcessor.INSTANCE;
                 } else if (line.getOptionValue("c").equals("mets")) {
                     processor = MetsProcessor.INSTANCE;
+                } else if (line.getOptionValue("c").equals("text")) {
+                    processor = TextProcessor.INSTANCE;
+                } else if (line.getOptionValue("c").equals("html")) {
+                    processor = HtmlProcessor.INSTANCE;
                 } else {
                     throw new ParseException("Could not identify container format: " + line.getOptionValue("c"));
                 }

@@ -40,13 +40,7 @@ public class AltoProcessor {
      * @throws IOException
      */
     public static int handlePotentialAltoFile(final URL potentialAltoFilename, final String mimeType, final Locale lang, final String md5sum, final ResultHandler[] handler) throws IOException {
-        /*
-        if (!("text/xml".equalsIgnoreCase(mimeType)) || (!(potentialAltoFilename.getFile().endsWith(".xml")))) {
-            System.out.println("NOT processing ALTO file " + potentialAltoFilename + " Either no .xml extention or no text/xml mimetype detected.");
-            return (-1);
-        }
-        */
-         try {
+        try {
             System.out.println("Trying to process ALTO file " + potentialAltoFilename);
             long startTime = System.currentTimeMillis();
             InputSource input_file = null;
