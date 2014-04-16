@@ -76,7 +76,7 @@ def get_textblock_range(xmltree_alto_data, start, end):
 
     return blocks
 
-def alto_to_disk(alto_filename, blocks = [], blocks_range = False):
+def alto_to_disk(alto_filename, blocks = [], blocks_range = False, output_filename= "" ):
     ''' Grab the selected text blocks and write them to disk '''
     xmltree_alto_data = xml_to_xmltree(alto_filename)
 
