@@ -15,6 +15,13 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 
+
+//import net.htmlparser.jericho.TextExtractor;
+//import net.htmlparser.jericho;
+import net.htmlparser.jericho.*;
+
+
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,24 +44,31 @@ public class TxtProcessor {
      * @param handler
      * @throws IOException
      */
-     public static int handlePotentialTextFile(final URL potentialTextFilename, final String mimeType, final Locale lang, final String md5sum, final ResultHandler[] handler) throws IOException {
-
-        System.out.println("Trying to process ALTO file " + potentialTextFilename);
+    public static int handlePotentialTextFile(final URL potentialTextFilename, final String mimeType, final Locale lang, final String md5sum, final ResultHandler[] handler) throws IOException {
         long startTime = System.currentTimeMillis();
+        System.out.println("Trying to process ALTO file " + potentialTextFilename);
+
+        // Get the selected classifier for the language
         CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(lang);
 
-
-        // Read the text file into mem
+        // Open filepointer
         BufferedReader in = new BufferedReader(new InputStreamReader(potentialTextFilename.openStream()));
+
         String text="";
         String inputLine;
 
+        // Read the text file into memory
         while ((inputLine = in.readLine()) != null)
             text += inputLine;
+
+        // Close filepointer
         in.close();
 
-        if (mimeType.equals("html")) {
-            // REMOVE HTML TAGS and pare 
+        // If the input is html, loose the tags
+        if (mimeType.equals("text/html")) {
+            Source html_source = new Source(text);
+            TextExtractor textExtractor=new TextExtractor(html_source);
+            text = textExtractor.setIncludeAttributes(false).toString();
         }
 
         // Run the selected classifier over the text
@@ -70,7 +84,7 @@ public class TxtProcessor {
                                         label.get(AltoStringID.class),
                                         label.get(OriginalContent.class),
                                         label.get(TextAnnotation.class),
-                                        label.get(AnswerAnnotation.class),
+                                        label.get(AnswerAnnotation.class), // Should be null ??
                                         label.get(ContinuationAltoStringID.class));
                             }
                 } else {
@@ -91,11 +105,12 @@ public class TxtProcessor {
             }
         }
 
-
+        // Close all the textblocks
         for (ResultHandler h : handler) {
                 h.stopTextBlock();
         }
 
+        // Close all the documents
         for (ResultHandler h : handler) {
                 h.stopDocument();
         }
