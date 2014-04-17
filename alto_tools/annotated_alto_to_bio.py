@@ -6,7 +6,7 @@
 
 # Takes in annotated ALTO and parse it to BIO form:
 #
-# In POS O 
+# In POS O
 # Nederland POS B-LOC
 # staat POS O
 # een POS O
@@ -18,7 +18,7 @@
 # with the '-f alto' option.
 
 # Example usage :
-# 
+#
 # 1: Create classifier for dutch
 # java -Xmx5G -cp target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop test-files/austen_dutch.prop
 #
@@ -50,37 +50,32 @@ import locale
 import xml.etree.ElementTree as ET
 from lxml import html
 
-
-sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout) 
-
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
 MIN_CHAR_PER_LINE = 20
 MIN_ENTITY_REQ = 1
 
 
 def annotated_alto_to_bio(filename):
-    fh = codecs.open(filename,"r","utf-8") #open(filename, 'r')
+    fh = codecs.open(filename, "r", "utf-8")
     alto_data = fh.read()
     fh.close()
-    
+
     entity_count = 0
     foundone = False
-    sentence = "" 
+    sentence = ""
     sentence_mapping = []
 
     for line in alto_data.split('\n'):
-	if line.strip().lower().startswith('<string'):
-	    entity = False
+        if line.strip().lower().startswith('<string'):
+            entity = False
 
-	    if line.find('ALTERNATIVE') > -1:
-
-
+            if line.find('ALTERNATIVE') > -1:
                 if line.find("ALTERNATIVE=\"") > -1:
                     entity = line.split("ALTERNATIVE=\"")[1].split("\"")[0]
 
                 if line.find("ALTERNATIVE='") > -1:
                     entity = line.split("ALTERNATIVE='")[1].split("'")[0]
-
 
                 if entity == "B-NOT KNOWN":
                     entity = False
@@ -89,12 +84,11 @@ def annotated_alto_to_bio(filename):
                 foundone = True
                 entity_count += 1
 
-
             if line.find('content="') > -1:
                 word = line.split('content="')[1].split('"')[0]
             if line.find('CONTENT="') > -1:
                 word = line.split('CONTENT="')[1].split('"')[0]
-            word_entity_mapping = { html.fromstring(word).text : entity } 
+            word_entity_mapping = {html.fromstring(word).text: entity}
             sentence_mapping.append(word_entity_mapping)
 
             if entity:
@@ -103,7 +97,7 @@ def annotated_alto_to_bio(filename):
                 sentence += u" " + html.fromstring(word).text.strip()
 
             if (sentence.endswith(".") or sentence.endswith("?") or sentence.endswith("!")) \
-                    and foundone and len(sentence) > MIN_CHAR_PER_LINE and entity_count > MIN_ENTITY_REQ: 
+                    and foundone and len(sentence) > MIN_CHAR_PER_LINE and entity_count > MIN_ENTITY_REQ:
                 # If the sentence is finished, and contains at least MIN_CHAR_PER_LINE characters,
                 # and the nr of entities is greater then MIN_ENTITY_REQ, add the line to the output.
 

@@ -1,25 +1,25 @@
 #!/usr/bin/env python
 
-# 
+#
 # ALTO2TEXT ALTO_TO_TEXT ALTO TO TEXT
 # alto2text alto_to_text alto to text
-# 
+#
 
 # Open an ALTO (xml) file and print the text to stdout.
 # This is useful to compare the output of stanford-vanilla
 # against the europeana-ner.
 
 #  Copyright (c) 2013 Koninklijke Bibliotheek
-# 
+#
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the European Union Public Licence (EUPL),
 #  version 1.1 (or any later version).
-# 
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  European Union Public Licence for more details.
-# 
+#
 #  You should have received a copy of the European Union Public Licence
 #  along with this program. If not, see
 #  http://www.osor.eu/eupl/european-union-public-licence-eupl-v.1.1
@@ -35,8 +35,8 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
-
 TMPDIR = tempfile.gettempdir()
+
 
 def xml_to_xmltree(alto_filename):
     ''' Convert xml file to element tree '''
@@ -53,6 +53,7 @@ def xml_to_xmltree(alto_filename):
 
     alto_file.close()
     return ET.fromstring(alto_data)
+
 
 def get_textblock_range(xmltree_alto_data, start, end):
     ''' Get all the block-id's within the range '''
@@ -76,7 +77,8 @@ def get_textblock_range(xmltree_alto_data, start, end):
 
     return blocks
 
-def alto_to_disk(alto_filename, blocks = [], blocks_range = False, output_filename= "" ):
+
+def alto_to_disk(alto_filename, blocks=[], blocks_range=False, output_filename=""):
     ''' Grab the selected text blocks and write them to disk '''
     xmltree_alto_data = xml_to_xmltree(alto_filename)
 
@@ -87,7 +89,7 @@ def alto_to_disk(alto_filename, blocks = [], blocks_range = False, output_filena
             usage()
         # Reassign blocks with all the text-blocks in the specified range.
         blocks = get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])
-    elif len(blocks) >0:
+    elif len(blocks) > 0:
         for item in blocks:
             if len(get_textblock_range(xmltree_alto_data, item, item)) == 0:
                 sys.stdout.write("Error: Could not find block %s, aborting\n" % item)
@@ -117,7 +119,7 @@ def alto_to_disk(alto_filename, blocks = [], blocks_range = False, output_filena
                     alto_text += item.get("CONTENT")
                     block_words += 1
                 prev_was_hyp = False
-            else: 
+            else:
                 if print_current_block != None or print_all_blocks:
                     alto_text += " " + item.get("CONTENT")
                     block_words += 1
@@ -145,6 +147,7 @@ def alto_to_disk(alto_filename, blocks = [], blocks_range = False, output_filena
     text_outputfile.write(alto_text)
     text_outputfile.close()
     sys.stdout.write("Wrote %s bytes to %s\n" % (str(len(alto_text)), text_outputfilename))
+
 
 def parse_arguments():
     blocks = False
@@ -178,6 +181,7 @@ def parse_arguments():
 
     return blocks, alto_files, fetch_via_http, output_filename
 
+
 def alto_to_text():
     blocks, alto_files, fetch_via_http, output_filename = parse_arguments()
 
@@ -208,10 +212,12 @@ def alto_to_text():
         for alto_filename in alto_files:
             alto_to_disk(alto_filename, blocks, block_range, output_filename)
 
+
 def usage():
     sys.stdout.write("Usage: %s [--blocks=a,b,c --blocks=a-c] [--output=/path_to_output_file] path_to_alto_files\n\n" % sys.argv[0])
     sys.stdout.write("The (optional) blocks parameter is used to extract only certain parts of the ALTO document.\n")
     sys.exit(-1)
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
