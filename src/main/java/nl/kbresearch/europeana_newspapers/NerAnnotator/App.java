@@ -13,9 +13,14 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.*;
 import java.util.concurrent.*;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
 
 /**
  * Command line interface of application
@@ -24,10 +29,24 @@ import java.util.concurrent.*;
  * @author Willem Jan Faber
  */
 
-public class App {
+public class App extends HttpServlet {
     static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
     static File outputDirectoryRoot;
     static String[] outputFormats;
+    
+
+    public void init() throws ServletException {
+    }
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<h1>Hello world from NER</h1>");
+    }
+  
+    public void destroy() {
+    }
+
 
     /**
      * @return root for the output files
