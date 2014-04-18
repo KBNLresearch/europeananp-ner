@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class NERhttp extends HttpServlet {
 
     public void init() throws ServletException {

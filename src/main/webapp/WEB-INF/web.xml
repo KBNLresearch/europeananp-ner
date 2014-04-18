@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+                version="2.4">
+  <display-name>NerAnnotator</display-name>
+  <description>NerAnnotator</description>
+  <context-param>
+    <param-name>webmaster</param-name>
+    <param-value>myaddress@mycompany.com</param-value>
+    <description>
+        The EMAIL address of the administrator to whom questions
+        and comments about this application should be addressed.
+      </description>
+  </context-param>
+  <servlet>
+    <servlet-name>NerAnnotator</servlet-name>
+    <description>
+      </description>
+    <servlet-class>nl.kbresearch.europeana_newspapers.NerAnnotator.App</servlet-class>
+    <load-on-startup>5</load-on-startup>
+  </servlet>
+  <!-- Define mappings that are used by the servlet container to
+         translate a particular request URI (context-relative) to a
+         particular servlet.  The examples below correspond to the
+         servlet descriptions above.  Thus, a request URI like:
+
+           http://localhost:8080/{contextpath}/graph
+
+         will be mapped to the "graph" servlet, while a request like:
+
+           http://localhost:8080/{contextpath}/saveCustomer.do
+
+         will be mapped to the "controller" servlet.
+
+         You may define any number of servlet mappings, including zero.
+         It is also legal to define more than one mapping for the same
+         servlet, if you wish to.
+    -->
+  <servlet-mapping>
+    <servlet-name>NerAnnotator</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>10</session-timeout>
+  </session-config>
+</web-app>
