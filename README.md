@@ -16,6 +16,18 @@ At the moment, the following output formats are implemented:
 * CSV (comma separated values)
 * SQL
 
+Building from source:
+
+    Install maven, java (version "1.7" and up), in the toplevel directory run:
+
+    mvn package
+
+    This command will generate a jar, and a war version of the NER located in the target/ directory.
+    To deploy the war file, just copy the war file in your tomcat webapp directory. To test the webapp
+    from command line (this will try to bind to port 8080): 
+
+    mvn jetty:run
+
 Basic usage:
 
 Help:

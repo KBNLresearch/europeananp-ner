@@ -2,6 +2,7 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.http.NERhttp;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -13,14 +14,9 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import java.util.*;
 import java.util.concurrent.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 
 /**
  * Command line interface of application
@@ -29,24 +25,10 @@ import javax.servlet.http.*;
  * @author Willem Jan Faber
  */
 
-public class App extends HttpServlet {
+public class App extends NERhttp {
     static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
     static File outputDirectoryRoot;
     static String[] outputFormats;
-    
-
-    public void init() throws ServletException {
-    }
-
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println("<h1>Hello world from NER</h1>");
-    }
-  
-    public void destroy() {
-    }
-
 
     /**
      * @return root for the output files

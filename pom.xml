@@ -4,16 +4,15 @@
   <groupId>nl.kbresearch.europeana_newspapers</groupId>
   <artifactId>NerAnnotator</artifactId>
   <version>0.0.2-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <name>NerAnnotator</name>
   <url>http://www.europeana-newspapers.eu/</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
-      <plugins>
-
-         <plugin>
+    <plugins>
+      <plugin>
         <!-- This plugin is needed for the servlet example -->
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
@@ -33,6 +32,15 @@
         <!-- Build an executable JAR -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+         <execution>
+           <id>make-a-jar</id>
+           <phase>compile</phase>
+           <goals>
+             <goal>jar</goal>
+           </goals>
+         </execution>
+        </executions>
         <version>2.4</version>
         <configuration>
           <archive>
