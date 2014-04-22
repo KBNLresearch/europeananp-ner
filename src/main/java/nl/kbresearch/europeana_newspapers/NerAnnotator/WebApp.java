@@ -21,11 +21,10 @@ import java.util.concurrent.*;
 /**
  * Command line interface of application
  * 
- * @author rene
  * @author Willem Jan Faber
  */
 
-public class App {
+public class WebApp extends NERhttp {
     static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
     static File outputDirectoryRoot;
     static String[] outputFormats;

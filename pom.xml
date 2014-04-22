@@ -18,6 +18,14 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <configuration>
 
+
+                    <archive>
+                        <manifest>
+                            <mainClass>nl.kbresearch.europeana_newspapers.WebApp</mainClass>
+                        </manifest>
+                    </archive>
+
+
         <contextPath>/</contextPath>
         <descriptor>${basedir}/web/WEB-INF/web.xml</descriptor>
         <war>target/europeana-ner.war</war>
@@ -52,12 +60,36 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
+              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.WebApp</mainClass>
             </manifest>
           </archive>
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptorRefs>

@@ -17,7 +17,7 @@
     <servlet-name>NerAnnotator</servlet-name>
     <description>
       </description>
-    <servlet-class>nl.kbresearch.europeana_newspapers.NerAnnotator.App</servlet-class>
+    <servlet-class>nl.kbresearch.europeana_newspapers.NerAnnotator.WebApp</servlet-class>
     <load-on-startup>5</load-on-startup>
   </servlet>
   <!-- Define mappings that are used by the servlet container to
