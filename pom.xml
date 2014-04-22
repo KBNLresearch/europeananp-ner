@@ -17,16 +17,22 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <configuration>
-        <archive>
-          <manifest>
-            <mainClass>nl.kbresearch.europeana_newspapers.WebApp</mainClass>
-          </manifest>
-        </archive>
-        <contextPath>/</contextPath>
-        <descriptor>${basedir}/web/WEB-INF/web.xml</descriptor>
-        <war>target/europeana-ner.war</war>
+          <webResources>
+            <resource>
+             <targetPath>WEB-INF/</targetPath>
+             <filtering>true</filtering>
+            </resource>
+          </webResources>
+          <archive>
+            <manifest>
+              <mainClass>nl.kbresearch.europeana_newspapers.WebApp</mainClass>
+            </manifest>
+          </archive>
+          <contextPath>/</contextPath>
+          <descriptor>${basedir}/web/WEB-INF/web.xml</descriptor>
+          <war>target/europeana-ner.war</war>
         </configuration>
-        </plugin>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
