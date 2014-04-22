@@ -12,10 +12,23 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
 
 public class NERhttp extends HttpServlet {
 
+    // Support the following requests: 
+    // 
+    //
+    // /
+    //   * Display help text and some sample links.
+    //
+    //
+    // /?listClassifiers
+    //   * Display the list of loaded classifiers and their checksums.
+    //
+    //
+    // /?lang=nl&alto=http://resources2.kb.nl/000010000/alto/000010470/DDD_000010470_001_alto.xml
+    //
+    //   * If there is a classifier available to classify, return an 
+    //     xml/text response with the result.
+    //
 
-    // Initialize a list of classifiers here..  (so once the webapp is loaded, no classifiers can be changed)
-    // NERClassifiers.setLanguageModels(optionProperties);
-    // CRFClassifier classifier_nl = NERClassifiers.getCRFClassifierForLanguage(new Locale("nl"));
 
     public void init() throws ServletException {
 

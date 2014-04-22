@@ -19,10 +19,20 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Command line interface of application
+ * HTTP interface of application
  * 
  * @author Willem Jan Faber
  */
+
+
+//
+// 1. Parse ini file for the application.
+// 2. Load the classifiers specified for different languages.
+// 3. Enter main loop, wait for requests. (Startup with reference to loaded lang models).
+//
+//
+//
+
 
 public class WebApp extends NERhttp {
     static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
