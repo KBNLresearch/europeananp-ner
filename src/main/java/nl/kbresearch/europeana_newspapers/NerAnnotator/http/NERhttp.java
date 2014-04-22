@@ -4,13 +4,27 @@ import java.io.PrintWriter;
 import java.io.IOException;
 
 import javax.servlet.*;
+
 import javax.servlet.http.*;
 import java.util.Locale;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
+
+import java.util.Properties;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+
 import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
 
+
+
+
 public class NERhttp extends HttpServlet {
+
+    public final static String CONFIG_PATH = "WEB-INF/classes/config.ini";
+
 
     // Support the following requests: 
     // 
@@ -37,15 +51,36 @@ public class NERhttp extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-        
-        //String path = request.getRequestURI();
+
+        HashMap config = parse_config();
 
         if (request.getParameter("lang") != null) {
-            out.println(request.getParameter("lang"));
+            Object value = config.get(request.getParameter("lang"));
+            if ( value != null ) {
+                out.println(request.getParameter("lang"));
+            } else {
+                out.println("Error : Language " + (String) request.getParameter("lang") +  " not found in config, See <a href='?listClassifiers'>listClassifiers</a>");
+            }
         } else {
             usage(out);
         }
 
+    }
+
+    public HashMap parse_config() {
+        final String CONFIG_FILE = getServletContext().getRealPath("/") + CONFIG_PATH;
+        HashMap classifiers = new HashMap();
+        //classifiers.put("nl", "ok");
+
+        try {
+            InputStream input = new FileInputStream(CONFIG_FILE);
+            Properties props = new Properties(); 
+            props.load(input);
+        } catch (IOException ex) {
+            return classifiers;
+        } 
+
+        return classifiers;
     }
 
     public void usage(PrintWriter out) {
