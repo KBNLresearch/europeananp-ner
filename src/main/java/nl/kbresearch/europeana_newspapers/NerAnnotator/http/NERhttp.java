@@ -1,94 +1,168 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.http;
 
-import java.io.PrintWriter;
-import java.io.IOException;
-
-import javax.servlet.*;
-
-import javax.servlet.http.*;
-import java.util.Locale;
-
+import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 
-import java.util.Properties;
-import java.io.IOException;
-import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Properties;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.NERClassifiers;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.ini4j.Ini;
+import org.ini4j.Profile.Section;
 
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
-public class NERhttp extends HttpServlet {
-
-    public final static String CONFIG_PATH = "WEB-INF/classes/config.ini";
-
-
-    // Support the following requests: 
-    // 
-    //
-    // /
-    //   * Display help text and some sample links.
-    //
-    //
-    // /?listClassifiers
-    //   * Display the list of loaded classifiers and their checksums.
-    //
-    //
-    // /?lang=nl&alto=http://resources2.kb.nl/000010000/alto/000010470/DDD_000010470_001_alto.xml
-    //
-    //   * If there is a classifier available to classify, return an 
-    //     xml/text response with the result.
-    //
-
-
-    public void init() throws ServletException {
-
-    }
-
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        HashMap config = parse_config();
-
-        if (request.getParameter("lang") != null) {
-            Object value = config.get(request.getParameter("lang"));
-            if ( value != null ) {
-                out.println(request.getParameter("lang"));
-            } else {
-                out.println("Error : Language " + (String) request.getParameter("lang") +  " not found in config, See <a href='?listClassifiers'>listClassifiers</a>");
+public class NERhttp {
+    // List the available classifiers
+    static public void listClassifiers(HashMap config, PrintWriter out) {
+        if (config.get("mode").equals("xml")) {
+            out.println("<classifiers>");
+            for (Object value: config.keySet()) {
+                if ((config.get((String) value) != null) && (((String) value).endsWith("__checksum"))) {
+                    out.println("<classifier>");
+                    out.println("<lang>");
+                    out.println(((String) value).split("__")[0]);
+                    out.println("</lang>");
+                    out.println("<checksum>");
+                    out.println((String) config.get((String) value));
+                    out.println("</checksum>");
+                    out.println("</classifier>");
+                }
             }
+            out.println("</classifiers>");
         } else {
-            usage(out);
+            out.println("<h2>Available languages :</h2><br/>");
+            for (Object value: config.keySet()) {
+                if ((config.get((String) value) != null) && (((String) value).endsWith("__checksum"))) {
+                    out.println(((String) value).split("__")[0] + " : ");
+                    out.println((String) config.get((String) value) + "</br>");
+                }
+            }
         }
-
     }
 
-    public HashMap parse_config() {
-        final String CONFIG_FILE = getServletContext().getRealPath("/") + CONFIG_PATH;
-        HashMap classifiers = new HashMap();
-        //classifiers.put("nl", "ok");
+    // Set the classifier language
+    static public HashMap setLang(HashMap config, String lang, PrintWriter out) {
+        return config;
+    }
+
+
+    // Initialize by loading/interpeting the config file
+    static public HashMap init(String configPath) {
+        HashMap config = new HashMap();
+        config.put("status", "init");
+        config.put("lang", "unknown");
+
+        Ini configIni = new Ini();
+
+        Properties optionProperties = new Properties();
+        // optionProperties.setProperty("nl", "path_to_classifiers");
 
         try {
-            InputStream input = new FileInputStream(CONFIG_FILE);
-            Properties props = new Properties(); 
-            props.load(input);
+            configIni = new Ini(new FileReader(configPath));
         } catch (IOException ex) {
-            return classifiers;
+            System.out.println("Error while reading config file, located here: " + configPath);
         } 
 
-        return classifiers;
+        for (String sectionName: configIni.keySet()) {
+            Section section = configIni.get(sectionName);
+
+            for (String optionKey: section.keySet()) {
+                    config.put(sectionName + "__" + optionKey , section.get(optionKey));
+                    System.out.println(optionKey);
+                    if (optionKey.equals("classifier")) {
+                        optionProperties.setProperty(sectionName, section.get(optionKey));
+                    }
+            }
+        }
+
+        // TODO: Load classifiers from disk, and add them to the config object.
+        //
+        // NERClassifiers.setLanguageModels(optionProperties);
+        // CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(new Locale("nl"));
+        // classifiers.put("nl__classifier", classifier_text);
+        // CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(lang);
+        // classifier = CRFClassifier.getClassifier(getDefaultInputModelStream(langModels.getProperty(langKey.toString()), lang));
+        // getDefaultInputModelStream -> modelStream = new FileInputStream(modelName); // return new GZIPInputStream(modelStream); 
+        // return classifiers;
+
+        // NERClassifiers.setLanguageModels(optionProperties);
+        // CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(new Locale("nl"));
+        // classifiers.put("nl__classifier", classifier_text);
+        return config;
     }
 
-    public void usage(PrintWriter out) {
-        out.println("<h1><a href='https://github.com/KBNLresearch/europeananp-ner'>europeananp-ner</a></h1><br>");
-        out.println("Usage: <br><a href='?lang=nl&alto=/path/to/altofile'>example1</a>");
-        out.println("<a href='?lang=nl&html=/path/to/altofile'>example2</a><br>");
+    // Parse the supplied alto file
+    static public void parse_alto(HashMap config, String altoPath, PrintWriter out) {
+        URL url = null;
+
+        try { 
+            url = new URL(altoPath);
+        } catch(MalformedURLException ex) {
+            out.println("Error : " + ex.toString());
+            return;
+        }
+
+        URLConnection urlConnection = null;
+        InputStream in = null;
+
+        try {
+            urlConnection = url.openConnection();
+            in = new BufferedInputStream(urlConnection.getInputStream());
+        } catch (IOException ex) {
+            out.println("Error: "  + ex.toString());
+        }
+        
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = null;
+
+        try {
+            db = dbf.newDocumentBuilder(); 
+        } catch (ParserConfigurationException ex) {
+            System.out.println("Error while parsing xml: " + ex.toString());
+        }
+
+        Document doc = null;
+
+        try {
+            doc = db.parse(in);
+        } catch (SAXException ex) {
+            System.out.println("Error while parsing xml: " + ex.toString());
+        } catch (IOException ex) {
+            System.out.println("Error while parsing xml: " + ex.toString());
+        }
+        // TODO: Invoke classifier  via  AltoProcessor.java (Class needs to be 
+        // adepted to cope with pre-loaded classifiers, and existing doc as input)
+        // And also see if there needs to be a different kind of outputWriter.
     }
 
-    public void destroy() {
+
+    // Parse the supplied html file
+    static public void parse_html(HashMap config, String htmlPath, PrintWriter out) {
+        out.println("Parsing html file " + htmlPath);
+    }
+
+    // Parse the supplied mets file
+    static public void parse_mets(HashMap config, String metsPath, PrintWriter out) {
+        out.println("Parsing mets file " + metsPath);
     }
 }

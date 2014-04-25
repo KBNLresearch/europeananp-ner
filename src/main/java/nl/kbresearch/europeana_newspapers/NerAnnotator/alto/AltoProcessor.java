@@ -39,7 +39,9 @@ public class AltoProcessor {
      * @param handler
      * @throws IOException
      */
-    public static int handlePotentialAltoFile(final URL potentialAltoFilename, final String mimeType, final Locale lang, final String md5sum, final ResultHandler[] handler) throws IOException {
+    public static int handlePotentialAltoFile(
+            //final HashMap classifiers, 
+            final URL potentialAltoFilename, final String mimeType, final Locale lang, final String md5sum, final ResultHandler[] handler) throws IOException {
         try {
             System.out.println("Trying to process ALTO file " + potentialAltoFilename);
             long startTime = System.currentTimeMillis();
