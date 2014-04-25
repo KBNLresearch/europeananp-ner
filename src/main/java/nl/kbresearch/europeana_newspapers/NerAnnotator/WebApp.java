@@ -3,7 +3,10 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.http.NERhttp;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import java.util.HashMap;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -42,7 +45,7 @@ public class WebApp extends HttpServlet {
         }
 
         // Handle output mode
-        if (request.getParameter("output") != null {
+        if (request.getParameter("output") != null) {
             // TODO: Create some logic for this, also have a look at outputwriters.
             //
             // This can be, alto_alternative, alto2_1, text, html, cvs
