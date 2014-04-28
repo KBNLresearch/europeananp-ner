@@ -13,9 +13,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
+import edu.stanford.nlp.ling.CoreLabel;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -69,12 +71,8 @@ public class NERhttp {
     static public HashMap init(String configPath) {
         HashMap config = new HashMap();
         config.put("status", "init");
-        config.put("lang", "unknown");
 
         Ini configIni = new Ini();
-
-        Properties optionProperties = new Properties();
-        // optionProperties.setProperty("nl", "path_to_classifiers");
 
         try {
             configIni = new Ini(new FileReader(configPath));
@@ -87,31 +85,21 @@ public class NERhttp {
 
             for (String optionKey: section.keySet()) {
                     config.put(sectionName + "__" + optionKey , section.get(optionKey));
-                    System.out.println(optionKey);
                     if (optionKey.equals("classifier")) {
-                        optionProperties.setProperty(sectionName, section.get(optionKey));
+                        Properties optionProperties = new Properties();
+                        optionProperties.setProperty(sectionName, section.get(optionKey).replace("\"", ""));
+                        NERClassifiers.setLanguageModels(optionProperties);
+                        Locale llang = new Locale(sectionName);
+                        CRFClassifier cli = NERClassifiers.getCRFClassifierForLanguage(llang);
+                        config.put("langmodel__" + sectionName, cli);
                     }
             }
         }
-
-        // TODO: Load classifiers from disk, and add them to the config object.
-        //
-        // NERClassifiers.setLanguageModels(optionProperties);
-        // CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(new Locale("nl"));
-        // classifiers.put("nl__classifier", classifier_text);
-        // CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(lang);
-        // classifier = CRFClassifier.getClassifier(getDefaultInputModelStream(langModels.getProperty(langKey.toString()), lang));
-        // getDefaultInputModelStream -> modelStream = new FileInputStream(modelName); // return new GZIPInputStream(modelStream); 
-        // return classifiers;
-
-        // NERClassifiers.setLanguageModels(optionProperties);
-        // CRFClassifier classifier_text = NERClassifiers.getCRFClassifierForLanguage(new Locale("nl"));
-        // classifiers.put("nl__classifier", classifier_text);
         return config;
     }
 
     // Parse the supplied alto file
-    static public void parse_alto(HashMap config, String altoPath, PrintWriter out) {
+    static public void parse_alto(HashMap config, String altoPath, PrintWriter out, String lang) {
         URL url = null;
 
         try { 
@@ -150,6 +138,9 @@ public class NERhttp {
         } catch (IOException ex) {
             System.out.println("Error while parsing xml: " + ex.toString());
         }
+        out.println("Done loading " + altoPath);
+
+
         // TODO: Invoke classifier  via  AltoProcessor.java (Class needs to be 
         // adepted to cope with pre-loaded classifiers, and existing doc as input)
         // And also see if there needs to be a different kind of outputWriter.

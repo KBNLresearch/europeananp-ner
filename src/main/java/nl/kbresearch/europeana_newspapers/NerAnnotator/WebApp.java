@@ -44,29 +44,23 @@ public class WebApp extends HttpServlet {
             this.config.put("mode", "xml");
         }
 
-        // Handle output mode
-        if (request.getParameter("output") != null) {
-            // TODO: Create some logic for this, also have a look at outputwriters.
-            //
-            // This can be, alto_alternative, alto2_1, text, html, cvs
-            // But if the input is text/html the ouput of cource cannot be alto
-            return;
-        }
-
         // Handle 'listClassifiers' argument
         if (request.getParameter("listClassifiers") != null) {
             NERhttp.listClassifiers(config, out);
             return;
         }
 
+
+        String lang = null;
         // Handle 'lang' argument
         if (request.getParameter("lang") != null) {
+            lang = request.getParameter("lang");
             config = NERhttp.setLang(config, request.getParameter("lang"), out);
         }
 
         // Handle 'alto' argument
         if (request.getParameter("alto") != null) {
-            NERhttp.parse_alto(config, request.getParameter("alto"), out);
+            NERhttp.parse_alto(config, request.getParameter("alto"), out, lang);
         }
     }
 }
