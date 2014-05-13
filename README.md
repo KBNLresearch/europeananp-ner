@@ -18,13 +18,13 @@ At the moment, the following output formats are implemented:
 
 Building from source:
 
-    Install maven, java (version "1.7" and up), in the toplevel directory run:
+Install maven, java (version "1.7" and up). In the toplevel directory run:
 
     mvn package
 
-    This command will generate a jar, and a war version of the NER located in the target/ directory.
-    To deploy the war file, just copy the war file in your tomcat webapp directory. To test the webapp
-    from command line (this will try to bind to port 8080): 
+This command will generate a jar, and a war version of the NER located in the target/ directory.
+To deploy the war file, just copy the war file in your tomcat webapp directory. To test the webapp
+from command line (this will try to bind to port 8080): 
 
     mvn jetty:run
 
@@ -32,7 +32,7 @@ Basic usage (Command line client):
 
 Help:
   
-     java -jar NerAnnotator.jar --help
+      java -jar NerAnnotator.jar --help
 	
 Print result to stdout for German language:
 
@@ -56,15 +56,17 @@ Now you can compare the output with the example output provided.
 
     diff out/dutch_alto.xml-annotations/dutch_alto.xml.alto.xml ./test-files/dutch_alto_processed_output.xml
 
-The same prcedure can be applied using the German example files.
+The same procedure can be applied using the German example files.
 
 The austen.prop file (basic version) can be found here:
 
     http://nlp.stanford.edu/downloads/ner-example/austen.prop
 
-
 Basic usage (Web client):
 
-    Build the NER package from source, (mvn package), and place the generated WAR file in the webapps dir (cp ./target/NerAnnotator-0.0.2-SNAPSHOT.war /usr/local/tomcat7/webapps/).
-    The default configuration (as well as test-classifiers) resides in here: src/main/resources/config.ini, this file references the available classifiers. See the provided sample for some default settings.
-    The landing page of the application will show the available options once invoked with the browser. Once the webapp is deployed, the config.ini and the classifiers will end up here WEB-INF/classes/ (for now at least).
+Build the NER package from source, (mvn package), and place the generated WAR file in the webapps dir: 
+
+    cp ./target/NerAnnotator-0.0.2-SNAPSHOT.war /usr/local/tomcat7/webapps/).
+    
+The default configuration (as well as test-classifiers) resides in here: src/main/resources/config.ini, this file references the available classifiers. See the provided sample for some default settings.
+The landing page of the application will show the available options once invoked with the browser. Once the webapp is deployed, the config.ini and the classifiers will end up in WEB-INF/classes/ (for now at least).
