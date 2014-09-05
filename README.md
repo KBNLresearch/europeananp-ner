@@ -64,9 +64,9 @@ The austen.prop file (basic version) can be found here:
 
 Basic usage (Web client):
 
-Build the NER package from source, (mvn package), and place the generated WAR file in the webapps dir: 
+Build the NER package from source, (mvn package), and place the generated WAR file in the webapps dir:
 
-    cp ./target/NerAnnotator-0.0.2-SNAPSHOT.war /usr/local/tomcat7/webapps/).
-    
+    cp ./target/NerAnnotator-0.0.2-SNAPSHOT.war /usr/local/tomcat7/webapps/
+
 The default configuration (as well as test-classifiers) resides in here: src/main/resources/config.ini, this file references the available classifiers. See the provided sample for some default settings.
 The landing page of the application will show the available options once invoked with the browser. Once the webapp is deployed, the config.ini and the classifiers will end up in WEB-INF/classes/ (for now at least).

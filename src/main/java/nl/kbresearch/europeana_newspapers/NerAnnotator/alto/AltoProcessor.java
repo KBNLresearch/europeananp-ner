@@ -11,25 +11,29 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+
 /**
  * ALTO file processing
- * 
+ *
  * @author Rene
  * @author Willem Jan Faber
- * 
+ *
  */
+
+
 public class AltoProcessor {
     /**
      * @param potentialAltoFilename
@@ -39,9 +43,11 @@ public class AltoProcessor {
      * @param handler
      * @throws IOException
      */
-    public static int handlePotentialAltoFile(
-            //final HashMap classifiers, 
-            final URL potentialAltoFilename, final String mimeType, final Locale lang, final String md5sum, final ResultHandler[] handler) throws IOException {
+    public static int handlePotentialAltoFile(final URL potentialAltoFilename,
+                                              final String mimeType,
+                                              final Locale lang,
+                                              final String md5sum,
+                                              final ResultHandler[] handler) throws IOException {
         try {
             System.out.println("Trying to process ALTO file " + potentialAltoFilename);
             long startTime = System.currentTimeMillis();
@@ -79,7 +85,7 @@ public class AltoProcessor {
                 for (ResultHandler h : handler) {
                     h.startTextBlock();
                 }
-                
+
                 // Loop over the alto to extract text elements. Make one long string (sentence).
                 List<CoreMap> classify_alto = classifier_alto.classify(block);
                 String text = "";
@@ -122,6 +128,11 @@ public class AltoProcessor {
                     }
                 }
 
+
+                //TODO: This contains a devious search / seek loop,
+                //      needs more polishing, add debug output statements,
+                //      that can be switched on and off.
+
                 for (CoreMap label : classify_alto) {
                     if (label.get(HyphenatedLineBreak.class) != null) {
                         for (ResultHandler h : handler) {
@@ -138,7 +149,6 @@ public class AltoProcessor {
                         // Matching the stanford tokenized output to the alto format.
                         if (label.get(TextAnnotation.class) != null) {
                             if (sentenceCount + offset < stanford_tokens.size()) {
-
                                 Set<String> stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
                                 stanford = TextElementsExtractor.cleanWord(stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0]);
                                 stanfordClassification = (stanford_tokens.get(sentenceCount + offset).get(stanford));

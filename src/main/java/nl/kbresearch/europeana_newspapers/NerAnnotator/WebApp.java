@@ -13,7 +13,7 @@ import javax.servlet.http.*;
 
 /**
  * HTTP interface for Europeana-NER
- * 
+ *
  * @author Willem Jan Faber
  */
 public class WebApp extends HttpServlet {
@@ -34,7 +34,8 @@ public class WebApp extends HttpServlet {
         PrintWriter out = null;
 
         // Set the desired output mode (default = XML)
-        if ((request.getParameter("mode") != null) && (request.getParameter("mode").equals("html"))) {
+        if ((request.getParameter("mode") != null) && 
+                (request.getParameter("mode").equals("html"))) {
             response.setContentType("text/html");
             out = response.getWriter();
             this.config.put("mode", "html");

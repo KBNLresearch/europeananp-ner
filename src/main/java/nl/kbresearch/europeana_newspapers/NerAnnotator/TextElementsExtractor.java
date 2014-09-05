@@ -51,6 +51,9 @@ public class TextElementsExtractor {
                 boolean hyphenatedEnd = false;
                 Element hyphenWord = null;
 
+
+                // TODO: Rewrite these nested if loops, split in functions.
+
                 for (int j = 0; j < textLineToken.getLength(); j++) {
                     // Loop over TextLine
                     Node textLineNode = textLineToken.item(j);
@@ -71,7 +74,7 @@ public class TextElementsExtractor {
                                                     textLineElement.getAttribute("CONTENT"), null)); 
                                     } else {
                                         if (isNextHyphen(textLineNodeList, k + 1)) {
-                                            // If the next item is a hypen, 
+                                            // If the next item is a hypen,
                                             // get next word-part, and join the strings
                                             Element nextElement = lookupNextWord(textLineToken, j);
 
@@ -80,7 +83,7 @@ public class TextElementsExtractor {
                                                     nextElement != null &&
                                                     nextElement.getAttribute("CONTENT") != null) {
 
-                                                newBlock.add(getWordToLabel(textLineElement, 
+                                                newBlock.add(getWordToLabel(textLineElement,
                                                              textLineElement.getAttribute("CONTENT") + nextElement.getAttribute("CONTENT"),
                                                              nextElement));
 

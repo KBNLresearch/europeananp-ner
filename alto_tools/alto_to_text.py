@@ -45,7 +45,7 @@ def xml_to_xmltree(alto_filename):
     alto_data = alto_file.read()
 
     try:
-        xmltree_alto_data = ET.fromstring(alto_data)
+        ET.fromstring(alto_data)
     except ET.ParseError as e:
         sys.stdout.write("Failed parsing %s, aborting\n" % alto_filename)
         sys.stdout.write(e.message)
@@ -78,17 +78,19 @@ def get_textblock_range(xmltree_alto_data, start, end):
     return blocks
 
 
-def alto_to_disk(alto_filename, blocks=[], blocks_range=False, output_filename=""):
+def alto_to_disk(alto_filename, blocks=[],
+                 blocks_range=False, output_filename=""):
+
     ''' Grab the selected text blocks and write them to disk '''
     xmltree_alto_data = xml_to_xmltree(alto_filename)
 
     # Check if the given blocks are actually in the ALTO file.
     if blocks_range:
-        if len(get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])) == 0:
-            sys.stdout.write("Error: Could not find a range spanning from %s to %s, aborting\n" % (blocks[0], blocks[1]))
-            usage()
         # Reassign blocks with all the text-blocks in the specified range.
         blocks = get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])
+        if len(blocks) == 0:
+            sys.stdout.write("Error: Could not find a range spanning from %s to %s, aborting\n" % (blocks[0], blocks[1]))
+            usage()
     elif len(blocks) > 0:
         for item in blocks:
             if len(get_textblock_range(xmltree_alto_data, item, item)) == 0:
@@ -115,12 +117,12 @@ def alto_to_disk(alto_filename, blocks=[], blocks_range=False, output_filename="
 
         if item.tag.endswith("String"):
             if prev_was_hyp:
-                if print_current_block != None or print_all_blocks:
+                if print_current_block is not None or print_all_blocks:
                     alto_text += item.get("CONTENT")
                     block_words += 1
                 prev_was_hyp = False
             else:
-                if print_current_block != None or print_all_blocks:
+                if print_current_block is not None or print_all_blocks:
                     alto_text += " " + item.get("CONTENT")
                     block_words += 1
                 total_words += 1
@@ -129,9 +131,9 @@ def alto_to_disk(alto_filename, blocks=[], blocks_range=False, output_filename="
             prev_was_hyp = True
 
         if item.tag.endswith("TextBlock"):
-            if print_current_block != None and print_current_block != item:
+            if print_current_block is not None and print_current_block != item:
                 print_current_block = None
-            if print_current_block != None or print_all_blocks:
+            if print_current_block is not None or print_all_blocks:
                 if len(alto_text) > 0:
                     alto_text += "\n"
 
@@ -146,7 +148,8 @@ def alto_to_disk(alto_filename, blocks=[], blocks_range=False, output_filename="
     text_outputfile = codecs.open(text_outputfilename, "wb", "utf-8")
     text_outputfile.write(alto_text)
     text_outputfile.close()
-    sys.stdout.write("Wrote %s bytes to %s\n" % (str(len(alto_text)), text_outputfilename))
+    sys.stdout.write("Wrote %s bytes to %s\n" % (
+                     str(len(alto_text)), text_outputfilename))
 
 
 def parse_arguments():
@@ -217,7 +220,6 @@ def usage():
     sys.stdout.write("Usage: %s [--blocks=a,b,c --blocks=a-c] [--output=/path_to_output_file] path_to_alto_files\n\n" % sys.argv[0])
     sys.stdout.write("The (optional) blocks parameter is used to extract only certain parts of the ALTO document.\n")
     sys.exit(-1)
-
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

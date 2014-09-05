@@ -3,19 +3,21 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
 import java.io.*;
-
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 
+
 /**
- * Output for the stanford-ner bio file format.
- * 
+ * Output as stanford-ner bio file format.
+ *
  * @author Willem Jan Faber
- * 
+ *
  */
+
+
 public class BioResultHandler implements ResultHandler {
     ContainerContext context;
     String continuationId = null;
@@ -27,7 +29,7 @@ public class BioResultHandler implements ResultHandler {
 
     List<HashMap> labels = new ArrayList();
 
-    // Fiddle with these values to reduce or increase 
+    // Fiddle with these values to reduce or increase
     // noise in the output BIO file.
     final static int minSentenceLength = 20;
     final static int minEntitiesCount = 1;

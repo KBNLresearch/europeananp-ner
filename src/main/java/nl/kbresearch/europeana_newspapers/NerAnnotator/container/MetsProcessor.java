@@ -1,4 +1,6 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.container;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoProcessor;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,36 +9,26 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoProcessor;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
-
-/*
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
-*/
-
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 
 /**
- * Processor for METS containers
- * 
+ * Processor for METS containers.
+ *
  * @author Rene
  * @author Willem Jan Faber
- * 
+ *
  */
+
+
 public class MetsProcessor implements ContainerProcessor {
-    /**
-    * the default instance of the METS processor
-    */
+    // The default instance of the METS processor.
     public static MetsProcessor INSTANCE = new MetsProcessor();
 
     @Override
@@ -50,6 +42,7 @@ public class MetsProcessor implements ContainerProcessor {
         } else {
             url = new URL(urlStr);
         }
+
         Document doc = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         int count = 0;
@@ -66,39 +59,48 @@ public class MetsProcessor implements ContainerProcessor {
                     try {
                         if (e.getAttribute("xlink:href").endsWith(".xml")) {
                             URI referencedFile = new URI(e.getAttribute("xlink:href"));
+
                             if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
                                 String path = referencedFile.getPath();
                                 String relativeToUrl = url.toString();
-                                potentialAltoFilename = new URI(relativeToUrl.substring(0, relativeToUrl.lastIndexOf("/")) + path).normalize() .toURL();
+                                potentialAltoFilename = new URI(relativeToUrl.substring(0, relativeToUrl.lastIndexOf("/")) + path).normalize().toURL();
                             } else {
                                 potentialAltoFilename = referencedFile.normalize().toURL();
                             }
+
                             String[] split = potentialAltoFilename.toExternalForm().split("/");
                             String name;
+
                             if (split.length > 0 && !split[split.length - 1].isEmpty()) {
-                                // name from url
+                                // Name from URL.
                                 name = split[split.length - 1];
                             } else {
-                                // Generic name, if not available
+                                // Generic name, if not available.
                                 name = "alto-" + (count++) + ".xml";
                             }
+
                             System.out.println(potentialAltoFilename);
-                            AltoProcessor.handlePotentialAltoFile(potentialAltoFilename, "text/xml",
-                                                                  lang, md5sum, ResultHandlerFactory.createResultHandlers(context, name, md5sum));
+                            AltoProcessor.handlePotentialAltoFile(potentialAltoFilename,
+                                                                  "text/xml",
+                                                                  lang,
+                                                                  md5sum,
+                                                                  ResultHandlerFactory.createResultHandlers(context,
+                                                                                                            name,
+                                                                                                            md5sum));
                         }
-                   } catch (URISyntaxException ee) {
-                        System.err.println("Error parsing path to file in METS for file id " + e.getAttribute("ID"));
-                        ee.printStackTrace();
+                    } catch (URISyntaxException error) {
+                        System.err.println("Error parsing path to file in METS for file id " + error.getAttribute("ID"));
+                        error.printStackTrace();
                         return false;
                    }
 
                 }
             }
-        } catch (javax.xml.parsers.ParserConfigurationException e) { 
-            e.printStackTrace();
+        } catch (javax.xml.parsers.ParserConfigurationException error) { 
+            error.printStackTrace();
             return false;
-        } catch (org.xml.sax.SAXException e) {
-            e.printStackTrace();
+        } catch (org.xml.sax.SAXException error) {
+            error.printStackTrace();
             return false;
         }
         return (count > 0);

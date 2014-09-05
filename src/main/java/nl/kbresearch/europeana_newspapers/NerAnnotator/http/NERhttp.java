@@ -118,7 +118,6 @@ public class NERhttp {
         } catch (IOException ex) {
             out.println("Error: "  + ex.toString());
         }
-        
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = null;

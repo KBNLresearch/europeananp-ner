@@ -11,30 +11,29 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-
-
-//import net.htmlparser.jericho.TextExtractor;
-//import net.htmlparser.jericho;
-import net.htmlparser.jericho.*;
-
-
+import java.io.*;
+import java.net.URL;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.net.URL;
-import java.io.*;
-import java.util.*;
+
+import net.htmlparser.jericho.*;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 
 /**
  * Text file processing
- * 
+ *
  * @author Willem Jan Faber
- * 
+ *
  */
+
+
 public class TxtProcessor {
     /**
      * @param potentialTextFilename
@@ -44,7 +43,12 @@ public class TxtProcessor {
      * @param handler
      * @throws IOException
      */
-    public static int handlePotentialTextFile(final URL potentialTextFilename, final String mimeType, final Locale lang, final String md5sum, final ResultHandler[] handler) throws IOException {
+    public static int handlePotentialTextFile(final URL potentialTextFilename,
+                                              final String mimeType,
+                                              final Locale lang,
+                                              final String md5sum,
+                                              final ResultHandler[] handler) throws IOException {
+
         long startTime = System.currentTimeMillis();
         System.out.println("Trying to process ALTO file " + potentialTextFilename);
 
@@ -84,7 +88,7 @@ public class TxtProcessor {
                                         label.get(AltoStringID.class),
                                         label.get(OriginalContent.class),
                                         label.get(TextAnnotation.class),
-                                        label.get(AnswerAnnotation.class), // Should be null ??
+                                        label.get(AnswerAnnotation.class),
                                         label.get(ContinuationAltoStringID.class));
                             }
                 } else {

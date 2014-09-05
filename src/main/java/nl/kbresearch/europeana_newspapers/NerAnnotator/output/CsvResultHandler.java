@@ -6,20 +6,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.w3c.dom.Document;
-
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import org.w3c.dom.Document;
+
 /**
- * Output handler for a simple CSV format, that maintains a list of labelled
- * tokens.
- * 
- * @author rene
- * 
+ * Output as CSV format, that maintains a list of labelled tokens.
+ *
+ * @author Rene
+ *
  */
+
+
 public class CsvResultHandler implements ResultHandler {
 
     ContainerContext context;

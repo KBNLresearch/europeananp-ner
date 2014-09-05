@@ -166,14 +166,14 @@ public class App {
 
             outputDirectoryRoot = new File(outputDirectory);
 
-            // all others should be files
+            // all other arguments should be files
             List fileList = line.getArgList();
-            
+
             if (fileList.isEmpty()) {
                 System.out.println("No file specified, read file list from stdin");
                 try {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));                      
-                    String input;                    
+                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                    String input;
                     while ((input = br.readLine()) != null) {
                         fileList.add(input);
                     }
@@ -197,21 +197,30 @@ public class App {
             versionString += "\nClassifier: " + classifierFileName + " md5sum: " + getMD5sum(classifierFileName);
 
             // Create the needed threads
-            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads), maxThreads, 1000, TimeUnit.MILLISECONDS, containerHandlePool);
+            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads),
+                                                                           maxThreads,
+                                                                           1000,
+                                                                           TimeUnit.MILLISECONDS,
+                                                                           containerHandlePool);
 
             for (Object arg : fileList) {
                 System.out.println(arg);
                 // Fire up the created threads
-                results.put(arg.toString(), threadPoolExecutor.submit(new ContainerHandleThread(arg.toString(), lang, processor, versionString)));
+                results.put(arg.toString(),
+                            threadPoolExecutor.submit(
+                                new ContainerHandleThread(arg.toString(),
+                                                          lang,
+                                                          processor,
+                                                          versionString)));
             }
-           
+
             // Shutdown and wait for threads to end
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             ResultHandlerFactory.shutdownResultHandlers();
-           
+
             // Display stats to stdout
-            System.out.println("Total processing time: " + (System.currentTimeMillis() - startTime)); 
+            System.out.println("Total processing time: " + (System.currentTimeMillis() - startTime));
             boolean errors = false;
             int successful = 0;
             int withErrors = 0;

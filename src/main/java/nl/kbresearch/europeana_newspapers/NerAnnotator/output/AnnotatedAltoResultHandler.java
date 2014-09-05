@@ -4,7 +4,6 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
 import java.io.*;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -16,11 +15,15 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+
 /**
+ * Outuput as annotated alto (Inline tags in Alto1.0).
+ *
  * @author Rene
  * @author Willem Jan Faber
  *
  */
+
 
 public class AnnotatedAltoResultHandler implements ResultHandler {
     private ContainerContext context;
@@ -73,7 +76,7 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
             outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto.xml"), "UTF-8");
 
             Element element = altoDocument.getDocumentElement();
-            // Get current date, and add it to the comment line
+            // Get current date, and add it to the comment line.
             Calendar currentDate = Calendar.getInstance();
             SimpleDateFormat formatter= new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
             String dateNow = formatter.format(currentDate.getTime());
@@ -95,9 +98,9 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
             // Reformat output, because of additional nodes added.
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            // Set the right output encoding
+            // Set the right output encoding.
             transformer.setOutputProperty("encoding", "ISO-8859-1");
-            // Transform the input document to output
+            // Transform the input document to output.
             transformer.transform(domSource, result);
 
             // Store results to file.

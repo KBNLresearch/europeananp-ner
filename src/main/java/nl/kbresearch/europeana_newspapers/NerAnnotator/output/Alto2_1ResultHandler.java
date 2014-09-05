@@ -4,7 +4,6 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
 import java.io.*;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,10 +19,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+
 /**
+ * Output in Alto2_1/3 xml format
+ *
  * @author Willem Jan Faber
  *
  */
+
 
 public class Alto2_1ResultHandler implements ResultHandler {
 
@@ -48,7 +51,9 @@ public class Alto2_1ResultHandler implements ResultHandler {
      * @param context
      * @param name
      */
-    public Alto2_1ResultHandler(final ContainerContext context, final String name, final String versionString) {
+    public Alto2_1ResultHandler(final ContainerContext context,
+                                final String name,
+                                final String versionString) {
         this.context = context;
         this.name = name;
         this.versionString = versionString;
@@ -67,10 +72,15 @@ public class Alto2_1ResultHandler implements ResultHandler {
     }
 
     @Override
-    public void addToken(String wordid, String originalContent, String word, String label, String continuationid) {
+    public void addToken(String wordid,
+                         String originalContent,
+                         String word,
+                         String label,
+                         String continuationid) {
+
         HashMap mMap = new HashMap();
 
-        // try to find out if this is a continuation of the previous word
+        // Try to find out if this is a continuation of the previous word.
         if (continuationid != null) {
             this.continuationId = continuationid;
             this.continuationLabel = label;
@@ -102,12 +112,12 @@ public class Alto2_1ResultHandler implements ResultHandler {
             if ((this.prevIsNamed) && (this.prevType.equals(label))) {
                 // This is a continuation of a label, eg. J.A de Vries..
                 // prevIsNamed indicates that the previous word was also a NE
-                // Concatenation string to generate one label.
-                
-                if (!word.equalsIgnoreCase(this.prevWord.trim())) { 
+                // concatenation string to generate one label.
+
+                if (!word.equalsIgnoreCase(this.prevWord.trim())) {
                     // Don't double label names on a hypened word.
                     word = this.prevWord + word;
-                } 
+                }
 
                 this.Entity_list.remove(this.Entity_list.size()-1);
                 this.prevWord = word + " ";
@@ -115,7 +125,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
 
                 // Add the TAGREFS attribute to the corresponding String in the alto.
                 if (this.tagCounter > 0) {
-                    // Prevent negative tag numbers :)
+                    // Prevent negative tag numbers.
                     domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter - 1));
                     mMap.put("id", String.valueOf(this.tagCounter - 1));
                 } else {
@@ -123,7 +133,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
                     mMap.put("id", String.valueOf(this.tagCounter));
                 }
 
-                // Create mapping for the TAGS header part of alto2_1
+                // Create mapping for the TAGS header part of alto2_1.
                 mMap.put("label", label);
                 mMap.put("word", word);
 
@@ -131,9 +141,10 @@ public class Alto2_1ResultHandler implements ResultHandler {
                 this.Entity_list.add(mMap);
             } else {
                 // Add the TAGREFS attribute to the corresponding String in the alto.
-                domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
+                domElement.setAttribute("TAGREFS",
+                                        "Tag" + String.valueOf(this.tagCounter));
 
-                // Create mapping for the TAGS header part of alto2_1
+                // Create mapping for the TAGS header part of ALTO2_1 
                 mMap.put("id", String.valueOf(this.tagCounter));
                 mMap.put("label", label);
                 mMap.put("word", word);
@@ -181,7 +192,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
             outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
 
             Element element = altoDocument.getDocumentElement();
-            // Get current date, and add it to the comment line
+            // Get current date, and add it to the comment line.
             Calendar currentDate = Calendar.getInstance();
             SimpleDateFormat formatter= new SimpleDateFormat("yyyy/MMM/dd HH:mm:ss");
             String dateNow = formatter.format(currentDate.getTime());
@@ -201,9 +212,9 @@ public class Alto2_1ResultHandler implements ResultHandler {
             // Reformat output, because of additional nodes added.
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            // Set the right output encoding
+            // Set the right output encoding.
             transformer.setOutputProperty("encoding", "ISO-8859-1");
-            // Transform the input document to output
+            // Transform the input document to output.
             transformer.transform(domSource, result);
 
             // Store results to file.

@@ -7,10 +7,12 @@ import org.w3c.dom.Document;
 
 /**
  * Output handler for the result of the NER process on a single ALTO document
- * 
+ *
  * @author rene
- * 
+ *
  */
+
+
 public interface ResultHandler {
     /**
      * Called at the beginning of the document
@@ -24,7 +26,7 @@ public interface ResultHandler {
 
     /**
      * called at the end of a line
-     * 
+     *
      * @param hyphenated
      *            true, if there is a hyphen at the end
      */
@@ -66,10 +68,7 @@ public interface ResultHandler {
      * This is called in any case after the processing of the file.
      */
     public void close();
-    
-    /**
-     * 
-     */
+
     public void globalShutdown();
 
     /**

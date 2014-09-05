@@ -3,13 +3,15 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.container;
 import java.io.IOException;
 import java.util.Locale;
 
+
 /**
- * Processor for a container format
- * 
- * @author rene
+ * Processor for a container format.
+ *
+ * @author Rene
  * @author Willem Jan Faber
- * 
+ *
  */
+
 
 public interface ContainerProcessor {
     /**
@@ -25,5 +27,8 @@ public interface ContainerProcessor {
      *         successfully processed
      * @throws IOException
      */
-    public boolean processFile(ContainerContext context, String urlStr, Locale lang, String md5sum) throws IOException;
+    public boolean processFile(ContainerContext context,
+                               String urlStr,
+                               Locale lang,
+                               String md5sum) throws IOException;
 }

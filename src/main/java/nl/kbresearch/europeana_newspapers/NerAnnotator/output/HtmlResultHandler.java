@@ -5,16 +5,18 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContex
 import java.io.*;
 
 import org.w3c.dom.Document;
-
 import org.apache.commons.lang3.StringEscapeUtils;
+
 
 /**
  * Output for a simple HTML format, that tries to keep the logical structure
  * intact and highlights labelled tokens.
- * 
- * @author rene
- * 
+ *
+ * @author Rene
+ *
  */
+
+
 public class HtmlResultHandler implements ResultHandler {
     ContainerContext context;
     String name;
@@ -35,7 +37,10 @@ public class HtmlResultHandler implements ResultHandler {
 
     public void startDocument() {
         try {
-            outputFile = new BufferedWriter(new FileWriter(new File(context.getOutputDirectory(), name + ".html")));
+            outputFile = new BufferedWriter(
+                            new FileWriter(
+                                new File(context.getOutputDirectory(), name + ".html")));
+
             outputFile.write("      <!doctype html>\n" + "<html lang=en>\n"
                                     + "<head>\n" + "<meta charset=utf-8>\n" + "<title>"
                                     + StringEscapeUtils.escapeHtml4(name) + "</title>\n"
