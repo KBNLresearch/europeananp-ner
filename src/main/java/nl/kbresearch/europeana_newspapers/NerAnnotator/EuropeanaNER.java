@@ -33,23 +33,14 @@ public class EuropeanaNER {
     static File outputDirectoryRoot;
     static String[] outputFormats;
 
-    /**
-     * @return root for the output files
-     */
     public static File getOutputDirectoryRoot() {
         return outputDirectoryRoot;
     }
 
-    /**
-     * @return list of output formats to be generated
-     */
     public static String[] getOutputFormats() {
         return outputFormats;
     }
 
-    /**
-     * @return md5sum of file given path
-     */
     private static String getMD5sum(String path) {
         String md5sum = "";
         File jarFile = new File(path);
@@ -62,16 +53,8 @@ public class EuropeanaNER {
         return md5sum;
     }
 
-    /**
-     * @param args
-     * @throws ClassCastException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     */
     @SuppressWarnings("static-access")
     public static void main(final String[] args) throws ClassCastException, ClassNotFoundException, InterruptedException {
-
-
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
 
@@ -144,7 +127,9 @@ public class EuropeanaNER {
                 } else if (line.getOptionValue("c").equals("html")) {
                     processor = HtmlProcessor.INSTANCE;
                 } else {
-                    throw new ParseException("Could not identify container format: " + line.getOptionValue("c"));
+                    String msg = "Could not identify container format: " +
+                                 line.getOptionValue("c");
+                    throw new ParseException(msg);
                 }
             }
 
@@ -190,17 +175,24 @@ public class EuropeanaNER {
 
             long startTime = System.currentTimeMillis();
 
-            // Load classifier
+            // Load classifier from disk.
             NERClassifiers.getCRFClassifierForLanguage(lang);
 
-            // Fetch the version from maven settings
+            // Fetch the path from running jarfile.
             String path = EuropeanaNER.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-            // Generate an md5sum from the current running jar
-            String versionString = "Version: " + EuropeanaNER.class.getPackage().getSpecificationVersion() + " md5sum: " + getMD5sum(path);
-            // Generate an md5sum for the used classifier 
-            versionString += "\nClassifier: " + classifierFileName + " md5sum: " + getMD5sum(classifierFileName);
 
-            // Create the needed threads
+            // Generate an md5sum from running jarfile.
+            String versionString = "Version: " +
+                                   EuropeanaNER.class.getPackage().getSpecificationVersion() +
+                                   " md5sum: " + getMD5sum(path);
+
+            // Extend version string with info on used classifier.
+            versionString += "\nClassifier: " +
+                             classifierFileName + 
+                             " md5sum: " + 
+                             getMD5sum(classifierFileName);
+
+            // Create threads.
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads),
                                                                            maxThreads,
                                                                            1000,
@@ -208,7 +200,7 @@ public class EuropeanaNER {
                                                                            containerHandlePool);
 
             for (Object arg : fileList) {
-                System.out.println(arg);
+                logger.info(arg);
                 // Fire up the created threads
                 results.put(arg.toString(),
                             threadPoolExecutor.submit(
@@ -238,14 +230,17 @@ public class EuropeanaNER {
                         errors = true;
                     }
                 } catch (ExecutionException error) {
-                    logger.warning("Error while parsing of container file: " + key + " . Cause: " + error.getCause().getMessage());
+                    logger.warning("Error while parsing of container file: " +
+                                   key + " . Cause: " + error.getCause().getMessage());
                     error.printStackTrace();
                     withErrors += 1;
                     errors = true;
                 }
             }
 
-            logger.info(successful + " container documents successfully processed, " + withErrors + " with errors.");
+            logger.info(String(successful) +
+                        " container documents successfully processed, " +
+                        String(withErrors) + " with errors.");
 
             if (errors) {
                 logger.severe("There were errors while processing.");
