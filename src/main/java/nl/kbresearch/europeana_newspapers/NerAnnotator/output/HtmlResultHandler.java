@@ -38,9 +38,9 @@ public class HtmlResultHandler implements ResultHandler {
                                 new File(context.getOutputDirectory(), name + ".html")));
 
             outputFile.write("<!doctype html>\n<html lang=en>\n" +
-                             + "<head>\n<meta charset=utf-8><title>" +
-                             + StringEscapeUtils.escapeHtml4(name) + "</title>\n"
-                             + "</head>\n<body>\n</html>\n");
+                             "<head>\n<meta charset=utf-8><title>" +
+                             StringEscapeUtils.escapeHtml4(name) + "</title>\n" +
+                             "</head>\n<body>\n</html>\n");
         } catch (IOException error) {
             String msg = "Could not wirte to HTML file";
             throw new IllegalStateException(msg, error);
