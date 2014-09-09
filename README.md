@@ -31,18 +31,32 @@ from command line (this will try to bind to port 8080):
 Basic usage (Command line client): 
 
 Help:
-  
+
       java -jar NerAnnotator.jar --help
-	
+
 Print result to stdout for German language:
 
      java -Xmx800m -jar NerAnnotator.jar -c mets -f alto -l de -m de=/path/to/trainingmodels/german/hgc_175m_600.crf.ser.gz -n 2 /path/to/mets/AZ_19260425/AZ_19260425_mets.xml
 
-### Training classifiers
+### Working with classifiers and model generation
 
 To be able to compare your results with a baseline we provide you with some test files located in the 'test-files' directory.
-    
-Run the following command:
+
+To run a back to front test (in Linux) try this:
+
+    cd test-files;./test_europeana_ner.sh
+
+Output should look like this:
+
+    Generating new classification model.
+    Applying generated model.
+
+    Results:
+        Locations: 1
+        Organizations: 8
+        Persons: 0
+
+To generate a model, use the following command:
 
     java -Xmx5G -cp target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop test-files/austen_dutch.prop
 
@@ -51,10 +65,6 @@ This should result in a file called 'eunews_dutch.crf.gz' located in the directo
 To verify the NER software use the created classifier to process the provided example file.
 
     java -jar target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar -c alto -d out -f alto -l nl -m nl=./test-files/eunews_dutch.crf.gz -n 8 ./test-files/dutch_alto.xml
-
-Now you can compare the output with the example output provided.
-
-    diff out/dutch_alto.xml-annotations/dutch_alto.xml.alto.xml ./test-files/dutch_alto_processed_output.xml
 
 The same procedure can be applied using the German example files.
 
