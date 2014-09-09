@@ -89,7 +89,8 @@ def alto_to_disk(alto_filename, blocks=[],
         # Reassign blocks with all the text-blocks in the specified range.
         blocks = get_textblock_range(xmltree_alto_data, blocks[0], blocks[1])
         if len(blocks) == 0:
-            sys.stdout.write("Error: Could not find a range spanning from %s to %s, aborting\n" % (blocks[0], blocks[1]))
+            sys.stdout.write(
+                    "Error: Could not find a range spanning from %s to %s, aborting\n" % (blocks[0], blocks[1]))
             usage()
     elif len(blocks) > 0:
         for item in blocks:

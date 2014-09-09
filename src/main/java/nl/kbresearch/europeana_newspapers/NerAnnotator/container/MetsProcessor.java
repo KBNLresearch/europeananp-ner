@@ -54,11 +54,11 @@ public class MetsProcessor implements ContainerProcessor {
             for (int i = 0; i<nodesByTag.getLength(); i++) {
                 Node tokens = nodesByTag.item(i);
                 if (tokens.getNodeType() == Node.ELEMENT_NODE) {
-                    Element e = (Element) tokens;
+                    Element token_element = (Element) tokens;
                     URL potentialAltoFilename;
                     try {
-                        if (e.getAttribute("xlink:href").endsWith(".xml")) {
-                            URI referencedFile = new URI(e.getAttribute("xlink:href"));
+                        if (token_element.getAttribute("xlink:href").endsWith(".xml")) {
+                            URI referencedFile = new URI(token_element.getAttribute("xlink:href"));
 
                             if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
                                 String path = referencedFile.getPath();
@@ -89,7 +89,7 @@ public class MetsProcessor implements ContainerProcessor {
                                                                                                             md5sum));
                         }
                     } catch (URISyntaxException error) {
-                        System.err.println("Error parsing path to file in METS for file id " + error.getAttribute("ID"));
+                        System.err.println("Error parsing path to file in METS for file id " + token_element.getAttribute("ID"));
                         error.printStackTrace();
                         return false;
                    }

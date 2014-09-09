@@ -1,9 +1,9 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoStringID;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.ContinuationAltoStringID;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.HyphenatedLineBreak;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.OriginalContent;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.ContinuationAltoStringID;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
@@ -12,15 +12,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 /**
  * Converter from ALTO elements to tokens for Stanford NER
@@ -30,9 +31,9 @@ import javax.xml.xpath.XPathFactory;
  * 
  */
 
-public class TextElementsExtractor {
-    private static final Logger logger = Logger.getLogger("TextElementsExtractor.class");
 
+public class TextElementsExtractor {
+    private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
     * @param altoDocument
@@ -51,9 +52,7 @@ public class TextElementsExtractor {
                 boolean hyphenatedEnd = false;
                 Element hyphenWord = null;
 
-
                 // TODO: Rewrite these nested if loops, split in functions.
-
                 for (int j = 0; j < textLineToken.getLength(); j++) {
                     // Loop over TextLine
                     Node textLineNode = textLineToken.item(j);
@@ -110,6 +109,8 @@ public class TextElementsExtractor {
         return result;
     }
 
+
+    // Find the next 'String' element, and return it.
     private static Element lookupNextWord(NodeList textLineToken, int offset) {
         for (int j = offset + 1; j < textLineToken.getLength(); j++) {
             // Loop over TextLine
@@ -180,6 +181,7 @@ public class TextElementsExtractor {
         return label;
     }
 
+    // Remove 'noisy' char's from string, and return it.
     public static String cleanWord(String attr) {
         String[] removeChars = {".", ",", ")", "(", ";", "'", "\"", "}", "{"};
         String cleaned = attr;
@@ -188,9 +190,10 @@ public class TextElementsExtractor {
             cleaned = cleaned.replace(remove, "");
         }
         return cleaned;
-   }
+    }    
 
-   private static String calcuateAltoStringID(Element word) {
+    // Find the corresponding ALTO_ID_STR from a Element.
+    private static String calcuateAltoStringID(Element word) {
        String parentHpos = nullsafe(word.getAttribute("HPOS"));
        String parentVpos = nullsafe(word.getAttribute("VPOS"));
        String parentWidth = nullsafe(word.getAttribute("WIDTH"));
@@ -225,8 +228,10 @@ public class TextElementsExtractor {
        }
 
        return alto_id;
-   }
+    }
 
+
+    // Lookup a corresponding AltoElement for a given ALTO_WORD_ID.
     public static Element findAltoElementByStringID(Document altoDocument, String id) {
         if (id == null || id.isEmpty()) {
             logger.warning("Trying to find element in ALTO document, with empty or null id");
@@ -238,24 +243,42 @@ public class TextElementsExtractor {
             return null;
         }
 
+        // Preform the seek, by using a xpath expression,
+        // to find the corresponding element.
         String[] split = id.split(":");
-        String expression = "//String[@HPOS='" + split[0] + "'][@VPOS='" + split[1] + "'][@HEIGHT='" + split[2] + "'][@WIDTH='" + split[3] + "']"; 
+
+        //String[@HPOS='x'][@VPOS='y'][@HEIGHT='z'][@WIDTH='r']
+        String expression = "//String[@HPOS='" +
+                            split[0] +
+                            "'][@VPOS='" +
+                            split[1] +
+                            "'][@HEIGHT='" +
+                            split[2] +
+                            "'][@WIDTH='" +
+                            split[3] +
+                            "']";
+
         XPath xpath = XPathFactory.newInstance().newXPath();
 
         try {
-            NodeList nodes = (NodeList) xpath.evaluate(expression, altoDocument, XPathConstants.NODESET);
-            Element ep = (Element) nodes.item(0);
-            if (ep !=null) {
-                return(ep);
+            NodeList nodes = (NodeList) xpath.evaluate(expression,
+                                                       altoDocument,
+                                                       XPathConstants.NODESET);
+
+            Element alto_element = (Element) nodes.item(0);
+
+            if (alto_element !=null) {
+                return alto_element;
             }
-        } catch (XPathExpressionException e) { 
-            e.printStackTrace(); 
+
+        } catch (XPathExpressionException error) { 
+            error.printStackTrace(); 
         }
         return null;
    }
 
+   // Never return null as value.
    private static String nullsafe(String attr) {
         return attr == null ? "" : attr;
    }
-
 }

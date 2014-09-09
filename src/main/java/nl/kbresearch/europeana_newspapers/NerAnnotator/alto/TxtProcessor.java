@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 
 
 public class TxtProcessor {
+    @SuppressWarnings("unchecked")
     /**
      * @param potentialTextFilename
      * @param mimeType

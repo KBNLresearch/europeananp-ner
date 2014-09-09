@@ -4,7 +4,9 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.TextElementsExtractor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
 import java.io.*;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -29,13 +31,12 @@ import org.w3c.dom.NodeList;
 
 
 public class Alto2_1ResultHandler implements ResultHandler {
-
     private ContainerContext context;
     private String name;
     private PrintWriter outputFile;
     private Document altoDocument;
     private String versionString;
-    private List<HashMap> Entity_list = new ArrayList();
+    private List<HashMap> Entity_list = new ArrayList<HashMap>();
 
     String continuationId = null;
     String continuationLabel = null;
@@ -47,10 +48,6 @@ public class Alto2_1ResultHandler implements ResultHandler {
 
     int tagCounter = 0;
 
-    /**
-     * @param context
-     * @param name
-     */
     public Alto2_1ResultHandler(final ContainerContext context,
                                 final String name,
                                 final String versionString) {
@@ -78,7 +75,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
                          String label,
                          String continuationid) {
 
-        HashMap mMap = new HashMap();
+        HashMap<String, String> mMap = new HashMap<String, String>();
 
         // Try to find out if this is a continuation of the previous word.
         if (continuationid != null) {
@@ -92,16 +89,23 @@ public class Alto2_1ResultHandler implements ResultHandler {
 
         if (label != null) {
             // Reformat the label to a more readable form.
-            if ((label.equals("B-LOC")) || (label.equals("I-LOC"))) {
+            if ((label.equals("B-LOC")) ||
+                    (label.equals("I-LOC"))) {
                 label = "location";
             }
-            if ((label.equals("B-PER")) || (label.equals("I-PER"))) {
+
+            if ((label.equals("B-PER")) ||
+                    (label.equals("I-PER"))) {
                 label = "person";
             }
-            if ((label.equals("B-ORG") || (label.equals("I-ORG")))) {
+
+            if (label.equals("B-ORG") ||
+                    (label.equals("I-ORG"))) {
                 label = "organization";
             }
-            if ((label.equals("B-MISC") || (label.equals("I-MISC")))) {
+
+            if (label.equals("B-MISC") ||
+                    (label.equals("I-MISC"))) {
                 label = "miscellaneous";
             }
 
@@ -119,18 +123,22 @@ public class Alto2_1ResultHandler implements ResultHandler {
                     word = this.prevWord + word;
                 }
 
-                this.Entity_list.remove(this.Entity_list.size()-1);
+                this.Entity_list.remove(this.Entity_list.size() - 1);
                 this.prevWord = word + " ";
                 this.prevType = label;
 
                 // Add the TAGREFS attribute to the corresponding String in the alto.
                 if (this.tagCounter > 0) {
                     // Prevent negative tag numbers.
-                    domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter - 1));
-                    mMap.put("id", String.valueOf(this.tagCounter - 1));
+                    domElement.setAttribute("TAGREFS",
+                                            "Tag" + String.valueOf(this.tagCounter - 1));
+                    mMap.put("id",
+                             String.valueOf(this.tagCounter - 1));
                 } else {
-                    domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
-                    mMap.put("id", String.valueOf(this.tagCounter));
+                    domElement.setAttribute("TAGREFS",
+                                            "Tag" + String.valueOf(this.tagCounter));
+                    mMap.put("id",
+                             String.valueOf(this.tagCounter));
                 }
 
                 // Create mapping for the TAGS header part of alto2_1.
@@ -171,11 +179,15 @@ public class Alto2_1ResultHandler implements ResultHandler {
         // <Tags><NamedEntityTag ID="Tag7" TYPE="Person" LABEL="James M Bigstaff "/></Tags>
         // Entity_list is populated with known NE's
         Element child = altoDocument.createElement("Tags");
+
         for (HashMap s: this.Entity_list) {
             Element childOfTheChild = altoDocument.createElement("NamedEntityTag");
-            childOfTheChild.setAttribute("TYPE", (String) s.get("label"));
-            childOfTheChild.setAttribute("LABEL", (String) s.get("word"));
-            childOfTheChild.setAttribute("ID", "Tag" + (String) s.get("id"));
+            childOfTheChild.setAttribute("TYPE",
+                                         (String) s.get("label"));
+            childOfTheChild.setAttribute("LABEL",
+                                         (String) s.get("word"));
+            childOfTheChild.setAttribute("ID",
+                                         "Tag" + (String) s.get("id"));
             child.appendChild(childOfTheChild);
         }
 
@@ -183,13 +195,20 @@ public class Alto2_1ResultHandler implements ResultHandler {
 
         NodeList alto = altoDocument.getElementsByTagName("alto");
         Element alto_root = (Element) alto.item(0);
-        alto_root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        alto_root.setAttribute("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
-        alto_root.setAttribute("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
+
+        alto_root.setAttribute("xmlns:xsi",
+                               "http://www.w3.org/2001/XMLSchema-instance");
+        alto_root.setAttribute("xmlns",
+                               "http://www.loc.gov/standards/alto/ns-v2#");
+        alto_root.setAttribute("xsi:schemaLocation",
+                               "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
 
         try {
             // Output file for alto2_1 format.
-            outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
+            outputFile = new PrintWriter(
+                            new File(context.getOutputDirectory(),
+                                     name + ".alto2_1.xml"),
+                                     "UTF-8");
 
             Element element = altoDocument.getDocumentElement();
             // Get current date, and add it to the comment line.
@@ -210,10 +229,15 @@ public class Alto2_1ResultHandler implements ResultHandler {
             Transformer transformer = tf.newTransformer();
 
             // Reformat output, because of additional nodes added.
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty(OutputKeys.INDENT,
+                                          "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
+                                          "2");
+
             // Set the right output encoding.
-            transformer.setOutputProperty("encoding", "ISO-8859-1");
+            transformer.setOutputProperty("encoding",
+                                          "ISO-8859-1");
+
             // Transform the input document to output.
             transformer.transform(domSource, result);
 
@@ -222,10 +246,10 @@ public class Alto2_1ResultHandler implements ResultHandler {
             outputFile.flush();
             outputFile.close();
 
-       } catch(TransformerException e) {
-            e.printStackTrace();
-       } catch (IOException e) {
-            e.printStackTrace();
+       } catch(TransformerException error) {
+            error.printStackTrace();
+       } catch (IOException error) {
+            error.printStackTrace();
        }
     }
 

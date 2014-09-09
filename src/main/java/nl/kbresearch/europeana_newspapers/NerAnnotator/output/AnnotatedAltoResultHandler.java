@@ -32,11 +32,6 @@ public class AnnotatedAltoResultHandler implements ResultHandler {
     private Document altoDocument;
     private String versionString;
 
-    /**
-     * @param context
-     * @param name
-     * @param versionString
-     */
     public AnnotatedAltoResultHandler(final ContainerContext context, final String name, final String versionString) {
         this.context = context;
         this.name = name;

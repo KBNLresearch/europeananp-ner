@@ -4,28 +4,31 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.http.NERhttp;
 
-import org.apache.commons.cli.*;
-import org.apache.commons.codec.digest.DigestUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
-
-import org.apache.commons.io.FileUtils;
-
 import java.io.InputStreamReader;
 import java.io.IOException;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
+
+import org.apache.commons.cli.*;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
+
 
 /**
- * Command line interface of application
+ * Command line interface to Europeana Newspapers NER.
  * 
- * @author rene
+ * @author Rene
  * @author Willem Jan Faber
  */
 
-public class App {
+
+public class EuropeanaNER {
+    private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     static Map<String, Future<Boolean>> results = new LinkedHashMap<String, Future<Boolean>>();
     static File outputDirectoryRoot;
     static String[] outputFormats;
@@ -43,7 +46,6 @@ public class App {
     public static String[] getOutputFormats() {
         return outputFormats;
     }
-
 
     /**
      * @return md5sum of file given path
@@ -68,6 +70,7 @@ public class App {
      */
     @SuppressWarnings("static-access")
     public static void main(final String[] args) throws ClassCastException, ClassNotFoundException, InterruptedException {
+
 
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
@@ -129,7 +132,7 @@ public class App {
             }
 
             if (line.getOptionValue("c") != null) {
-                System.out.println("Container format: " + line.getOptionValue("c"));
+                logger.info("Container format: " + line.getOptionValue("c"));
                 if (line.getOptionValue("c").equals("didl")) {
                     processor = DIDLProcessor.INSTANCE;
                 } else if (line.getOptionValue("c").equals("alto")) {
@@ -167,15 +170,16 @@ public class App {
             outputDirectoryRoot = new File(outputDirectory);
 
             // all other arguments should be files
-            List fileList = line.getArgList();
+            @SuppressWarnings("unchecked")
+            List<String> fileList = line.getArgList();
 
             if (fileList.isEmpty()) {
-                System.out.println("No file specified, read file list from stdin");
+                logger.warning("No file specified, read file list from stdin");
                 try {
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                     String input;
                     while ((input = br.readLine()) != null) {
-                        fileList.add(input);
+                        fileList.add((String)input);
                     }
                 } catch (IOException io){
                     io.printStackTrace();
@@ -190,9 +194,9 @@ public class App {
             NERClassifiers.getCRFClassifierForLanguage(lang);
 
             // Fetch the version from maven settings
-            String path = App.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            String path = EuropeanaNER.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             // Generate an md5sum from the current running jar
-            String versionString = "Version: " + App.class.getPackage().getSpecificationVersion() + " md5sum: " + getMD5sum(path);
+            String versionString = "Version: " + EuropeanaNER.class.getPackage().getSpecificationVersion() + " md5sum: " + getMD5sum(path);
             // Generate an md5sum for the used classifier 
             versionString += "\nClassifier: " + classifierFileName + " md5sum: " + getMD5sum(classifierFileName);
 
@@ -220,7 +224,7 @@ public class App {
             ResultHandlerFactory.shutdownResultHandlers();
 
             // Display stats to stdout
-            System.out.println("Total processing time: " + (System.currentTimeMillis() - startTime));
+            logger.info("Total processing time: " + (System.currentTimeMillis() - startTime));
             boolean errors = false;
             int successful = 0;
             int withErrors = 0;
@@ -233,28 +237,27 @@ public class App {
                         withErrors += 1;
                         errors = true;
                     }
-                } catch (ExecutionException e) {
-                    System.err.println("Error while parsing of container file: " + key + " . Cause: " + e.getCause().getMessage());
-                    e.printStackTrace();
+                } catch (ExecutionException error) {
+                    logger.warning("Error while parsing of container file: " + key + " . Cause: " + error.getCause().getMessage());
+                    error.printStackTrace();
                     withErrors += 1;
                     errors = true;
                 }
             }
 
-            System.out.println(successful + " container documents successfully processed, " + withErrors + " with errors.");
+            logger.info(successful + " container documents successfully processed, " + withErrors + " with errors.");
 
             if (errors) {
-                System.err.println("There were errors while processing.");
-                System.exit(1);
+                logger.severe("There were errors while processing.");
+                System.exit(-1);
             } else {
-                System.out.println("Successful.");
+                logger.info("Successful.");
                 System.exit(0);
             }
-        } catch (org.apache.commons.cli.ParseException e) {
+        } catch (org.apache.commons.cli.ParseException error) {
             HelpFormatter helpFormatter = new HelpFormatter();
             helpFormatter.printHelp("java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]", options);
             System.out.println("\nIf there are no input files specified, a list of file names is read from stdin.");
         }
     }
-
 }

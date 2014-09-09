@@ -16,6 +16,7 @@
         <!-- This plugin is needed for the WebApp -->
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.0.0</version>
         <configuration>
           <webResources>
             <resource>
@@ -39,6 +40,7 @@
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
+          <compilerArgument>-Xlint:unchecked</compilerArgument>
         </configuration>
       </plugin>
       <plugin>
@@ -77,31 +79,7 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
+              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.EuropeanaNER</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -155,7 +133,7 @@
       <version>1.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
+      <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>1.3.2</version>
     </dependency>

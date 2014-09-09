@@ -13,6 +13,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import org.w3c.dom.Document;
 
+
 /**
  * Output as CSV format, that maintains a list of labelled tokens.
  *
@@ -22,43 +23,71 @@ import org.w3c.dom.Document;
 
 
 public class CsvResultHandler implements ResultHandler {
-
     ContainerContext context;
-    String name;
-    File outputFile;
     CsvListWriter csvListWriter;
+    File outputFile;
+    String name;
 
-    final String[] header = new String[] { "wordId", "originalText", "text", "label", "continuationId" };
-    final CellProcessor[] processors = new CellProcessor[] { new NotNull(), new NotNull(), new NotNull(), new NotNull(), new NotNull() };
+    final String[] header = new String[] { "wordId",
+                                           "originalText",
+                                           "text",
+                                           "label",
+                                           "continuationId"
+    }
 
-    /**
-     * @param context
-     * @param name
-     */
+    final CellProcessor[] processors = new CellProcessor[] { new NotNull(),
+                                                             new NotNull(),
+                                                             new NotNull(),
+                                                             new NotNull(),
+                                                             new NotNull()
+    }
+
     public CsvResultHandler(final ContainerContext context, final String name) {
         this.context = context;
         this.name = name;
     }
 
-    public void addToken(String wordid, String originalContent, String word, String label, String continuationId) {
+    public void addToken(String wordid,
+                         String originalContent,
+                         String word,
+                         String label,
+                         String continuationId) {
+
         if (label != null) {
             if (csvListWriter == null) {
+                // Create a new file(handler) .csv 
                 outputFile = new File(context.getOutputDirectory(), name + ".csv");
+
                 try {
-                    csvListWriter = new CsvListWriter(new FileWriter(outputFile), CsvPreference.STANDARD_PREFERENCE);
+                    csvListWriter = new CsvListWriter(
+                                        new FileWriter(outputFile),
+                                        CsvPreference.STANDARD_PREFERENCE);
+
                     csvListWriter.writeHeader(header);
-                } catch (IOException e) {
-                    throw new IllegalStateException( "Could not open CSV writer for file " + outputFile.getAbsolutePath(), e);
+
+                } catch (IOException error) {
+                    String msg = "Could not open CSV writer for file " +
+                                 outputFile.getAbsolutePath();
+                    throw new IllegalStateException(msg, error);
                 }
             }
             try {
                 String continuationIdStr = "";
+
                 if (continuationId != null) {
                     continuationIdStr = continuationId;
                 }
-                csvListWriter.write(wordid, originalContent, word, label, continuationIdStr);
-            } catch (IOException e) {
-                throw new IllegalStateException("Could not write to CSV writer for file " + outputFile.getAbsolutePath(), e);
+
+                csvListWriter.write(wordid,
+                                    originalContent,
+                                    word,
+                                    label,
+                                    continuationIdStr);
+
+            } catch (IOException error) {
+                String msg = "Could not open CSV writer for file " +
+                             outputFile.getAbsolutePath();
+                throw new IllegalStateException(msg, error);
             }
         }
     }
@@ -68,8 +97,10 @@ public class CsvResultHandler implements ResultHandler {
             if (csvListWriter != null) {
                 csvListWriter.close();
             }
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not close CSV writer for file " + outputFile.getAbsolutePath(), e);
+        } catch (IOException error) {
+            String msg = "Could not open CSV writer for file " +
+                         outputFile.getAbsolutePath()
+            throw new IllegalStateException(msg, error);
         }
     }
 

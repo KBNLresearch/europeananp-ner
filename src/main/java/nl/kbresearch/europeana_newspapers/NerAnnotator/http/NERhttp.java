@@ -62,14 +62,14 @@ public class NERhttp {
     }
 
     // Set the classifier language
-    static public HashMap setLang(HashMap config, String lang, PrintWriter out) {
+    static public HashMap<String, Object> setLang(HashMap<String, Object> config, String lang, PrintWriter out) {
         return config;
     }
 
 
     // Initialize by loading/interpeting the config file
-    static public HashMap init(String configPath) {
-        HashMap config = new HashMap();
+    static public HashMap<String, Object> init(String configPath) {
+        HashMap<String, Object> config = new HashMap<String, Object>();
         config.put("status", "init");
 
         Ini configIni = new Ini();

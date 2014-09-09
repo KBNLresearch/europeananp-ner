@@ -19,51 +19,49 @@ public class LogResultHandler implements ResultHandler {
     }
 
     @Override
-    public void addToken(String wordid, String originalContent, String word, String label, String continuationId) {
+    public void addToken(String wordid,
+                         String originalContent,
+                         String word,
+                         String label,
+                         String continuationId) {
+
         if (label != null) {
-            System.out.println("Wordid: " + wordid + " OriginalContent"
-                               + originalContent + " Word: " + word + " Label: " + label
-                               + " ContinuationId: " + continuationId);
+            System.out.println("Wordid: " + wordid + " OriginalContent" +
+                               originalContent + " Word: " + word + " Label: " +
+                               label + " ContinuationId: " + continuationId);
         }
     }
 
     @Override
     public void close() {
-            System.out.println("Output finished");
+        System.out.println("Output finished");
     }
 
     public void startDocument() {
-
     }
 
     @Override
     public void startTextBlock() {
-
     }
 
     @Override
     public void stopTextBlock() {
-
     }
 
     @Override
     public void stopDocument() {
-
     }
 
     @Override
     public void newLine(boolean hyphenated) {
-
     }
 
     @Override
     public void globalShutdown() {
-
     }
 
     @Override
     public void setAltoDocument(Document doc) {
         altoDocument = doc;
     }
-
 }

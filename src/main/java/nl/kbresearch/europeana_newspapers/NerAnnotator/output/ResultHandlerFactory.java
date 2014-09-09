@@ -1,13 +1,13 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.App;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.EuropeanaNER;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
+
+import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import java.sql.SQLException;
 
 
 /**
@@ -23,17 +23,13 @@ import java.sql.SQLException;
 public class ResultHandlerFactory {
     static Map<Class<? extends ResultHandler>, ResultHandler> registeredHandlers =
         new LinkedHashMap<Class<? extends ResultHandler>, ResultHandler>();
-    /**
-     * @param context
-     * @param name
-     * @param md5sum
-     * @return array of ResultHandlers according to the configuration
-     */
+
     public static ResultHandler[] createResultHandlers(final ContainerContext context,
                                                        final String name,
                                                        final String versionString) {
 
-        String[] outputFormats = App.getOutputFormats();
+        String[] outputFormats = EuropeanaNER.getOutputFormats();
+
         ArrayList<ResultHandler> result = new ArrayList<ResultHandler>();
 
         for (String outputFormat : outputFormats) {
@@ -42,52 +38,76 @@ public class ResultHandlerFactory {
                     LogResultHandler logResultHandler = new LogResultHandler();
                     registeredHandlers.put(LogResultHandler.class,
                                            logResultHandler);
+
                     result.add(logResultHandler);
                     break;
+
                 case "csv":
-                    CsvResultHandler csvResultHandler = new CsvResultHandler(context, name );
+                    CsvResultHandler csvResultHandler = new CsvResultHandler(context, 
+                                                                             name);
                     registeredHandlers.put(CsvResultHandler.class,
                                            csvResultHandler);
+
                     result.add(csvResultHandler);
                     break;
+
                 case "alto":
-                    AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context, name, versionString);
+                    AnnotatedAltoResultHandler annotatedAltoResultHandler = new AnnotatedAltoResultHandler(context,
+                                                                                                           name,
+                                                                                                           versionString);
                     registeredHandlers.put(AnnotatedAltoResultHandler.class,
                                            annotatedAltoResultHandler);
+
                     result.add(annotatedAltoResultHandler);
                     break;
+
                 case "html":
-                    HtmlResultHandler htmlResultHandler = new HtmlResultHandler(context, name);
+                    HtmlResultHandler htmlResultHandler = new HtmlResultHandler(context,
+                                                                                name);
                     registeredHandlers.put(HtmlResultHandler.class,
                                            htmlResultHandler);
+
                     result.add(htmlResultHandler);
                     break;
+
                 case "alto2_1":
-                    Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name, versionString);
+                    Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context,
+                                                                                         name,
+                                                                                         versionString);
                     registeredHandlers.put(Alto2_1ResultHandler.class,
                                            alto2_1ResultHandler);
+
                     result.add(alto2_1ResultHandler);
                     break;
+
                 case "bio":
-                    BioResultHandler bioResultHandler = new BioResultHandler(context, name);
+                    BioResultHandler bioResultHandler = new BioResultHandler(context,
+                                                                             name);
                     registeredHandlers.put(BioResultHandler.class,
                                            bioResultHandler);
+
                     result.add(bioResultHandler);
                     break;
+
                 case "db":
                     try {
-                        DbResultHandler dbResultHandler = new DbResultHandler(context, name);
+                        DbResultHandler dbResultHandler = new DbResultHandler(context,
+                                                                              name);
                         registeredHandlers.put(DbResultHandler.class,
                                                dbResultHandler);
+
                         result.add(dbResultHandler);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    } catch (SQLException error) {
+                        error.printStackTrace();
                     }
                     break;
-                default: throw new IllegalArgumentException("Unknown output format: " + outputFormat);
+
+                default: throw new IllegalArgumentException(
+                                 "Unknown output format: " + outputFormat);
             }
         }
-        return result.toArray(new ResultHandler[result.size()]);
+        return result.toArray(
+                new ResultHandler[result.size()]);
     }
 
     public static void shutdownResultHandlers() {

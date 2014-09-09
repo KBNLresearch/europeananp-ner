@@ -27,17 +27,13 @@ public class BioResultHandler implements ResultHandler {
     Writer outputFile;
     int labelCount = 0;
 
-    List<HashMap> labels = new ArrayList();
+    List<HashMap> labels = new ArrayList<HashMap>();
 
     // Fiddle with these values to reduce or increase
     // noise in the output BIO file.
     final static int minSentenceLength = 20;
     final static int minEntitiesCount = 1;
 
-    /**
-     * @param context
-     * @param name
-     */
     public BioResultHandler(final ContainerContext context, final String name) {
         this.context = context;
         this.name = name;
@@ -53,7 +49,7 @@ public class BioResultHandler implements ResultHandler {
 
     public void startTextBlock() {
         this.sentence = "";
-        this.labels = new ArrayList();
+        this.labels = new ArrayList<HashMap>();
         this.labelCount = 0;
     }
 
@@ -78,21 +74,25 @@ public class BioResultHandler implements ResultHandler {
 
         if (originalContent != null) {
             if (label != null) {
-                HashMap entry = new HashMap();
+                HashMap<String, String> entry = new HashMap<String, String>();
                 entry.put(originalContent, label);
                 this.labels.add(entry);
             } else {
-                HashMap entry = new HashMap();
+                HashMap<String, String> entry = new HashMap<String, String>();
                 entry.put(originalContent, "");
                 this.labels.add(entry);
             }
             this.sentence += " " + originalContent;
         }
 
-        if ((this.sentence.length() > minSentenceLength) && (this.sentence.endsWith(".")) && (this.labelCount > minEntitiesCount)) {
+        if ((this.sentence.length() > minSentenceLength) &&
+                (this.sentence.endsWith(".")) &&
+                (this.labelCount > minEntitiesCount)) {
+
             for (HashMap part: this.labels) {
                 String outword = (String) part.keySet().toArray()[0];
                 String outlabel = (String) part.get(outword);
+
                 if (outlabel.equals("")) {
                     try {
                         outputFile.write(outword + " POS O\n");
@@ -108,7 +108,7 @@ public class BioResultHandler implements ResultHandler {
                 }
             }
             this.sentence = "";
-            this.labels = new ArrayList();
+            this.labels = new ArrayList<HashMap>();
             this.labelCount = 0;
         }
     }

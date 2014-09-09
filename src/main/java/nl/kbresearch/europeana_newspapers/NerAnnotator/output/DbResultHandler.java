@@ -1,6 +1,6 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.App;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.EuropeanaNER;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
 import java.sql.*;
@@ -17,7 +17,6 @@ import org.w3c.dom.Document;
 
 
 public class DbResultHandler implements ResultHandler {
-
     ContainerContext context;
     String name;
 
@@ -36,7 +35,7 @@ public class DbResultHandler implements ResultHandler {
                 e.printStackTrace();
             }
             dbConn = DriverManager.getConnection("jdbc:hsqldb:file:"
-                                    + App.getOutputDirectoryRoot().getAbsolutePath()
+                                    + EuropeanaNER.getOutputDirectoryRoot().getAbsolutePath()
                                     + "/annotations", "SA", "");
             update("CREATE CACHED TABLE IF NOT EXISTS annotations " + "("
                     + "wordId  VARCHAR(10000),"

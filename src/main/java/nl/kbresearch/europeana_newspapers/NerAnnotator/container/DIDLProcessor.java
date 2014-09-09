@@ -58,13 +58,16 @@ public class DIDLProcessor implements ContainerProcessor {
             for (int i = 0; i<elementsByTag.getLength(); i++) {
                 Node tokens = elementsByTag.item(i);
                 if (tokens.getNodeType() == Node.ELEMENT_NODE) {
-                    Element e = (Element) tokens;
-                    if (e.getAttribute("mimeType").equals("text/xml") && (e.getAttribute("ref").endsWith(":alto"))) {
-                        URL url2 = new URL(e.getAttribute("ref"));
-                        String altoFilename = e.getAttribute("dcx:filename");
+                    Element token_element = (Element) tokens;
+                    if (token_element.getAttribute("mimeType").equals("text/xml") && 
+                            (token_element.getAttribute("ref").endsWith(":alto"))) {
+
+                        URL url2 = new URL(token_element.getAttribute("ref"));
+                        String altoFilename = token_element.getAttribute("dcx:filename");
                         if (altoFilename == null || altoFilename.isEmpty()) {
                             altoFilename = "alto-" + (count++) + ".xml";
                         }
+
                         AltoProcessor.handlePotentialAltoFile(url2,
                                                               "text/xml",
                                                               lang,
@@ -76,11 +79,11 @@ public class DIDLProcessor implements ContainerProcessor {
                 }
             }
             return (count > 0);
-        } catch (javax.xml.parsers.ParserConfigurationException e) {
-            e.printStackTrace();
+        } catch (javax.xml.parsers.ParserConfigurationException error) {
+            error.printStackTrace();
             return false;
-        } catch (org.xml.sax.SAXException e) {
-            e.printStackTrace();
+        } catch (org.xml.sax.SAXException error) {
+            error.printStackTrace();
             return false;
         }
     }

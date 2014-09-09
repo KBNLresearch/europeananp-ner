@@ -1,6 +1,6 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.container;
 
-import nl.kbresearch.europeana_newspapers.NerAnnotator.App;
+import nl.kbresearch.europeana_newspapers.NerAnnotator.EuropeanaNER;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -47,8 +47,8 @@ public class ContainerHandleThread implements Callable<Boolean> {
                                       lang,
                                       md5sum);
                 return true;
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception error) {
+                error.printStackTrace();
                 return false;
             }
     }
@@ -63,7 +63,7 @@ public class ContainerHandleThread implements Callable<Boolean> {
         String[] split = cleanedPath.split("/");
         String fileName = split[split.length - 1];
 
-        File outputDir = new File(App.getOutputDirectoryRoot(),
+        File outputDir = new File(EuropeanaNER.getOutputDirectoryRoot(),
                                   fileName + "-annotations");
 
         if ((!outputDir.isDirectory()) && (!outputDir.mkdirs())) {

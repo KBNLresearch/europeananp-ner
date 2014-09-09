@@ -28,5 +28,4 @@ if len(sys.argv) > 1:
         if not line.endswith("/O") and len(line.strip()) > 0:
             print line
 else:
-    sys.stdout.write(
-            "Missing inputfile name")
+    sys.stdout.write("Missing inputfile name")

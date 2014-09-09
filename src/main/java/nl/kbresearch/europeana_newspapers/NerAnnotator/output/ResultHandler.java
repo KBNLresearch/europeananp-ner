@@ -8,20 +8,16 @@ import org.w3c.dom.Document;
 /**
  * Output handler for the result of the NER process on a single ALTO document
  *
- * @author rene
+ * @author Rene
  *
  */
 
 
 public interface ResultHandler {
-    /**
-     * Called at the beginning of the document
-     */
+    //Called at the beginning of the document
     public void startDocument();
 
-    /**
-     * Called at the beginning of each ALTO textblock
-     */
+    //Called at the beginning of each ALTO textblock
     public void startTextBlock();
 
     /**
@@ -52,7 +48,11 @@ public interface ResultHandler {
      *            if not null, the element referenced by this is the second part
      *            of the same "word".
      */
-    public void addToken(String wordid, String originalContent, String word, String label, String continuationid);
+    public void addToken(String wordid,
+                         String originalContent,
+                         String word,
+                         String label,
+                         String continuationid);
 
     /**
      * Called at the end of a text block

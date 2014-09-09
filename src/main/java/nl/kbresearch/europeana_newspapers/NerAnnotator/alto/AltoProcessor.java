@@ -102,6 +102,7 @@ public class AltoProcessor {
 
                 ArrayList<Map<String , String>> stanford_tokens  = new ArrayList<Map<String,String>>();
                 // Classify the output text, using the stanford tokenizer.
+                @SuppressWarnings("unchecked")
                 List<List<CoreLabel>> out = classifier_text.classify(text);
                 Map<String, String> map = new HashMap<String, String>();
 
