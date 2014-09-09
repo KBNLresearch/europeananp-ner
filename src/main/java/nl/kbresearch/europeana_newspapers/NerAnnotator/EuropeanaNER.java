@@ -200,7 +200,7 @@ public class EuropeanaNER {
                                                                            containerHandlePool);
 
             for (Object arg : fileList) {
-                logger.info(arg);
+                logger.info("Starting: " + arg.toString());
                 // Fire up the created threads
                 results.put(arg.toString(),
                             threadPoolExecutor.submit(
@@ -238,9 +238,9 @@ public class EuropeanaNER {
                 }
             }
 
-            logger.info(String(successful) +
+            logger.info(String.valueOf(successful) +
                         " container documents successfully processed, " +
-                        String(withErrors) + " with errors.");
+                        String.valueOf(withErrors) + " with errors.");
 
             if (errors) {
                 logger.severe("There were errors while processing.");

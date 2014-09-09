@@ -5,8 +5,11 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFacto
 
 import java.io.File;
 import java.io.IOException;
+
 import java.net.URL;
+
 import java.util.Locale;
+import java.util.logging.Logger;
 
 
 /**
@@ -18,6 +21,7 @@ import java.util.Locale;
 
 
 public class AltoLocalProcessor implements ContainerProcessor {
+    private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     public static AltoLocalProcessor INSTANCE = new AltoLocalProcessor();
 
     @Override
@@ -25,17 +29,20 @@ public class AltoLocalProcessor implements ContainerProcessor {
                                String urlStr,
                                Locale lang,
                                String md5sum) throws IOException {
-        URL url = null;
+
         File file = new File(urlStr);
+        URL url = null;
 
         if (file.exists()) {
             url = file.toURI().toURL();
         } else {
             url = new URL(urlStr);
-            System.out.println("File not found, trying to get from URL: " + url.toExternalForm());
+            this.logger.warn("File not found, trying to get from URL: " +
+                             url.toExternalForm());
         }
 
-        System.out.println("Processing Alto-File " + urlStr);
+        logger.info("Processing Alto-File " +
+                    urlStr);
 
         String[] split = urlStr.split("/");
         String altoFilename = split[split.length - 1];

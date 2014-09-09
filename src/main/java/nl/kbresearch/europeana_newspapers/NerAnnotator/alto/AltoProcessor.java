@@ -35,27 +35,22 @@ import org.xml.sax.SAXException;
 
 
 public class AltoProcessor {
-    /**
-     * @param potentialAltoFilename
-     * @param mimeType
-     * @param lang
-     * @param md5sum
-     * @param handler
-     * @throws IOException
-     */
     public static int handlePotentialAltoFile(final URL potentialAltoFilename,
                                               final String mimeType,
                                               final Locale lang,
                                               final String md5sum,
-                                              final ResultHandler[] handler) throws IOException {
+                                              final ResultHandler[] handler) throws IOException,
+                                                                                    ParserConfigurationException,
+                                                                                    SAXException {
         try {
             System.out.println("Trying to process ALTO file " + potentialAltoFilename);
             long startTime = System.currentTimeMillis();
             InputSource input_file = null;
+
             try {
                 input_file = new InputSource(potentialAltoFilename.openStream());
-            } catch (Exception e) {
-                System.out.println(e);
+            } catch (Exception error) {
+                System.out.println(error);
             }
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -78,9 +73,9 @@ public class AltoProcessor {
             Map<String,String> answer = new HashMap<String, String>();
 
             for (List<CoreMap> block : coreMapElements) {
-                int sentenceCount = 0;
                 int offset = 0;
                 int offsetCount = 0;
+                int sentenceCount = 0;
 
                 for (ResultHandler h : handler) {
                     h.startTextBlock();
@@ -90,13 +85,18 @@ public class AltoProcessor {
                 List<CoreMap> classify_alto = classifier_alto.classify(block);
                 String text = "";
 
+                // label :
+                // [ValueAnnotation=Verhulst TextAnnotation=Verhulst OriginalTextAnnotation=Verhulst CharacterOffsetBeginAnnotation=260 
+                // CharacterOffsetEndAnnotation=268 BeforeAnnotation=  PositionAnnotation=60 ShapeAnnotation=Xxxxx GoldAnswerAnnotation=null AnswerAnnotation=B-LOC]
+                // [ValueAnnotation=; TextAnnotation=; OriginalTextAnnotation=; CharacterOffsetBeginAnnotation=268 CharacterOffsetEndAnnotation=269 BeforeAnnotation= 
+                // PositionAnnotation=61 ShapeAnnotation=; GoldAnswerAnnotation=null AnswerAnnotation=O]
+                // [ValueAnnotation=Rhap TextAnnotation=Rhap OriginalTextAnnotation=Rhap CharacterOffsetBeginAnnotation=270 CharacterOffsetEndAnnotation=274 BeforeAnnotation=  
+                // PositionAnnotation=62 ShapeAnnotation=Xxxx GoldAnswerAnnotation=null AnswerAnnotation=O]
+
                 for (CoreMap label : classify_alto) {
                     if (label.get(HyphenatedLineBreak.class) == null) {
                         String word = label.get(OriginalContent.class);
                         text = text + word + " ";
-                        // label:
-                        // [OriginalContent=Verhulst; TextAnnotation=Verhulst; AltoStringID=69:3233:45:880:29:677:3237:37:143 AnswerAnnotation=O]
-                        // [OriginalContent=Rhap TextAnnotation=Rhapsodie AltoStringID=69:3233:45:880:33:850:3242:35:79 ContinuationAltoStringID=69:3274:43:878:1:69:3275:30:70 AnswerAnnotation=O]
                     }
                 }
 
@@ -110,67 +110,69 @@ public class AltoProcessor {
                 for (List<CoreLabel> sentence : out) {
                     for (CoreLabel label: sentence) {
                         if (label.get(HyphenatedLineBreak.class) == null) {
-                            StringTokenizer st = new StringTokenizer(TextElementsExtractor.cleanWord(label.get(OriginalTextAnnotation.class)));
+                            StringTokenizer st = new StringTokenizer(
+                                                        TextElementsExtractor.cleanWord(
+                                                            label.get(OriginalTextAnnotation.class)));
                             // Sometimes the stanford tokenizer does not cut on whitespace (with numbers).
                             while (st.hasMoreTokens()) {
                                 answer = new HashMap<String, String>();
-                                answer.put(st.nextToken(), TextElementsExtractor.cleanWord(label.get(AnswerAnnotation.class)));
+                                answer.put(st.nextToken(),
+                                           TextElementsExtractor.cleanWord(
+                                                            label.get(AnswerAnnotation.class)));
                                 stanford_tokens.add(offsetCount, answer);
                                 offsetCount += 1;
                             }
-                            // label :
-                            // [ValueAnnotation=Verhulst TextAnnotation=Verhulst OriginalTextAnnotation=Verhulst CharacterOffsetBeginAnnotation=260 
-                            // CharacterOffsetEndAnnotation=268 BeforeAnnotation=  PositionAnnotation=60 ShapeAnnotation=Xxxxx GoldAnswerAnnotation=null AnswerAnnotation=B-LOC]
-                            // [ValueAnnotation=; TextAnnotation=; OriginalTextAnnotation=; CharacterOffsetBeginAnnotation=268 CharacterOffsetEndAnnotation=269 BeforeAnnotation= 
-                            // PositionAnnotation=61 ShapeAnnotation=; GoldAnswerAnnotation=null AnswerAnnotation=O]
-                            // [ValueAnnotation=Rhap TextAnnotation=Rhap OriginalTextAnnotation=Rhap CharacterOffsetBeginAnnotation=270 CharacterOffsetEndAnnotation=274 BeforeAnnotation=  
-                            // PositionAnnotation=62 ShapeAnnotation=Xxxx GoldAnswerAnnotation=null AnswerAnnotation=O]
                         }
                     }
                 }
 
-
-                //TODO: This contains a devious search / seek loop,
-                //      needs more polishing, add debug output statements,
-                //      that can be switched on and off.
-
+                // label :
+                // [OriginalContent=Verhulst; TextAnnotation=Verhulst; AltoStringID=69:3233:45:880:29:677:3237:37:143 AnswerAnnotation=O]
+                // [OriginalContent=Rhap TextAnnotation=Rhapsodie AltoStringID=69:3233:45:880:33:850:3242:35:79 ContinuationAltoStringID=69:3274:43:878:1:69:3275:30:70 AnswerAnnotation=O]
                 for (CoreMap label : classify_alto) {
                     if (label.get(HyphenatedLineBreak.class) != null) {
                         for (ResultHandler h : handler) {
                             h.newLine(label.get(HyphenatedLineBreak.class));
                         }
                     } else {
-                        // label :
-                        // [OriginalContent=Verhulst; TextAnnotation=Verhulst; AltoStringID=69:3233:45:880:29:677:3237:37:143 AnswerAnnotation=O]
-                        // [OriginalContent=Rhap TextAnnotation=Rhapsodie AltoStringID=69:3233:45:880:33:850:3242:35:79 ContinuationAltoStringID=69:3274:43:878:1:69:3275:30:70 AnswerAnnotation=O]
                         boolean match = false;
-                        String stanfordClassification = "O";
+                        String seek_str = "";
                         String stanford = "";
+                        String stanfordClassification = "O";
+                        String stanford_org = "";
 
                         // Matching the stanford tokenized output to the alto format.
                         if (label.get(TextAnnotation.class) != null) {
                             if (sentenceCount + offset < stanford_tokens.size()) {
-                                Set<String> stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
-                                stanford = TextElementsExtractor.cleanWord(stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0]);
-                                stanfordClassification = (stanford_tokens.get(sentenceCount + offset).get(stanford));
+                                Set<String> stanfordKeyset = stanford_tokens.get(sentenceCount +
+                                                                                 offset).keySet();
+                                seek_str = TextElementsExtractor.cleanWord(label.get(TextAnnotation.class));
+                                stanford_org = stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0];
+                                stanford = TextElementsExtractor.cleanWord(stanford_org);
+                                stanfordClassification = stanford_tokens.get(sentenceCount +
+                                                                             offset).get(stanford);
 
-                                if (TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)).equals("")) {
+                                if (seek_str.equals("")) {
                                     stanford = "";
                                     offset -= 1;
                                 }
 
-                                while ((!match) && (TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)).length() > 0)) {
-                                    if (stanford.equals(TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)))) {
+                                while ((!match) && (seek_str.length() > 0)) {
+                                    if (stanford.equals(seek_str)) {
                                         match = true;
                                         label.set(AnswerAnnotation.class, stanfordClassification);
                                     } else {
                                         offset += 1;
                                         if (sentenceCount + offset < stanford_tokens.size()) {
-                                            stanfordKeyset = stanford_tokens.get(sentenceCount + offset).keySet();
-                                            if (stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0].equals(TextElementsExtractor.cleanWord(label.get(TextAnnotation.class)))) {
+                                            // Here the stanford tokenizer and the ALTO's don't match,
+                                            // keep on looking, by concatonating results.
+                                            stanfordKeyset = stanford_tokens.get(sentenceCount +
+                                                                                 offset).keySet();
+                                            stanford_org = stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0];
+                                            if (stanford_org.equals(seek_str)) {
                                                 match = true;
                                             } else {
-                                                stanford = stanford + stanfordKeyset.toArray(new String[stanfordKeyset.size()])[0];
+                                                stanford = stanford + stanford_org;
                                             }
                                         } else {
                                             match = true;
@@ -214,27 +216,32 @@ public class AltoProcessor {
                 h.stopDocument();
             }
 
-            System.out.println();
-            System.out.println("Statistics: "
-                    + classified
-                    + " out of "
-                    + totalNumberOfWords
-                    + "/ " 
-                    + ((double) classified / (double) totalNumberOfWords) + ") classified");
-            System.out.println("Total millisecs: "
-                    + (System.currentTimeMillis() - startTime));
+            System.out.println("\nStatistics: " +
+                               classified +
+                               " out of " +
+                               totalNumberOfWords +
+                               "/ " +
+                               ((double) classified / (double) totalNumberOfWords) +
+                               ") classified");
 
-        } catch (IOException e) {
-            System.err.println("Could not read ALTO file " + potentialAltoFilename.toExternalForm());
-            throw e;
-        } catch (SAXException e) {
+            System.out.println("Total millisecs: " +
+                               (System.currentTimeMillis() -
+                               startTime));
 
-        } catch (ParserConfigurationException e) {
-
+        } catch (IOException error) {
+            System.err.println("Could not read ALTO file " +
+                               potentialAltoFilename.toExternalForm());
+            throw error;
+        } catch (SAXException error) {
+            throw error;
+        } catch (ParserConfigurationException error) {
+            throw error;
         }
+
         for (ResultHandler h : handler) {
             h.close();
         }
-        return (1);
+
+        return (0);
     }
 }
