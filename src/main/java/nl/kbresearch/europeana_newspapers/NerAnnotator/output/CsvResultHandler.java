@@ -33,14 +33,14 @@ public class CsvResultHandler implements ResultHandler {
                                            "text",
                                            "label",
                                            "continuationId"
-    }
+    };
 
     final CellProcessor[] processors = new CellProcessor[] { new NotNull(),
                                                              new NotNull(),
                                                              new NotNull(),
                                                              new NotNull(),
                                                              new NotNull()
-    }
+    };
 
     public CsvResultHandler(final ContainerContext context, final String name) {
         this.context = context;
@@ -99,7 +99,7 @@ public class CsvResultHandler implements ResultHandler {
             }
         } catch (IOException error) {
             String msg = "Could not open CSV writer for file " +
-                         outputFile.getAbsolutePath()
+                         outputFile.getAbsolutePath();
             throw new IllegalStateException(msg, error);
         }
     }

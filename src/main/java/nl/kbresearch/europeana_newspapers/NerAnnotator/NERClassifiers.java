@@ -56,7 +56,10 @@ public class NERClassifiers {
                     logger.info(langKey + " -> " + langModels.getProperty(langKey.toString()));
                     if (lang.getLanguage().equals(new Locale(langKey.toString()).getLanguage())) {
                         // Populate the classifier with the specified classifier from the command line
-                        classifier = CRFClassifier.getClassifier(getDefaultInputModelStream(langModels.getProperty(langKey.toString()), lang));
+                        classifier = CRFClassifier.getClassifier(
+                                            getDefaultInputModelStream(langModels.getProperty(langKey.toString()),
+                                                                       lang));
+                    }
                 }
             } catch (ClassCastException error) {
                     throw new IllegalArgumentException("Model does not seem to be the right class ", error);

@@ -42,7 +42,7 @@ public class HtmlResultHandler implements ResultHandler {
                              + StringEscapeUtils.escapeHtml4(name) + "</title>\n"
                              + "</head>\n<body>\n</html>\n");
         } catch (IOException error) {
-            String msg = "Could not wirte to HTML file"
+            String msg = "Could not wirte to HTML file";
             throw new IllegalStateException(msg, error);
         }
     }
