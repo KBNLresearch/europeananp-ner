@@ -33,10 +33,7 @@ public class AltoLocalProcessor implements ContainerProcessor {
     public boolean processFile(ContainerContext context,
                                String urlStr,
                                Locale lang,
-                               String md5sum) throws IOException,
-                                                     ParserConfigurationException,
-                                                     SAXException {
-
+                               String md5sum) throws IOException {
         File file = new File(urlStr);
         URL url = null;
 
@@ -53,14 +50,21 @@ public class AltoLocalProcessor implements ContainerProcessor {
 
         String[] split = urlStr.split("/");
         String altoFilename = split[split.length - 1];
-
-        AltoProcessor.handlePotentialAltoFile(url,
-                                              "text/xml",
-                                              lang,
-                                              md5sum,
-                                              ResultHandlerFactory.createResultHandlers(context,
-                                                                                        altoFilename,
-                                                                                        md5sum));
+        try {
+            AltoProcessor.handlePotentialAltoFile(url,
+                                                "text/xml",
+                                                lang,
+                                                md5sum,
+                                                ResultHandlerFactory.createResultHandlers(context,
+                                                                                            altoFilename,
+                                                                                            md5sum));
+        } catch (javax.xml.parsers.ParserConfigurationException error) {
+            error.printStackTrace();
+            return false;
+        } catch (org.xml.sax.SAXException error) {
+            error.printStackTrace();
+            return false;
+        }
 
         return (true);
     }

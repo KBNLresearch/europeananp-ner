@@ -4,10 +4,6 @@ import java.io.IOException;
 
 import java.util.Locale;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 
 /**
  * Processor for a container format.
@@ -35,7 +31,5 @@ public interface ContainerProcessor {
     public boolean processFile(ContainerContext context,
                                String urlStr,
                                Locale lang,
-                               String md5sum) throws IOException,
-                                                     ParserConfigurationException,
-                                                     SAXException;
+                               String md5sum) throws IOException;
 }

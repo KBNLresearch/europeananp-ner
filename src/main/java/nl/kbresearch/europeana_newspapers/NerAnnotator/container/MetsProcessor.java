@@ -1,12 +1,15 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.container;
+
 import nl.kbresearch.europeana_newspapers.NerAnnotator.alto.AltoProcessor;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,7 +35,11 @@ public class MetsProcessor implements ContainerProcessor {
     public static MetsProcessor INSTANCE = new MetsProcessor();
 
     @Override
-    public boolean processFile(ContainerContext context, String urlStr, Locale lang, String md5sum) throws IOException {
+    public boolean processFile(ContainerContext context,
+                               String urlStr,
+                               Locale lang,
+                               String md5sum) throws IOException {
+
         System.out.println("Processing METS file " + urlStr);
         URL url = null;
         File file = new File(urlStr);
@@ -51,6 +58,7 @@ public class MetsProcessor implements ContainerProcessor {
             DocumentBuilder db = dbf.newDocumentBuilder();
             doc = db.parse(file);
             NodeList nodesByTag = doc.getElementsByTagName("mets:FLocat");
+
             for (int i = 0; i<nodesByTag.getLength(); i++) {
                 Node tokens = nodesByTag.item(i);
                 if (tokens.getNodeType() == Node.ELEMENT_NODE) {
@@ -63,7 +71,9 @@ public class MetsProcessor implements ContainerProcessor {
                             if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
                                 String path = referencedFile.getPath();
                                 String relativeToUrl = url.toString();
-                                potentialAltoFilename = new URI(relativeToUrl.substring(0, relativeToUrl.lastIndexOf("/")) + path).normalize().toURL();
+                                potentialAltoFilename = new URI(relativeToUrl.substring(0,
+                                                                                        relativeToUrl.lastIndexOf("/")) +
+                                                                                        path).normalize().toURL();
                             } else {
                                 potentialAltoFilename = referencedFile.normalize().toURL();
                             }
@@ -89,7 +99,8 @@ public class MetsProcessor implements ContainerProcessor {
                                                                                                             md5sum));
                         }
                     } catch (URISyntaxException error) {
-                        System.err.println("Error parsing path to file in METS for file id " + token_element.getAttribute("ID"));
+                        System.err.println("Error parsing path to file in METS for file id " +
+                                           token_element.getAttribute("ID"));
                         error.printStackTrace();
                         return false;
                    }
@@ -103,6 +114,6 @@ public class MetsProcessor implements ContainerProcessor {
             error.printStackTrace();
             return false;
         }
-        return (count > 0);
+        return count > 0;
     }
 }

@@ -5,7 +5,9 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFacto
 
 import java.io.File;
 import java.io.IOException;
+
 import java.net.URL;
+
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
@@ -29,10 +31,11 @@ public class TextProcessor implements ContainerProcessor {
                                String urlStr,
                                Locale lang,
                                String md5sum) throws IOException {
-        System.out.println("Processing TEXT-File " + urlStr);
-        int count = 0;
 
+        int count = 0;
+        System.out.println("Processing TEXT-File " + urlStr);
         URL textURL = new File(urlStr).toURI().toURL();
+
         TxtProcessor.handlePotentialTextFile(textURL,
                                              "text/xml",
                                              lang,

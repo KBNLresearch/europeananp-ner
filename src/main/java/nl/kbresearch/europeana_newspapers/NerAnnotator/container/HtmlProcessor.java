@@ -5,7 +5,9 @@ import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFacto
 
 import java.io.File;
 import java.io.IOException;
+
 import java.net.URL;
+
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
@@ -25,7 +27,11 @@ public class HtmlProcessor implements ContainerProcessor {
     public static HtmlProcessor INSTANCE = new HtmlProcessor();
 
     @Override
-    public boolean processFile(ContainerContext context, String urlStr, Locale lang, String md5sum) throws IOException {
+    public boolean processFile(ContainerContext context,
+                               String urlStr,
+                               Locale lang,
+                               String md5sum) throws IOException {
+
         System.out.println("Processing TEXT-File " + urlStr);
         int count = 0;
         URL textURL = new File(urlStr).toURI().toURL();

@@ -3,6 +3,7 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.container;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.EuropeanaNER;
 
 import java.io.File;
+
 import java.util.concurrent.Callable;
 import java.util.Locale;
 
@@ -16,48 +17,44 @@ import java.util.Locale;
 
 
 public class ContainerHandleThread implements Callable<Boolean> {
-    private String filePath;
-    private Locale lang;
     private ContainerProcessor processor;
+    private Locale lang;
+    private String filePath;
     private String md5sum;
 
-    /**
-     * @param filePath
-     * @param lang
-     * @param processor
-     * @param md5sum
-     */
     public ContainerHandleThread(final String filePath,
                                  final Locale lang,
                                  final ContainerProcessor processor,
                                  final String md5sum) {
-            this.filePath = filePath;
-            this.lang = lang;
-            this.processor = processor;
-            this.md5sum = md5sum;
+
+        this.filePath = filePath;
+        this.lang = lang;
+        this.md5sum = md5sum;
+        this.processor = processor;
     }
 
     @Override
     public Boolean call() throws Exception {
-            try {
-                ContainerContext containerContext = new ContainerContext();
-                containerContext.setOutputDirectory(getOutputDirectory());
-                processor.processFile(containerContext,
-                                      filePath,
-                                      lang,
-                                      md5sum);
-                return true;
-            } catch (Exception error) {
-                error.printStackTrace();
-                return false;
-            }
+        try {
+            ContainerContext containerContext = new ContainerContext();
+            containerContext.setOutputDirectory(getOutputDirectory());
+            processor.processFile(containerContext,
+                                  filePath,
+                                  lang,
+                                  md5sum);
+            return true;
+        } catch (Exception error) {
+            error.printStackTrace();
+            return false;
+        }
     }
 
     private File getOutputDirectory() {
         String cleanedPath = filePath.trim();
 
         while (cleanedPath.endsWith("/")) {
-            cleanedPath = cleanedPath.substring(0, cleanedPath.length() - 1);
+            cleanedPath = cleanedPath.substring(0,
+                                                cleanedPath.length() - 1);
         }
 
         String[] split = cleanedPath.split("/");
@@ -67,11 +64,11 @@ public class ContainerHandleThread implements Callable<Boolean> {
                                   fileName + "-annotations");
 
         if ((!outputDir.isDirectory()) && (!outputDir.mkdirs())) {
-            throw new IllegalArgumentException(
-                    "Could not create output directory "
-                            + outputDir.getAbsolutePath());
+            String msg = "Could not create output directory " +
+                         outputDir.getAbsolutePath();
+            throw new IllegalArgumentException(msg);
         }
+
         return outputDir;
     }
-
 }
