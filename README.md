@@ -6,14 +6,14 @@ parses out all references to [ALTO](http://www.loc.gov/standards/alto/) files an
 (with most models: Location, Person, Organisation, Misc). The aim is to keep the physical location on the page available through the whole process
 to be able to highlight the results in a viewer. Read more about it on the KBNLresearch [blog](http://researchkb.wordpress.com/2014/03/03/ner-newspapers/).
 
-Currently, [Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is used for tagging.
+[Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is used for tagging.
 
-At the moment, the following output formats are implemented:
+The following output formats are implemented:
 
-* ALTO-with-Alternatives
-* ALTO [2.1](https://github.com/altoxml/documentation/wiki/v2.1-Draft)
+* ALTO-with-Alternatives (a.k.a. inline ALTO)
+* ALTO [2.1 (soon to be replaced with 3.0)](http://www.loc.gov/standards/alto/v3/alto-3-0.xsd)
 * HTML
-* CSV (comma separated values)
+* CSV
 * SQL
 
 Building from source:

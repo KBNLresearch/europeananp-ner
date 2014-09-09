@@ -1,7 +1,12 @@
 package nl.kbresearch.europeana_newspapers.NerAnnotator.container;
 
 import java.io.IOException;
+
 import java.util.Locale;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 
 /**
@@ -23,12 +28,14 @@ public interface ContainerProcessor {
      *            the language to use for named entity recognition
      * @param md5sum
      *            the md5sum of the jar file producing the output
-     * @return true iff the container and the dependent documents where
+     * @return true if the container and the dependent documents where
      *         successfully processed
      * @throws IOException
      */
     public boolean processFile(ContainerContext context,
                                String urlStr,
                                Locale lang,
-                               String md5sum) throws IOException;
+                               String md5sum) throws IOException,
+                                                     ParserConfigurationException,
+                                                     SAXException;
 }

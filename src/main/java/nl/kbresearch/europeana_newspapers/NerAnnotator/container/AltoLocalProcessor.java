@@ -11,11 +11,16 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 
 /**
  * Processor for MPEG21-DIDL files.
  *
  * @author Rene
+ * @author Willem jan Faber
  *
  */
 
@@ -28,7 +33,9 @@ public class AltoLocalProcessor implements ContainerProcessor {
     public boolean processFile(ContainerContext context,
                                String urlStr,
                                Locale lang,
-                               String md5sum) throws IOException {
+                               String md5sum) throws IOException,
+                                                     ParserConfigurationException,
+                                                     SAXException {
 
         File file = new File(urlStr);
         URL url = null;
@@ -37,8 +44,8 @@ public class AltoLocalProcessor implements ContainerProcessor {
             url = file.toURI().toURL();
         } else {
             url = new URL(urlStr);
-            this.logger.warn("File not found, trying to get from URL: " +
-                             url.toExternalForm());
+            AltoLocalProcessor.logger.warning("File not found, trying to get from URL: " +
+                                              url.toExternalForm());
         }
 
         logger.info("Processing Alto-File " +
