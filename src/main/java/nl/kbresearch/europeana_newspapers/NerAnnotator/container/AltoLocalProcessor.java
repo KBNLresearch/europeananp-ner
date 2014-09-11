@@ -57,7 +57,8 @@ public class AltoLocalProcessor implements ContainerProcessor {
                                                 md5sum,
                                                 ResultHandlerFactory.createResultHandlers(context,
                                                                                             altoFilename,
-                                                                                            md5sum));
+                                                                                            md5sum,
+                                                                                            null));
         } catch (javax.xml.parsers.ParserConfigurationException error) {
             error.printStackTrace();
             return false;

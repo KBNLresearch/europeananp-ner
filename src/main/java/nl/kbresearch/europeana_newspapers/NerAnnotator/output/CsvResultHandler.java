@@ -22,7 +22,7 @@ import org.w3c.dom.Document;
  */
 
 
-public class CsvResultHandler implements ResultHandler {
+public class CsvResultHandler extends ResultHandler {
     ContainerContext context;
     CsvListWriter csvListWriter;
     File outputFile;

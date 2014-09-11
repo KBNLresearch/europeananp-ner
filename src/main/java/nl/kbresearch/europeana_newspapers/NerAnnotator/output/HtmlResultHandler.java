@@ -17,7 +17,7 @@ import org.w3c.dom.Document;
  */
 
 
-public class HtmlResultHandler implements ResultHandler {
+public class HtmlResultHandler extends ResultHandler {
     ContainerContext context;
     String continuationId = null;
     String continuationLabel = null;

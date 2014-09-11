@@ -3,6 +3,8 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator.output;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.EuropeanaNER;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.ContainerContext;
 
+import java.io.PrintWriter;
+
 import java.sql.SQLException;
 
 import java.util.ArrayList;
@@ -16,7 +18,6 @@ import java.util.Map;
  *
  * @author Rene
  * @author Willem Jan Faber
- *
  */
 
 
@@ -26,14 +27,35 @@ public class ResultHandlerFactory {
 
     public static ResultHandler[] createResultHandlers(final ContainerContext context,
                                                        final String name,
-                                                       final String versionString) {
+                                                       final String versionString,
+                                                       final PrintWriter output) {
 
         String[] outputFormats = EuropeanaNER.getOutputFormats();
 
         ArrayList<ResultHandler> result = new ArrayList<ResultHandler>();
 
+        // If not output fromat is specified,
+        // default to http.
+        if (outputFormats == null) {
+                outputFormats = new String[1];
+                outputFormats[0] = "http";
+        }
+
         for (String outputFormat : outputFormats) {
             switch (outputFormat) {
+
+                case "http":
+                    HttpResultHandler httpResultHandler = new HttpResultHandler(context,
+                                                                                name,
+                                                                                versionString,
+                                                                                output);
+
+                    registeredHandlers.put(HttpResultHandler.class,
+                                           httpResultHandler);
+
+                    result.add(httpResultHandler);
+                    break;
+
                 case "log":
                     LogResultHandler logResultHandler = new LogResultHandler();
                     registeredHandlers.put(LogResultHandler.class,

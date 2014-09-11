@@ -112,12 +112,12 @@ public class TxtProcessor {
 
         // Close all the textblocks
         for (ResultHandler h : handler) {
-                h.stopTextBlock();
+            h.stopTextBlock();
         }
 
         // Close all the documents
         for (ResultHandler h : handler) {
-                h.stopDocument();
+            h.stopDocument();
         }
 
         return 1;

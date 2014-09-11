@@ -18,7 +18,7 @@ import org.w3c.dom.Document;
  */
 
 
-public class BioResultHandler implements ResultHandler {
+public class BioResultHandler extends ResultHandler {
     ContainerContext context;
     String continuationId = null;
     String continuationLabel = null;

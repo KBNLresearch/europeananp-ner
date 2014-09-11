@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
  */
 
 
-public class AnnotatedAltoResultHandler implements ResultHandler {
+public class AnnotatedAltoResultHandler extends ResultHandler {
     private ContainerContext context;
     private String name;
     private PrintWriter outputFile;

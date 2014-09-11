@@ -16,7 +16,7 @@ import org.w3c.dom.Document;
  */
 
 
-public class DbResultHandler implements ResultHandler {
+public class DbResultHandler extends ResultHandler {
     ContainerContext context;
     String name;
 

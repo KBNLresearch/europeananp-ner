@@ -96,7 +96,8 @@ public class MetsProcessor implements ContainerProcessor {
                                                                   md5sum,
                                                                   ResultHandlerFactory.createResultHandlers(context,
                                                                                                             name,
-                                                                                                            md5sum));
+                                                                                                            md5sum,
+                                                                                                            null));
                         }
                     } catch (URISyntaxException error) {
                         System.err.println("Error parsing path to file in METS for file id " +

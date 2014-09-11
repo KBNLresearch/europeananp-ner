@@ -7,11 +7,10 @@ import org.w3c.dom.Document;
  * Output handler that writes the result of the NER process to stdout.
  *
  * @author Rene
- *
  */
 
 
-public class LogResultHandler implements ResultHandler {
+public class LogResultHandler extends ResultHandler {
     Document altoDocument;
 
     public LogResultHandler() {
@@ -37,6 +36,10 @@ public class LogResultHandler implements ResultHandler {
         System.out.println("Output finished");
     }
 
+    @Override
+    public void stopTextBlock() {
+    }
+
     public void startDocument() {
     }
 
@@ -44,9 +47,6 @@ public class LogResultHandler implements ResultHandler {
     public void startTextBlock() {
     }
 
-    @Override
-    public void stopTextBlock() {
-    }
 
     @Override
     public void stopDocument() {

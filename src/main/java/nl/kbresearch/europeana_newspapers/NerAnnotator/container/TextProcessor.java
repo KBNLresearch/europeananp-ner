@@ -42,7 +42,8 @@ public class TextProcessor implements ContainerProcessor {
                                              md5sum,
                                              ResultHandlerFactory.createResultHandlers(context,
                                                                                        urlStr,
-                                                                                       md5sum));
+                                                                                       md5sum,
+                                                                                       null));
 
         return true;
     }

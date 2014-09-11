@@ -76,7 +76,8 @@ public class DIDLProcessor implements ContainerProcessor {
                                                               md5sum,
                                                               ResultHandlerFactory.createResultHandlers(context,
                                                                                                         altoFilename,
-                                                                                                        md5sum));
+                                                                                                        md5sum,
+                                                                                                        null));
                     }
                 }
             }
