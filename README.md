@@ -16,6 +16,9 @@ The following output formats are implemented:
 * CSV
 * SQL
 
+
+## Building
+
 Building from source:
 
 Install maven, java (version "1.7" and up). In the toplevel directory run:
@@ -23,24 +26,58 @@ Install maven, java (version "1.7" and up). In the toplevel directory run:
     mvn package
 
 This command will generate a jar, and a war version of the NER located in the target/ directory.
-To deploy the war file, just copy the war file in your tomcat webapp directory. To test the webapp
-from command line (this will try to bind to port 8080): 
+To deploy the war file, just copy the war file in your tomcat webapp directory. 
+
+## Usage command-line-interface
+
+Invoking help:
+
+    java -jar NerAnnotator.jar --help
+
+usage: java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]
+ -c,--container <FORMAT>             Input type: mets (Default), didl,
+                                     alto, text, html
+ -d,--output-directory <DIRECTORY>   output DIRECTORY for result files.
+                                     Default ./output
+ -f,--export <FORMAT>                Output type: log (Default), csv,
+                                     html, db, alto, alto2_1, bio.
+                                     Multiple formats:" -f html -f csv"
+ -l,--language <ISO-CODE>            use two-letter ISO-CODE for language
+                                     selection: en, de, nl ....
+ -m,--models <language=filename>     models for languages. Ex. -m
+                                     de=/path/to/file/model_de.gz -m
+                                     nl=/path/to/file/model_nl.gz
+ -n,--nthreads <THREADS>             maximum number of threads to be used
+                                     for processing. Default 8
+
+If there are no input files specified, a list of file names is read from stdin.
+
+Example invocation for classification of german_alto.xml:
+
+    java -Xmx800m -jar NerAnnotator.jar -c mets -f alto -l de -m de=./test-files/german.ser.gz -n 2 ./test-files/german_alto.xml
+
+The given example takes the language model called 'german.ser.gz' and
+applies it to 'german_alo.xml' using 2 threads, and container type METS.
+
+## Usage web-interface
+
+Webinterface standalone:
 
     mvn jetty:run
 
-Basic usage (Command line client): 
+This will try to bind to port 8080, using jetty.
 
-Help:
+Once deployed to Tomcat the following applies. The default configuration (as well as test-classifiers)
+reside in src/main/resources/config.ini, this file references the available classifiers.
 
-      java -jar NerAnnotator.jar --help
-
-Print result to stdout for German language:
-
-     java -Xmx800m -jar NerAnnotator.jar -c mets -f alto -l de -m de=/path/to/trainingmodels/german/hgc_175m_600.crf.ser.gz -n 2 /path/to/mets/AZ_19260425/AZ_19260425_mets.xml
+See the provided sample for some default settings. The landing page of the application
+will show the available options once invoked with the browser.  The config.ini and the
+classifiers will end up in WEB-INF/classes/, after deployment.
 
 ### Working with classifiers and model generation
 
-To be able to compare your results with a baseline we provide you with some test files located in the 'test-files' directory.
+To be able to compare your results with a baseline we provide
+some test files located in the 'test-files' directory.
 
 To run a back to front test (in Linux) try this:
 
@@ -84,25 +121,16 @@ Output should look (something)like this:
 
 To generate a model, use the following command:
 
-    java -Xmx5G -cp target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop test-files/austen_dutch.prop
+    cd test-files; java -Xmx5G -cp ../target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen_dutch.prop
 
-This should result in a file called 'eunews_dutch.crf.gz' located in the directory 'test-files'. The size of the generated classifier should be around 1MB.
+This should result in a file called 'eunews_dutch.crf.gz'. The size of the generated classifier should be around 1MB.
 
 To verify the NER software use the created classifier to process the provided example file.
 
-    java -jar target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar -c alto -d out -f alto -l nl -m nl=./test-files/eunews_dutch.crf.gz -n 8 ./test-files/dutch_alto.xml
+    cd test-files; java -jar ../target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar -c alto -d out -f alto -l nl -m nl=./eunews_dutch.crf.gz -n 8 ./dutch_alto.xml
 
-The same procedure can be applied using the German example files.
+Resulting in a directory called 'out' containing XML ALTO files with inline annotation.
 
 The austen.prop file (basic version) can be found here:
 
     http://nlp.stanford.edu/downloads/ner-example/austen.prop
-
-Basic usage (Web client):
-
-Build the NER package from source, (mvn package), and place the generated WAR file in the webapps dir:
-
-    cp ./target/NerAnnotator-0.0.2-SNAPSHOT.war /usr/local/tomcat7/webapps/
-
-The default configuration (as well as test-classifiers) resides in here: src/main/resources/config.ini, this file references the available classifiers. See the provided sample for some default settings.
-The landing page of the application will show the available options once invoked with the browser. Once the webapp is deployed, the config.ini and the classifiers will end up in WEB-INF/classes/ (for now at least).
