@@ -81,13 +81,13 @@ classifiers will end up in `WEB-INF/classes/`, after deployment.
 ### Working with classifiers and model generation
 
 To be able to compare your results with a baseline we provide
-some test files located in the 'test-files' directory.
+some test files located in the ```test-files``` directory.
 
-To run a back to front test (in Linux) try this:
+To run a back-to-front test try:
 
     cd test-files;./test_europeana_ner.sh
 
-Output should look (something)like this:
+The output should look something like:
 
     Generating new classification model. (de)
     -rw-rw-r-- 1 aloha aloha 1.4M Sep 11 15:55 ./eunews_german.crf.gz
@@ -123,7 +123,7 @@ Output should look (something)like this:
     user	0m9.278s
     sys	0m0.233s
 
-To generate a model, use the following command:
+To generate a binary classification model, use the following command:
 
     cd test-files; java -Xmx5G -cp ../target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen_dutch.prop
 
@@ -133,7 +133,7 @@ To verify the NER software, use the created classifier to process the provided e
 
     cd test-files; java -jar ../target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar -c alto -d out -f alto -l nl -m nl=./eunews_dutch.crf.gz -n 8 ./dutch_alto.xml
 
-Resulting in a directory called `out` containing XML ALTO files with inline annotation.
+Resulting in a directory called `out` containing ALTO files with inline annotation.
 
 The upstream austen.prop file can be found here:
 
