@@ -1,6 +1,6 @@
-trainFileList = test-files/german.bio
+trainFileList = german.bio
 type = crf
-serializeTo = test-files/eunews_german.crf.gz
+serializeTo = eunews_german.crf.gz
 map = word=0,answer=2
 useClassFeature=true
 useWord=true

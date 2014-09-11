@@ -46,15 +46,41 @@ To run a back to front test (in Linux) try this:
 
     cd test-files;./test_europeana_ner.sh
 
-Output should look like this:
+Output should look (something)like this:
 
-    Generating new classification model.
-    Applying generated model.
+    Generating new classification model. (de)
+    -rw-rw-r-- 1 aloha aloha 1.4M Sep 11 15:55 ./eunews_german.crf.gz
+
+    real	0m3.984s
+    user	0m5.452s
+    sys	0m0.235s
+    Applying generated model (de).
+
+    Results:
+        Locations: 4
+        Organizations: 0
+        Persons: 1071
+
+    real	0m13.512s
+    user	0m17.771s
+    sys	0m0.336s
+
+    Generating new classification model. (nl)
+    -rw-rw-r-- 1 aloha aloha 1.7M Sep 11 15:56 ./eunews_dutch.crf.gz
+
+    real	0m8.816s
+    user	0m10.437s
+    sys	0m0.371s
+    Applying generated model (nl).
 
     Results:
         Locations: 1
         Organizations: 8
         Persons: 0
+
+    real	0m5.048s
+    user	0m9.278s
+    sys	0m0.233s
 
 To generate a model, use the following command:
 
