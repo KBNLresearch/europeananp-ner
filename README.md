@@ -2,7 +2,7 @@ Named Entity Recognition Tool for <br>[Europeana Newspapers](http://www.european
 ------------------------------------------------------
 
 This tool takes container documents ([MPEG21-DIDL](http://xml.coverpages.org/mpeg21-didl.html), [METS](http://www.loc.gov/standards/mets/)),
-parses out all references to [ALTO](http://www.loc.gov/standards/alto/) files and tries to find named entities in the pages
+parses all references to [ALTO](http://www.loc.gov/standards/alto/) files and tries to find named entities in the pages
 (with most models: Location, Person, Organisation, Misc). The aim is to keep the physical location on the page available through the whole process
 to be able to highlight the results in a viewer. Read more about it on the KBNLresearch [blog](http://researchkb.wordpress.com/2014/03/03/ner-newspapers/).
 
@@ -21,12 +21,13 @@ The following output formats are implemented:
 
 Building from source:
 
-Install maven, java (version "1.7" and up). In the toplevel directory run:
+Install Maven, Java (v1.7 and up). In the toplevel directory run:
 
     mvn package
 
-This command will generate a jar, and a war version of the NER located in the target/ directory.
-To deploy the war file, just copy the war file in your tomcat webapp directory. 
+This command will generate a JAR and a WAR of the NER located in the `target/` directory.
+To deploy the WAR, just copy it into the Tomcat webapp directory, or use Tomcat
+manager to do it for you.
 
 ## Usage command-line-interface
 
@@ -65,14 +66,14 @@ Webinterface standalone:
 
     mvn jetty:run
 
-This will try to bind to port 8080, using jetty.
+This will try to bind to port 8080, using Jetty.
 
 Once deployed to Tomcat the following applies. The default configuration (as well as test-classifiers)
-reside in src/main/resources/config.ini, this file references the available classifiers.
+reside in `src/main/resources/config.ini`, this file references the available classifiers.
 
 See the provided sample for some default settings. The landing page of the application
 will show the available options once invoked with the browser.  The config.ini and the
-classifiers will end up in WEB-INF/classes/, after deployment.
+classifiers will end up in `WEB-INF/classes/`, after deployment.
 
 ### Working with classifiers and model generation
 
@@ -123,14 +124,14 @@ To generate a model, use the following command:
 
     cd test-files; java -Xmx5G -cp ../target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar edu.stanford.nlp.ie.crf.CRFClassifier -prop austen_dutch.prop
 
-This should result in a file called 'eunews_dutch.crf.gz'. The size of the generated classifier should be around 1MB.
+This should result in a file called `eunews_dutch.crf.gz`, with a file-size of +/- 1MB.
 
-To verify the NER software use the created classifier to process the provided example file.
+To verify the NER software, use the created classifier to process the provided example file.
 
     cd test-files; java -jar ../target/NerAnnotator-0.0.2-SNAPSHOT-jar-with-dependencies.jar -c alto -d out -f alto -l nl -m nl=./eunews_dutch.crf.gz -n 8 ./dutch_alto.xml
 
-Resulting in a directory called 'out' containing XML ALTO files with inline annotation.
+Resulting in a directory called `out` containing XML ALTO files with inline annotation.
 
-The austen.prop file (basic version) can be found here:
+The upstream austen.prop file can be found here:
 
     http://nlp.stanford.edu/downloads/ner-example/austen.prop
