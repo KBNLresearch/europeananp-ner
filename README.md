@@ -34,23 +34,23 @@ Invoking help:
 
     java -jar NerAnnotator.jar --help
 
-usage: java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]
- -c,--container <FORMAT>             Input type: mets (Default), didl,
-                                     alto, text, html
- -d,--output-directory <DIRECTORY>   output DIRECTORY for result files.
-                                     Default ./output
- -f,--export <FORMAT>                Output type: log (Default), csv,
-                                     html, db, alto, alto2_1, bio.
-                                     Multiple formats:" -f html -f csv"
- -l,--language <ISO-CODE>            use two-letter ISO-CODE for language
-                                     selection: en, de, nl ....
- -m,--models <language=filename>     models for languages. Ex. -m
-                                     de=/path/to/file/model_de.gz -m
-                                     nl=/path/to/file/model_nl.gz
- -n,--nthreads <THREADS>             maximum number of threads to be used
-                                     for processing. Default 8
+    usage: java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]
+    -c,--container <FORMAT>             Input type: mets (Default), didl,
+                                        alto, text, html
+    -d,--output-directory <DIRECTORY>   output DIRECTORY for result files.
+                                        Default ./output
+    -f,--export <FORMAT>                Output type: log (Default), csv,
+                                        html, db, alto, alto2_1, bio.
+                                        Multiple formats:" -f html -f csv"
+    -l,--language <ISO-CODE>            use two-letter ISO-CODE for language
+                                        selection: en, de, nl ....
+    -m,--models <language=filename>     models for languages. Ex. -m
+                                        de=/path/to/file/model_de.gz -m
+                                        nl=/path/to/file/model_nl.gz
+    -n,--nthreads <THREADS>             maximum number of threads to be used
+                                        for processing. Default 8
 
-If there are no input files specified, a list of file names is read from stdin.
+    If there are no input files specified, a list of file names is read from stdin.
 
 Example invocation for classification of german_alto.xml:
 
