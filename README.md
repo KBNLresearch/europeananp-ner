@@ -135,6 +135,20 @@ To verify the NER software, use the created classifier to process the provided e
 
 Resulting in a directory called `out` containing ALTO files with inline annotation.
 
-The upstream austen.prop file can be found here:
+# General remarks on binary classification model generation
 
-    http://nlp.stanford.edu/downloads/ner-example/austen.prop
+The process of generating a binary language model is a delicate one. The input
+`.bio` file needs be as clean as possible to prevent the garbage in-out rule from
+happening. Thus, use noise filters while creating `.bio` files.
+
+Gazette's greatly improve the quality of your classification process, but a
+big model in memory may slow down processing speed. Overall there is a strong
+correlation in model size and preformance.
+
+The Stanford NER package offers a lot of settings that can infuence the
+binary mode generation process. These settings can be configured using
+`austen.prop`, the vanilla version of the `.prop` file is found here:
+
+    [http://nlp.stanford.edu/downloads/ner-example/austen.prop](http://nlp.stanford.edu/downloads/ner-example/austen.prop)
+
+For more information on the Stanford settings see [Stanford NER FAQ](http://nlp.stanford.edu/software/crf-faq.shtml).
