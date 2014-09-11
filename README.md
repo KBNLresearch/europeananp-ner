@@ -19,7 +19,6 @@ The following output formats are implemented:
 * CSV
 * SQL
 
-
 ## Building
 
 Building from source:
@@ -78,7 +77,7 @@ See the provided sample for some default settings. The landing page of the appli
 will show the available options once invoked with the browser.  The config.ini and the
 classifiers will end up in `WEB-INF/classes/`, after deployment.
 
-### Working with classifiers and model generation
+### Working with classifiers and binary model generation
 
 To be able to compare your results with a baseline we provide
 some test files located in the ```test-files``` directory.
@@ -135,9 +134,9 @@ To verify the NER software, use the created classifier to process the provided e
 
 Resulting in a directory called `out` containing ALTO files with inline annotation.
 
-# General remarks on binary classification model generation
+### General remarks on binary classification model generation
 
-The process of generating a binary language model is a delicate one. The input
+The process of generating a binary classification model is a delicate one. The input
 `.bio` file needs be as clean as possible to prevent the garbage in-out rule from
 happening. Thus, use noise filters while creating `.bio` files.
 
@@ -146,9 +145,9 @@ big model in memory may slow down processing speed. Overall there is a strong
 correlation in model size and preformance.
 
 The Stanford NER package offers a lot of settings that can infuence the
-binary mode generation process. These settings can be configured using
-`austen.prop`, the vanilla version of the `.prop` file is found here:
+binary model generation process. These settings can be configured using
+`austen.prop`, For more information on the Stanford settings see
+[Stanford NER FAQ](http://nlp.stanford.edu/software/crf-faq.shtml).
 
-    [http://nlp.stanford.edu/downloads/ner-example/austen.prop](http://nlp.stanford.edu/downloads/ner-example/austen.prop)
-
-For more information on the Stanford settings see [Stanford NER FAQ](http://nlp.stanford.edu/software/crf-faq.shtml).
+Binary classification models generated with this tool are fully compatible with the upstream
+version of the Stanford NER.
