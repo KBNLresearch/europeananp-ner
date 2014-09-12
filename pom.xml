@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.kbresearch.europeana_newspapers</groupId>
-  <artifactId>NerAnnotator</artifactId>
+  <artifactId>europeananp-ner</artifactId>
   <version>0.0.2-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>NerAnnotator</name>
+  <name>europeananp-ner</name>
   <url>http://www.europeana-newspapers.eu/</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -64,7 +64,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.WebApp</mainClass>
+              <mainClass>nl.kbresearch.europeana_newspapers.ner.WebApp</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -79,7 +79,7 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.EuropeanaNER</mainClass>
+              <mainClass>nl.kbresearch.europeana_newspapers.ner.commandLine_NER</mainClass>
             </manifest>
           </archive>
         </configuration>

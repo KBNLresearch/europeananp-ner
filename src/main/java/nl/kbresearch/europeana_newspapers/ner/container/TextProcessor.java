@@ -1,0 +1,49 @@
+package nl.kbresearch.europeana_newspapers.ner.container;
+
+import nl.kbresearch.europeana_newspapers.ner.alto.TxtProcessor;
+import nl.kbresearch.europeana_newspapers.ner.output.ResultHandlerFactory;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.net.URL;
+
+import java.util.Locale;
+
+import org.apache.commons.io.FileUtils;
+
+
+/**
+ * Processor for Text files.
+ *
+ * @author Rene
+ * @author Willem Jan Faber
+ */
+
+
+public class TextProcessor implements ContainerProcessor {
+    // The default instance of the Text processor.
+    public static TextProcessor INSTANCE = new TextProcessor();
+
+    @Override
+    public boolean processFile(ContainerContext context,
+                               String urlStr,
+                               Locale lang,
+                               String md5sum) throws IOException {
+
+        int count = 0;
+        System.out.println("Processing TEXT-File " + urlStr);
+        URL textURL = new File(urlStr).toURI().toURL();
+
+        TxtProcessor.handlePotentialTextFile(textURL,
+                                             "text/xml",
+                                             lang,
+                                             md5sum,
+                                             ResultHandlerFactory.createResultHandlers(context,
+                                                                                       urlStr,
+                                                                                       md5sum,
+                                                                                       null));
+
+        return true;
+    }
+}
