@@ -8,8 +8,12 @@ to be able to highlight the results in a viewer.
 
 Read more about it on the KBNLresearch [blog](http://researchkb.wordpress.com/2014/03/03/ner-newspapers/).
 
-[Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is used for tagging. The goal during development was to use loose coupling,
-this enables us to quickly inherit/benefit from upstream development.
+[Stanford NER](http://www-nlp.stanford.edu/software/CRF-NER.shtml) is used for tagging. The goal during development was to use 'loose coupling',
+this enables us to quickly inherit/benefit from upstream development. Most of the development is done at the research department of the KB,
+[national library of the Netherlands](http://kb.nl/en/research). If you are looking for a project which does more interaction with the core of
+Stanford-NER, take a peek at the project from our colleagues INL,
+[Institute for Dutch Lexicology](http://www.inl.nl/our-work-and-working-methods) [INL-NERT](https://github.com/INL/NERT),
+although they are seperate branches now, there is a desire to intergrate both in the future.
 
 The following output formats are implemented:
 
