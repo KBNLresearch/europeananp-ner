@@ -13,15 +13,28 @@ this enables us to quickly inherit/benefit from upstream development. Most of th
 [national library of the Netherlands](http://kb.nl/en/research). If you are looking for a project which does more interaction with the core of
 Stanford-NER, take a peek at the project from our colleagues INL,
 [Institute for Dutch Lexicology](http://www.inl.nl/our-work-and-working-methods) [INL-NERT](https://github.com/INL/NERT),
-although they are seperate branches now, there is a desire to intergrate both in the future.
+although they are separate branches now, there is a desire to integrate both in the future.
+
+## Input formats
+
+The following input formats are implemented:
+
+* ALTO 1.0
+* HTML
+* Mets
+* MPEG21 DIDL
+* Text
+
+## Output formats
 
 The following output formats are implemented:
 
-* ALTO-with-Alternatives (a.k.a. inline ALTO)
 * ALTO [2.1 (soon to be replaced with 3.0)](http://www.loc.gov/standards/alto/v3/alto-3-0.xsd)
-* HTML
+* ALTO-with-Alternatives (aka. inline ALTO)
+* BIO
 * CSV
-* SQL
+* HTML
+* SQL(db)
 
 ## Building
 
@@ -146,7 +159,7 @@ happening. Thus, use noise filters while creating `.bio` files.
 
 Gazette's greatly improve the quality of your classification process, but a
 big model in memory may slow down processing speed. Overall there is a strong
-correlation in model size and preformance.
+correlation in model size and performance.
 
 The Stanford NER package offers a lot of settings that can infuence the
 binary model generation process. These settings can be configured using
