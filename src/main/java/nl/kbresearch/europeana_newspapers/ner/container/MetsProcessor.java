@@ -62,7 +62,7 @@ public class MetsProcessor implements ContainerProcessor {
                 Node tokens = nodesByTag.item(i);
                 if (tokens.getNodeType() == Node.ELEMENT_NODE) {
                     Element token_element = (Element) tokens;
-                    URL potentialAltoFilename;
+                    URL altoURI;
                     try {
                         if (token_element.getAttribute("xlink:href").endsWith(".xml")) {
                             URI referencedFile = new URI(token_element.getAttribute("xlink:href"));
@@ -70,14 +70,14 @@ public class MetsProcessor implements ContainerProcessor {
                             if ("file".equalsIgnoreCase(referencedFile.getScheme())) {
                                 String path = referencedFile.getPath();
                                 String relativeToUrl = url.toString();
-                                potentialAltoFilename = new URI(relativeToUrl.substring(0,
-                                                                                        relativeToUrl.lastIndexOf("/")) +
-                                                                                        path).normalize().toURL();
+                                altoURI = new URI(relativeToUrl.substring(0,
+                                                                          relativeToUrl.lastIndexOf("/")) +
+                                                                          path).normalize().toURL();
                             } else {
-                                potentialAltoFilename = referencedFile.normalize().toURL();
+                                altoURI = referencedFile.normalize().toURL();
                             }
 
-                            String[] split = potentialAltoFilename.toExternalForm().split("/");
+                            String[] split = altoURI.toExternalForm().split("/");
                             String name;
 
                             if (split.length > 0 && !split[split.length - 1].isEmpty()) {
@@ -88,8 +88,8 @@ public class MetsProcessor implements ContainerProcessor {
                                 name = "alto-" + (count++) + ".xml";
                             }
 
-                            System.out.println(potentialAltoFilename);
-                            AltoProcessor.handlePotentialAltoFile(potentialAltoFilename,
+                            System.out.println(altoURI);
+                            AltoProcessor.handlePotentialAltoFile(altoURI,
                                                                   "text/xml",
                                                                   lang,
                                                                   md5sum,
