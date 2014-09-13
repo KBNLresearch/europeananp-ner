@@ -40,13 +40,19 @@ The following output formats are implemented:
 
 Building from source:
 
-Install Maven, Java (v1.7 and up). In the toplevel directory run:
+Install Maven, Java (v1.7 and up). Clone the source from github, and in the toplevel directory run:
 
     mvn package
 
 This command will generate a JAR and a WAR of the NER located in the `target/` directory.
 To deploy the WAR, just copy it into the Tomcat webapp directory, or use Tomcat
 manager to do it for you.
+
+Or move quickly and run (on \*nix systems):
+
+    git clone https://github.com/KBNLresearch/europeananp-ner.git
+    cd europeananp-ner/
+    ./go.sh
 
 ## Usage command-line-interface
 
@@ -161,7 +167,7 @@ Gazette's greatly improve the quality of your classification process, but a
 big model in memory may slow down processing speed. Overall there is a strong
 correlation in model size and performance.
 
-The Stanford NER package offers a lot of settings that can infuence the
+The Stanford NER package offers a lot of settings that can influence the
 binary model generation process. These settings can be configured using
 `austen.prop`, For more information on the Stanford settings see
 [Stanford NER FAQ](http://nlp.stanford.edu/software/crf-faq.shtml).
