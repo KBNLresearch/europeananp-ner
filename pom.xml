@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.kbresearch.europeana_newspapers</groupId>
-  <artifactId>europeananp-ner</artifactId>
+  <artifactId>NerAnnotator</artifactId>
   <version>0.0.2-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>europeananp-ner</name>
+  <name>NerAnnotator</name>
   <url>http://www.europeana-newspapers.eu/</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,7 +16,6 @@
         <!-- This plugin is needed for the WebApp -->
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>8.1.0.RC5</version>
         <configuration>
           <webResources>
             <resource>
@@ -40,7 +39,6 @@
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
-          <compilerArgument>-Xlint:unchecked</compilerArgument>
         </configuration>
       </plugin>
       <plugin>
@@ -64,7 +62,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>nl.kbresearch.europeana_newspapers.ner.WebApp</mainClass>
+              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.WebApp</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -79,7 +77,31 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              <mainClass>nl.kbresearch.europeana_newspapers.ner.commandLine_NER</mainClass>
+              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+       <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <mainClass>nl.kbresearch.europeana_newspapers.NerAnnotator.App</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -133,7 +155,7 @@
       <version>1.2</version>
     </dependency>
     <dependency>
-      <groupId>commons-io</groupId>
+      <groupId>org.apache.commons</groupId>
       <artifactId>commons-io</artifactId>
       <version>1.3.2</version>
     </dependency>
