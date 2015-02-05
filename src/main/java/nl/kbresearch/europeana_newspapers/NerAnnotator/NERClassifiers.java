@@ -3,8 +3,8 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 
 import java.io.*;
-
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -21,14 +21,14 @@ public class NERClassifiers {
     @SuppressWarnings("rawtypes")
     static Map<Locale, CRFClassifier> classifierMap = new ConcurrentHashMap<Locale, CRFClassifier>();
 
-    static Properties langModels;
+    static LinkedList<String> langModels;
 
     /**
      * @param langModels
      *            file names of the classifier model for a language. E.g. de ->
      *            /path/to/file/model.gz
      */
-    public static void setLanguageModels(final Properties langModels) {
+    public static void setLanguageModels(final LinkedList<String> langModels) {
             NERClassifiers.langModels = langModels;
     }
 
@@ -48,11 +48,13 @@ public class NERClassifiers {
             // Load model
             System.out.println("Loading language model for " + lang.getDisplayLanguage());
             try {
-                for (Object langKey : langModels.keySet()) {
-                    System.out.println(langKey + " -> " + langModels.getProperty(langKey.toString()));
+                for (String model : langModels) {
+                	String langKey = model.substring(0, model.indexOf("="));
+                	String langFile = model.substring(model.indexOf("=")+1);
+                    System.out.println(langKey + " -> " + langFile);
                     if (lang.getLanguage().equals(new Locale(langKey.toString()).getLanguage())) {
                         // Populate the classifier with the specified classifier from the command line
-                        classifier = CRFClassifier.getClassifier(getDefaultInputModelStream(langModels.getProperty(langKey.toString()), lang));
+                        classifier = CRFClassifier.getClassifier(getDefaultInputModelStream(langFile, lang));
                     }
                 }
             } catch (ClassCastException e) {

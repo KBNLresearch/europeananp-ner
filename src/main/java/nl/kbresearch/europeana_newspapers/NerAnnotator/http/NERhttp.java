@@ -13,12 +13,11 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,14 +27,12 @@ import edu.stanford.nlp.ling.CoreLabel;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
-
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -93,9 +90,9 @@ public class NERhttp {
             for (String optionKey: section.keySet()) {
                     config.put(sectionName + "__" + optionKey , section.get(optionKey));
                     if (optionKey.equals("classifier")) {
-                        Properties optionProperties = new Properties();
-                        optionProperties.setProperty(sectionName, section.get(optionKey).replace("\"", ""));
-                        NERClassifiers.setLanguageModels(optionProperties);
+                        LinkedList<String> optModels = new LinkedList<String>();
+                        optModels.add(sectionName+"="+section.get(optionKey).replace("\"", ""));
+                        NERClassifiers.setLanguageModels(optModels);
                         Locale llang = new Locale(sectionName);
                         CRFClassifier cli = NERClassifiers.getCRFClassifierForLanguage(llang);
                         config.put("langmodel__" + sectionName, cli);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Version: 0.0.2-SNAPSHOT md5sum: 69ba3659d26d7656340e40e356008f81
-Classifier: eunews_dutch.crf.gz md5sum: 0565e97fe3d6886a92a4b1646c7ea20c Date/time NER-extraction: 2014/Nov/24 12:36:38
+<!--Version: 0.0.2-SNAPSHOT md5sum: 377301a2cc26504bad43d006f4c0e415
+Classifier: eunews_dutch.crf.gz md5sum: 0565e97fe3d6886a92a4b1646c7ea20c Date/time NER-extraction: 2015/Feb/05 12:35:17
 -->
 <alto xmlns="http://schema.ccs-gmbh.com/ALTO" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<Description>

@@ -2,7 +2,6 @@ package nl.kbresearch.europeana_newspapers.NerAnnotator;
 
 import nl.kbresearch.europeana_newspapers.NerAnnotator.container.*;
 import nl.kbresearch.europeana_newspapers.NerAnnotator.output.ResultHandlerFactory;
-import nl.kbresearch.europeana_newspapers.NerAnnotator.http.NERhttp;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -14,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.InputStreamReader;
 import java.io.IOException;
-
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -60,119 +59,177 @@ public class App {
         return md5sum;
     }
 
+    private static void usage() {
+    	System.err.println("usage: java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]");
+		System.err.println(" -c,--container <FORMAT>             Input type: mets (Default), didl,");
+		System.err.println("                                     alto, text, html");
+		System.err.println(" -d,--output-directory <DIRECTORY>   output DIRECTORY for result files.");
+		System.err.println("                                     Default ./output");
+		System.err.println(" -f,--export <FORMAT>                Output type: log (Default), csv,");
+		System.err.println("                                     html, db, alto, alto2_1, bio.");
+		System.err.println("                                     Multiple formats:' -f html -f csv'");
+		System.err.println(" -l,--language <ISO-CODE>            use two-letter ISO-CODE for language");
+		System.err.println("                                     selection: en, de, nl ....");
+		System.err.println(" -m,--models <language=filename>     models for languages. Ex. -m");
+		System.err.println("                                     de=/path/to/file/model_de.gz -m");
+		System.err.println("                                     nl=/path/to/file/model_nl.gz");
+		System.err.println(" -n,--nthreads <THREADS>             maximum number of threads to be used");
+		System.err.println("                                     for processing. Default 8");
+		System.err.println(" --                                  no more options after this");
+        System.err.println("\nIf there are no input files specified, a list of file names is read from stdin.");
+        System.exit(1);
+    }
+    
     /**
      * @param args
      * @throws ClassCastException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    @SuppressWarnings("static-access")
     public static void main(final String[] args) throws ClassCastException, ClassNotFoundException, InterruptedException {
-
-        CommandLineParser parser = new PosixParser();
-        Options options = new Options();
-
-        options.addOption(OptionBuilder
-                        .withLongOpt("export")
-                        .withDescription("Output type: log (Default), csv, html, db, alto, alto2_1, bio.\n Multiple formats:\" -f html -f csv\"")
-                        .hasArgs().withArgName("FORMAT").withType(String.class)
-                        .create("f"));
-
-        options.addOption(OptionBuilder
-                        .withLongOpt("language")
-                        .withDescription("use two-letter ISO-CODE for language selection: en, de, nl ....")
-                        .hasArg().withArgName("ISO-CODE").withType(String.class)
-                        .create("l"));
-
-        options.addOption(OptionBuilder
-                        .withLongOpt("container")
-                        .withDescription("Input type: mets (Default), didl, alto, text, html")
-                        .hasArg().withArgName("FORMAT").withType(String.class)
-                        .create("c"));
-
-        options.addOption(OptionBuilder
-                        .withLongOpt("nthreads")
-                        .withDescription("maximum number of threads to be used for processing. Default 8 ")
-                        .hasArg().withArgName("THREADS").withType(Integer.class)
-                        .create("n"));
-
-        options.addOption(OptionBuilder
-                        .withLongOpt("models")
-                        .withDescription("models for languages. Ex. -m de=/path/to/file/model_de.gz -m nl=/path/to/file/model_nl.gz")
-                        .hasArgs().withArgName("language=filename")
-                        .withValueSeparator().create("m"));
-
-        options.addOption(OptionBuilder
-                        .withLongOpt("output-directory")
-                        .withDescription("output DIRECTORY for result files. Default ./output")
-                        .hasArg().withArgName("DIRECTORY").withType(String.class)
-                        .create("d"));
+    	LinkedList<String> optContainer = new LinkedList<String>();
+    	LinkedList<String> optOutputDir = new LinkedList<String>();
+    	LinkedList<String> optExport = new LinkedList<String>();
+    	LinkedList<String> optLanguage = new LinkedList<String>();
+    	LinkedList<String> optModels = new LinkedList<String>();
+    	LinkedList<String> optThreads = new LinkedList<String>();
+    	LinkedList<String> optFiles = new LinkedList<String>();
+    	    	
+    	boolean moreOptions = true;
+    	for (int n=0; n<args.length; n++) {
+    		if (args[n].equals("--")) {
+    			moreOptions = false;
+    		}
+    		else if (moreOptions && (args[n].equals("-c") || args[n].equals("--container"))) {
+    			if ((n+1)<args.length) {
+    				n++;
+    				optContainer.addLast(args[n]);
+    			}
+    			else {
+    				usage();
+    			}
+    		}
+    		else if (moreOptions && (args[n].equals("-d") || args[n].equals("--output-directory"))) {
+    			if ((n+1)<args.length) {
+    				n++;
+    				optOutputDir.addLast(args[n]);
+    			}
+    			else {
+    				usage();
+    			}
+    		}
+    		else if (moreOptions && (args[n].equals("-f") || args[n].equals("--export"))) {
+    			if ((n+1)<args.length) {
+    				n++;
+    				optExport.addLast(args[n]);
+    			}
+    			else {
+    				usage();
+    			}
+    		}    		
+    		else if (moreOptions && (args[n].equals("-l") || args[n].equals("--language"))) {
+    			if ((n+1)<args.length) {
+    				n++;
+    				optLanguage.addLast(args[n]);
+    			}
+    			else {
+    				usage();
+    			}
+    		}    		
+    		else if (moreOptions && (args[n].equals("-m") || args[n].equals("--models"))) {
+    			if ((n+1)<args.length) {
+    				n++;
+    				optModels.addLast(args[n]);
+    			}
+    			else {
+    				usage();
+    			}
+    		}    		
+    		else if (moreOptions && (args[n].equals("-n") || args[n].equals("--nthreads"))) {
+    			if ((n+1)<args.length) {
+    				n++;
+    				optThreads.addLast(args[n]);
+    			}
+    			else {
+    				usage();
+    			}
+    		}
+    		else if (moreOptions && (args[n].startsWith("-"))) {
+    			System.err.println("unknown option "+args[n]);
+    			usage();
+    		}
+    		else {
+    			optFiles.addLast(args[n]);
+    		}
+    	}
+    	
 
         try {
-            CommandLine line = parser.parse(options, args);
             ContainerProcessor processor = MetsProcessor.INSTANCE;
-            int maxThreads = 8;
-            Locale lang = Locale.ENGLISH;
+
             outputFormats = new String[] { "http" };
-            String[] formats = line.getOptionValues("f");
-
-            if (formats != null && formats.length > 0) {
-                outputFormats = formats;
+            if (optExport.size()>0) {
+                outputFormats = optExport.toArray(new String[0]);
             }
 
-            if (line.getOptionValue("l") != null) {
-                lang = new Locale(line.getOptionValue("l"));
+            Locale lang = Locale.ENGLISH;
+            if (optLanguage.size()>0) {
+            	lang = new Locale(optLanguage.getLast());
             }
 
-            if (line.getOptionValue("n") != null) {
-                maxThreads = new Integer(line.getOptionValue("n"));
+            int maxThreads = 8;
+            if (optThreads.size()>0) {
+            	maxThreads = Integer.parseInt(optThreads.getLast());
             }
 
-            if (line.getOptionValue("c") != null) {
-                System.out.println("Container format: " + line.getOptionValue("c"));
-                if (line.getOptionValue("c").equals("didl")) {
+            if (optContainer.size()>0) {
+                System.out.println("Container format: " + optContainer.getLast());
+                if (optContainer.getLast().equals("didl")) {
                     processor = DIDLProcessor.INSTANCE;
-                } else if (line.getOptionValue("c").equals("alto")) {
+                } else if (optContainer.getLast().equals("alto")) {
                     processor = AltoLocalProcessor.INSTANCE;
-                } else if (line.getOptionValue("c").equals("mets")) {
+                } else if (optContainer.getLast().equals("mets")) {
                     processor = MetsProcessor.INSTANCE;
-                } else if (line.getOptionValue("c").equals("text")) {
+                } else if (optContainer.getLast().equals("text")) {
                     processor = TextProcessor.INSTANCE;
-                } else if (line.getOptionValue("c").equals("html")) {
+                } else if (optContainer.getLast().equals("html")) {
                     processor = HtmlProcessor.INSTANCE;
                 } else {
-                    throw new ParseException("Could not identify container format: " + line.getOptionValue("c"));
+                    throw new ParseException("Could not identify container format: " + optContainer.getLast());
                 }
             }
 
-            Properties optionProperties = line.getOptionProperties("m");
-
-            if (optionProperties == null || optionProperties.isEmpty()) {
+            if (optModels.size()==0) {
                 throw new ParseException("No language models defined!");
             }
 
-            NERClassifiers.setLanguageModels(optionProperties);
-
             String classifierFileName = "";
-            for (String name: optionProperties.stringPropertyNames()) {
-                classifierFileName = optionProperties.getProperty(name);
-                break;
+            for (String opt: optModels) {
+            	if (!opt.contains("=")) {
+            		usage();
+            	}
+                classifierFileName = opt.substring(opt.indexOf('=')+1);
             }
 
-            String outputDirectory = line.getOptionValue("d");
-            if (outputDirectory == null || outputDirectory.isEmpty()) {
+            NERClassifiers.setLanguageModels(optModels);
+
+            String outputDirectory = null;
+            if (optOutputDir.size()>0) {
+            	outputDirectory = optOutputDir.getLast();
+            }
+            else {
                 outputDirectory = "." + File.separator + "output";
             }
 
             outputDirectoryRoot = new File(outputDirectory);
 
             // all others should be files
-            List fileList = line.getArgList();
+            List<String> fileList = optFiles;
             
             if (fileList.isEmpty()) {
                 System.out.println("No file specified, read file list from stdin");
                 try {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));                      
+                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in, Charset.forName("UTF-8")));                      
                     String input;                    
                     while ((input = br.readLine()) != null) {
                         fileList.add(input);
@@ -199,10 +256,10 @@ public class App {
             // Create the needed threads
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Math.min(2, maxThreads), maxThreads, 1000, TimeUnit.MILLISECONDS, containerHandlePool);
 
-            for (Object arg : fileList) {
+            for (String arg : fileList) {
                 System.out.println(arg);
                 // Fire up the created threads
-                results.put(arg.toString(), threadPoolExecutor.submit(new ContainerHandleThread(arg.toString(), lang, processor, versionString)));
+                results.put(arg, threadPoolExecutor.submit(new ContainerHandleThread(arg, lang, processor, versionString)));
             }
            
             // Shutdown and wait for threads to end
@@ -241,10 +298,9 @@ public class App {
                 System.out.println("Successful.");
                 System.exit(0);
             }
-        } catch (org.apache.commons.cli.ParseException e) {
-            HelpFormatter helpFormatter = new HelpFormatter();
-            helpFormatter.printHelp("java -jar NerAnnotator.jar [OPTIONS] [INPUTFILES..]", options);
-            System.out.println("\nIf there are no input files specified, a list of file names is read from stdin.");
+        } 
+        catch (org.apache.commons.cli.ParseException e) {
+        	usage();
         }
     }
 
