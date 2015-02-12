@@ -109,7 +109,7 @@ test_extraction() {
         ORGANIZATION_COUNT=`cat "$OUTPUTDIR"/*/* | grep "ALTERNATIVE" | grep 'ORG" ' | wc -l`
         PERSON_COUNT=`cat "$OUTPUTDIR"/*/* | grep "ALTERNATIVE" | grep 'PER" ' | wc -l`
     else
-        echo "Some wierd things happend, run sh -x $0"
+        echo "Some weird things happend, run sh -x $0"
         echo "Or run: $cmd"
         exit 1
     fi
