@@ -16,6 +16,7 @@
         <!-- This plugin is needed for the WebApp -->
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
+        <version>7.6.16.v20140903</version>
         <configuration>
           <webResources>
             <resource>
