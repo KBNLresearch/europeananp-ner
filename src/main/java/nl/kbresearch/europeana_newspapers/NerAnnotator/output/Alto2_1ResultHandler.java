@@ -162,8 +162,8 @@ public class Alto2_1ResultHandler implements ResultHandler {
         Element child = altoDocument.createElement("Tags");
         for (HashMap s: this.Entity_list) {
             Element childOfTheChild = altoDocument.createElement("NamedEntityTag");
-            childOfTheChild.setAttribute("TYPE", (String) s.get("label"));
-            childOfTheChild.setAttribute("LABEL", (String) s.get("word"));
+            childOfTheChild.setAttribute("LABEL", (String) s.get("label"));
+            childOfTheChild.setAttribute("DESCRIPTION", (String) s.get("word"));
             childOfTheChild.setAttribute("ID", "Tag" + (String) s.get("id"));
             child.appendChild(childOfTheChild);
         }
