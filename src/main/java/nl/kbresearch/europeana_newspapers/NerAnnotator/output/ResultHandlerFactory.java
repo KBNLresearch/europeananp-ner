@@ -23,8 +23,7 @@ public class ResultHandlerFactory {
     
     /**
      * @param context
-     * @param name 
-     * @param md5sum
+     * @param name
      * @return array of ResultHandlers according to the configuration
      */
     public static ResultHandler[] createResultHandlers(final ContainerContext context, final String name, final String versionString, final PrintWriter out) {
@@ -63,6 +62,11 @@ public class ResultHandlerFactory {
                     Alto2_1ResultHandler alto2_1ResultHandler = new Alto2_1ResultHandler(context, name, versionString);
                     registeredHandlers.put(Alto2_1ResultHandler.class, alto2_1ResultHandler);
                     result.add(alto2_1ResultHandler);
+                    break;
+                case "alto3":
+                    Alto3ResultHandler alto3ResultHandler = new Alto3ResultHandler(context, name, versionString);
+                    registeredHandlers.put(Alto3ResultHandler.class, alto3ResultHandler);
+                    result.add(alto3ResultHandler);
                     break;
                 case "bio":
                     BioResultHandler bioResultHandler = new BioResultHandler(context, name);

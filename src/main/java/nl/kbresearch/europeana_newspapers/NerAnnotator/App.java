@@ -66,7 +66,7 @@ public class App {
 		System.err.println(" -d,--output-directory <DIRECTORY>   output DIRECTORY for result files.");
 		System.err.println("                                     Default ./output");
 		System.err.println(" -f,--export <FORMAT>                Output type: log (Default), csv,");
-		System.err.println("                                     html, db, alto, alto2_1, bio.");
+		System.err.println("                                     html, db, alto, alto2_1, alto3, bio.");
 		System.err.println("                                     Multiple formats:' -f html -f csv'");
 		System.err.println(" -l,--language <ISO-CODE>            use two-letter ISO-CODE for language");
 		System.err.println("                                     selection: en, de, nl ....");

@@ -66,7 +66,7 @@ Invoking help:
     -d,--output-directory <DIRECTORY>   output DIRECTORY for result files.
                                         Default ./output
     -f,--export <FORMAT>                Output type: log (Default), csv,
-                                        html, db, alto, alto2_1, bio.
+                                        html, db, alto, alto2_1, alto3, bio.
                                         Multiple formats:" -f html -f csv"
     -l,--language <ISO-CODE>            use two-letter ISO-CODE for language
                                         selection: en, de, nl ....
