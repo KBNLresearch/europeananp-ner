@@ -25,7 +25,7 @@ import org.w3c.dom.NodeList;
  *
  */
 
-public class Alto2_1ResultHandler implements ResultHandler {
+public class Alto3ResultHandler implements ResultHandler {
 
     private ContainerContext context;
     private String name;
@@ -48,7 +48,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
      * @param context
      * @param name
      */
-    public Alto2_1ResultHandler(final ContainerContext context, final String name, final String versionString) {
+    public Alto3ResultHandler(final ContainerContext context, final String name, final String versionString) {
         this.context = context;
         this.name = name;
         this.versionString = versionString;
@@ -74,7 +74,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
         if (continuationid != null) {
             this.continuationId = continuationid;
             this.continuationLabel = label;
-         }
+        }
 
         if (wordid.equals(this.continuationId)) {
             label = this.continuationLabel;
@@ -83,16 +83,16 @@ public class Alto2_1ResultHandler implements ResultHandler {
         if (label != null) {
             // Reformat the label to a more readable form.
             if ((label.equals("B-LOC")) || (label.equals("I-LOC"))) {
-                label = "location";
+                label = "LOC";
             }
             if ((label.equals("B-PER")) || (label.equals("I-PER"))) {
-                label = "person";
+                label = "PER";
             }
             if ((label.equals("B-ORG") || (label.equals("I-ORG")))) {
-                label = "organization";
+                label = "ORG";
             }
             if ((label.equals("B-MISC") || (label.equals("I-MISC")))) {
-                label = "miscellaneous";
+                label = "MISC";
             }
 
             // Find the alto node with the corresponding wordid.
@@ -103,11 +103,11 @@ public class Alto2_1ResultHandler implements ResultHandler {
                 // This is a continuation of a label, eg. J.A de Vries..
                 // prevIsNamed indicates that the previous word was also a NE
                 // Concatenation string to generate one label.
-                
-                if (!word.equalsIgnoreCase(this.prevWord.trim())) { 
+
+                if (!word.equalsIgnoreCase(this.prevWord.trim())) {
                     // Don't double label names on a hypened word.
                     word = this.prevWord + word;
-                } 
+                }
 
                 this.Entity_list.remove(this.Entity_list.size()-1);
                 this.prevWord = word + " ";
@@ -123,7 +123,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
                     mMap.put("id", String.valueOf(this.tagCounter));
                 }
 
-                // Create mapping for the TAGS header part of alto2_1
+                // Create mapping for the TAGS header part of alto3
                 mMap.put("label", label);
                 mMap.put("word", word);
 
@@ -133,7 +133,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
                 // Add the TAGREFS attribute to the corresponding String in the alto.
                 domElement.setAttribute("TAGREFS", "Tag" + String.valueOf(this.tagCounter));
 
-                // Create mapping for the TAGS header part of alto2_1
+                // Create mapping for the TAGS header part of alto3
                 mMap.put("id", String.valueOf(this.tagCounter));
                 mMap.put("label", label);
                 mMap.put("word", word);
@@ -157,7 +157,7 @@ public class Alto2_1ResultHandler implements ResultHandler {
     @Override
     public void stopDocument() {
         // Create xml:
-        // <Tags><NamedEntityTag ID="Tag7" TYPE="Person" LABEL="James M Bigstaff "/></Tags>
+        // <Tags><NamedEntityTag ID="Tag7" LABEL="Person" DESCRIPTION="James M Bigstaff "/></Tags>
         // Entity_list is populated with known NE's
         Element child = altoDocument.createElement("Tags");
         for (HashMap s: this.Entity_list) {
@@ -173,12 +173,12 @@ public class Alto2_1ResultHandler implements ResultHandler {
         NodeList alto = altoDocument.getElementsByTagName("alto");
         Element alto_root = (Element) alto.item(0);
         alto_root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        alto_root.setAttribute("xmlns" , "http://www.loc.gov/standards/alto/ns-v2#");
-        alto_root.setAttribute("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v2# https://raw.github.com/altoxml/schema/master/v2/alto-2-1-draft.xsd");
+        alto_root.setAttribute("xmlns" , "http://www.loc.gov/standards/alto/ns-v3#");
+        alto_root.setAttribute("xsi:schemaLocation", "http://www.loc.gov/standards/alto/ns-v3# https://www.loc.gov/standards/alto/v3/alto.xsd");
 
         try {
-            // Output file for alto2_1 format.
-            outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto2_1.xml"), "UTF-8");
+            // Output file for alto3 format.
+            outputFile = new PrintWriter(new File(context.getOutputDirectory(), name + ".alto3.xml"), "UTF-8");
 
             Element element = altoDocument.getDocumentElement();
             // Get current date, and add it to the comment line
@@ -211,11 +211,11 @@ public class Alto2_1ResultHandler implements ResultHandler {
             outputFile.flush();
             outputFile.close();
 
-       } catch(TransformerException e) {
+        } catch(TransformerException e) {
             e.printStackTrace();
-       } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-       }
+        }
     }
 
     @Override
