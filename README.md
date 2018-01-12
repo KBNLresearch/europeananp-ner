@@ -15,6 +15,8 @@ Stanford-NER, take a peek at the project from our colleagues INL,
 [Institute for Dutch Lexicology](http://www.inl.nl/our-work-and-working-methods) [INL-NERT](https://github.com/INL/NERT),
 although they are separate branches now, there is a desire to integrate both in the future.
 
+<b>This version is not longer maintained, for a maintained version go here: https://github.com/EuropeanaNewspapers/ner-app</b>
+
 ## Input formats
 
 The following input formats are implemented:
